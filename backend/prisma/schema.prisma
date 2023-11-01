@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  auth_id       String   @unique
+  nickname      String?  @unique
+  firstSignIn   Boolean  @default(true)
+  displayname   String?
+  bio           String?  @default("bio")
+  emailVerified Boolean?
+  picture       String?  @default("https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg")
+
+  stats          Stats?
+  friends1       Friends[]     @relation("User1ToFriends")
+  friends2       Friends[]     @relation("User2ToFriends")
+  blockedByUsers BlockedUser[] @relation("BlockedByUsers")
+  blockingUsers  BlockedUser[] @relation("BlockingUsers")
+  Member         Member[]
+  Message        Message[]
+}
+
+model Stats {
+  stats_id      Int    @id @default(autoincrement())
+  user_id       String @unique
+  wins          Int    @default(0)
+  losses        Int    @default(0)
+  goal_conceded Int    @default(0)
+  goal_scoared  Int    @default(0)
+  clean_sheets  Int    @default(0)
+  points        Int    @default(0)
+  leaderboard   Int    @default(1500)
+
+  user Users @relation(fields: [user_id], references: [auth_id])
+}
+
+model Friends {
+  friendship_id Int      @id @default(autoincrement())
+  user1_id      String
+  user2_id      String
+  status        String
+  request_date  DateTime @default(now())
+  accept_date   DateTime @default(now())
+
+  user1 Users @relation("User1ToFriends", fields: [user1_id], references: [auth_id])
+  user2 Users @relation("User2ToFriends", fields: [user2_id], references: [auth_id])
+}
+
+model BlockedUser {
+  block_id       Int    @id @default(autoincrement())
+  blocked_id     String
+  blocker_id     String
+  blockedByUsers Users  @relation("BlockedByUsers", fields: [blocked_id], references: [auth_id])
+  blockingUsers  Users  @relation("BlockingUsers", fields: [blocker_id], references: [auth_id])
+}
+
+model Group {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  type      String
+  Privacy   String    @default("private")
+  password  String?
+  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  timestamp DateTime  @default(now())
+  members   Member[]
+  messages  Message[]
+}
+
+model Member {
+  id      Int     @id @default(autoincrement())
+  userId  String
+  groupId Int
+  isAdmin Boolean
+  user    Users   @relation(fields: [userId], references: [auth_id])
+  group   Group   @relation(fields: [groupId], references: [id])
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  senderId    String
+  groupId     Int
+  messageText String
+  timestamp   DateTime @default(now())
+  sender      Users    @relation(fields: [senderId], references: [auth_id])
+  group       Group    @relation(fields: [groupId], references: [id])
+}
+
+model Achievement {
+  achievement_id Int    @id @default(autoincrement())
+  name           String
+  description    String
+  goal_conceded  Int
+  goal_scoared   Int
+  clean_sheets   Int
+}
