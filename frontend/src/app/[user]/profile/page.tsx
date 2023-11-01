@@ -30,10 +30,7 @@ const spinner = (
   </svg>
 );
 
-
-
 export default function Profile() {
-  
   const params = useParams();
   const { dataUser } = useAuth();
   const {
@@ -67,17 +64,25 @@ export default function Profile() {
                   <div className="flex justify-between px-4 mx-2 mt-6">
                     <div className="flex gap-x-4 items-center">
                       <div className="w-16 h-16 flex items-center">
-                          <div className="h-16 w-16 rounded-full bg-cover" style={{backgroundImage:`url(${dataUser?.picture!})`}}></div>
+                        <div
+                          className="h-16 w-16 rounded-full bg-cover"
+                          style={{
+                            backgroundImage: `url(${dataUser?.picture!})`,
+                          }}></div>
                       </div>
-                          <span className="text-2xl text-white">{dataUser?.displayname}</span>
+                      <span className="text-sm xl:text-2xl text-white">
+                        {dataUser?.displayname}
+                      </span>
                     </div>
                     <div className="flex gap-x-4 items-center">
-                      <button
-        
-        className="bg-black hover:bg-cyan-600 text-white p-2  ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs lg:text-xl">
-        
-        Play Now
-      </button>
+                      <div className="flex justify-around">
+                        <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg ">
+                          Play Now
+                        </button>
+                        <button className="bg-black hover:bg-cyan-600 text-white p-2  ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg">
+                          Message
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
