@@ -48,6 +48,13 @@ export class BlockService {
         if (existingBlock) {
           throw new HttpException({ type:'User is already blocked!'}, 201);
         }
+      try {
+        this.FriendService.deleteFriend(blockedUserId, blockerUserId);  
+      }
+      catch (err)
+      {
+
+      }
         await this.prisma.blockedUser.create({
             data: 
             {
