@@ -1,8 +1,6 @@
 import { Controller,Get,Req,Body,Res ,Post,UseGuards,Param} from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthGuard } from '@nestjs/passport';
-import {UserService} from '../services/user.service'
+import {UserService} from '../../services/user.service'
 @Controller('/v1/api/user')
 export class UserController {
     constructor(private UserService :UserService) {}
@@ -35,35 +33,6 @@ export class UserController {
         return res.status(500).json({ message: 'An error occurred while fetching the user state.' });
       }
     }
-
-    @Post('/blockUser')
-    @UseGuards(AuthGuard('jwt'))
-    async blockUser(@Body() blockUserData, @Res() res,@Req() request) {
-        try {
-          const blockedUserId = request.user.auth_id
-          const { blockerUserId } = blockUserData;
-            const result = await this.UserService.blockUser(blockedUserId, blockerUserId);
-            return res.status(200).json({ message: result });
-        } catch (error) {
-            return res.status(500).json({ message: 'An error occurred while blockUser the user.' });
-        }
-    }
-
-
-    @Post('/deblocked')
-    @UseGuards(AuthGuard('jwt'))
-    async deblocked(@Body() deblockedData, @Res() res,@Req() request) {
-        try {
-          const blockedUserId = request.user.auth_id
-          const { blockerUserId } = deblockedData;
-          const result = await this.UserService.deblockUser(blockedUserId, blockerUserId);
-          return res.status(200).json({ message: result });
-        } catch (error) {
-            return res.status(500).json({ message: 'An error occurred while deblocking the user.' });
-        }
-      }
-
-
 
   
     @Get("/Achievement")
