@@ -1,6 +1,4 @@
 #!/bin/sh
-
-
 echo "DATABASE HOST db"
 echo "POSTGRES USER user"
 
