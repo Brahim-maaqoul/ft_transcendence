@@ -5,25 +5,25 @@ import { FriendService } from './friend.service';
 @Injectable()
 export class BlockService {
     constructor(private prisma: PrismaService, private FriendService:FriendService) {}
-    async deblockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
+    async unblockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
     try {
-      const existingBlock = await this.prisma.blockedUser.findMany({
+      const existingBlock = await this.prisma.blockedUser.findFirst({
         where: {
           blocked_id: blockedUserId,
           blocker_id: blockerUserId,
         },
       });
       
-      if (!existingBlock[0]) {
+      if (!existingBlock) {
         return 'User is not blocked.';
       }
-      for (const block of existingBlock) {
-        await this.prisma.blockedUser.delete({
-          where: {
-            block_id: block.block_id,
-          },
-        });
-      }
+     
+      await this.prisma.blockedUser.delete({
+        where: {
+          block_id: existingBlock.block_id,
+        },
+
+      })
 
       return 'User deblocked successfully.';
     } catch (error) {
@@ -46,14 +46,7 @@ export class BlockService {
             },
         });
         if (existingBlock) {
-            throw new HttpException('User is already blocked!', 201);
-        }
-        try{
-            this.FriendService.deleteFriend(blockedUserId, blockerUserId);
-        }
-        catch(error)
-        {
-            
+          throw new HttpException({ type:'User is already blocked!'}, 201);
         }
         await this.prisma.blockedUser.create({
             data: 

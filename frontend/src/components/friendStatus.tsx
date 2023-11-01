@@ -2,7 +2,9 @@ import Image from "next/image";
 import {
   acceptFriend,
   addFriend,
+  blockFriend,
   unFriend,
+  unblockFriend,
   useFriendType,
 } from "@/app/api/checkAuthentication";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -120,6 +122,63 @@ function AccpetFriend({ authId }: { authId: string }) {
     </>
   );
 }
+
+function Unblock({ authId }: { authId: string }) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: unblockFriend,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["FriendshipType"]);
+    },
+  });
+  const handler = () => {
+    mutation.mutate(authId);
+  };
+  return (
+    <>
+      <button
+        onClick={handler}
+        className="bg-slate-400 hover:bg-cyan-600 p-2  ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs lg:text-xl">
+        <Image
+          src={"/unblock.png"}
+          alt="Unblock Friend"
+          width={20}
+          height={20}
+          className="mr-2"
+        />
+        Unblock
+      </button>
+    </>
+  );
+}
+
+export function Block({ authId }: { authId: string }) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: blockFriend,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["FriendshipType"]);
+    },
+  });
+  const handler = () => {
+    mutation.mutate(authId);
+  };
+  return (
+    <>
+      <div onClick={handler} className="flex items-center">
+        <Image
+          src={"/block.png"}
+          alt="block Friend"
+          width={20}
+          height={20}
+          className="mr-2"
+        />
+        Block
+      </div>
+    </>
+  );
+}
+
 export default function FriendCases({
   FriendshipType,
   authId,
@@ -127,6 +186,7 @@ export default function FriendCases({
   FriendshipType: string;
   authId: string;
 }) {
+  console.log(FriendshipType);
   switch (FriendshipType) {
     case "not friend":
       return <AddFriend authId={authId} />;
@@ -138,6 +198,8 @@ export default function FriendCases({
 
     case "waiting":
       return <AccpetFriend authId={authId} />;
+    case "blocking":
+      return <Unblock authId={authId} />;
   }
 }
 // function getFriendType(auth_id: any): import("@tanstack/react-query").QueryFunction<unknown, string[]> {

@@ -26,10 +26,11 @@ export class FriendService {
 
         if (block)
         {
-            if (block.blocker_id == user1Id)
-                throw new HttpException('blocking', 200);
+          console.log("here", block, user1Id, block.blocked_id == user1Id)
+            if (block.blocked_id == user1Id)
+              throw new HttpException({ type: 'blocking' }, 200);
             else
-                throw new HttpException('blocked', 200);
+              throw new HttpException({ type: 'blocked' }, 200);
         }
 
         const existingFriendship = await this.prisma.friends.findFirst({

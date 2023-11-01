@@ -87,15 +87,17 @@ async function getFriendType(auth_id: string) {
 }
 
 export function useFriendType(auth_id: string) {
-  return useQuery({queryKey:["FriendshipType"], queryFn: () => getFriendType(auth_id)});
+  return useQuery({
+    queryKey: ["FriendshipType"],
+    queryFn: () => getFriendType(auth_id),
+  });
 }
-export async function  addFriend(auth_id:string)
-{
+export async function addFriend(auth_id: string) {
   try {
     console.log("here");
-    const response: AxiosResponse = await API.post(
-      "/friends/addFriend", {auth: auth_id}
-    );
+    const response: AxiosResponse = await API.post("/friends/addFriend", {
+      auth: auth_id,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching user stats:", error);
@@ -103,13 +105,12 @@ export async function  addFriend(auth_id:string)
   }
 }
 
-export async function  acceptFriend(auth_id:string)
-{
+export async function acceptFriend(auth_id: string) {
   try {
     console.log("here");
-    const response: AxiosResponse = await API.post(
-      "/friends/accepteFriend", {auth: auth_id}
-    );
+    const response: AxiosResponse = await API.post("/friends/accepteFriend", {
+      auth: auth_id,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching user stats:", error);
@@ -117,8 +118,7 @@ export async function  acceptFriend(auth_id:string)
   }
 }
 
-export async function  unFriend(auth_id:string)
-{
+export async function unFriend(auth_id: string) {
   try {
     console.log("here");
     const response: AxiosResponse = await API.delete(
@@ -131,7 +131,31 @@ export async function  unFriend(auth_id:string)
   }
 }
 
+export async function blockFriend(auth_id: string) {
+  try {
+    console.log("here");
+    const response: AxiosResponse = await API.post("/block/blockUser", {
+      auth: auth_id,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user stats:", error);
+    throw error;
+  }
+}
 
+export async function unblockFriend(auth_id: string) {
+  try {
+    console.log("here");
+    const response: AxiosResponse = await API.post("/block/unblock", {
+      auth: auth_id,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user stats:", error);
+    throw error;
+  }
+}
 
 // export function useAddFriend(auth_id: string) {
 //   return useQuery(["AddFriend", auth_id], () => addFriend(auth_id));

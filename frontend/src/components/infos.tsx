@@ -12,7 +12,7 @@ import {
   useFriendType,
 } from "@/app/api/checkAuthentication";
 
-import FriendCases from "./friendStatus";
+import FriendCases, { Block } from "./friendStatus";
 
 function Infos({ profileData }: { profileData: UserProfile }) {
   const { dataUser } = useAuth();
@@ -72,62 +72,59 @@ function Infos({ profileData }: { profileData: UserProfile }) {
             </div>
             {profileData?.nickname !== dataUser?.nickname && (
               <div className="flex items-start justify-end">
-                <div>
-                  <button
-                    onClick={() => {
-                      setShow(!show);
-                    }}
-                    className="relative bg-white flex justify-center items-center w-16 rounded-3xl  "
-                    ref={toggleButtonRef}>
-                    <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full  "></span>
-                    <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
-                    <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
+                {FriendshipType?.type !== "blocking" &&
+                  FriendshipType?.type !== "blocked" && (
+                    <div>
+                      <button
+                        onClick={() => {
+                          setShow(!show);
+                        }}
+                        className="relative bg-white flex justify-center items-center w-16 rounded-3xl  "
+                        ref={toggleButtonRef}>
+                        <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full  "></span>
+                        <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
+                        <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
 
-                    {show && (
-                      <div className="absolute z-50  right-0">
-                        <motion.div
-                          initial={{
-                            y: 300,
-                          }}
-                          animate={{
-                            y: 200,
-                          }}
-                          className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl">
-                          <Link className="flex     items-center " href={""}>
-                            <Image
-                              src={"/challenge.png"}
-                              alt="Send Message"
-                              width={20}
-                              height={20}
-                              className="mr-3"
-                            />
-                            Challenge
-                          </Link>
-                          <Link className="flex  items-center " href={""}>
-                            <Image
-                              src={"/Message.png"}
-                              alt="Send Message"
-                              width={20}
-                              height={20}
-                              className="mr-3"
-                            />
-                            Message
-                          </Link>
-                          <div className="flex cursor-pointer  items-center ">
-                            <Image
-                              src={"/block.png"}
-                              alt="add friend"
-                              width={20}
-                              height={20}
-                              className="mr-3"
-                            />
-                            Block
+                        {show && (
+                          <div className="absolute z-50  right-0">
+                            <motion.div
+                              initial={{
+                                y: 300,
+                              }}
+                              animate={{
+                                y: 200,
+                              }}
+                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl">
+                              <Link
+                                className="flex     items-center "
+                                href={""}>
+                                <Image
+                                  src={"/challenge.png"}
+                                  alt="Send Message"
+                                  width={20}
+                                  height={20}
+                                  className="mr-3"
+                                />
+                                Challenge
+                              </Link>
+                              <Link className="flex  items-center " href={""}>
+                                <Image
+                                  src={"/Message.png"}
+                                  alt="Send Message"
+                                  width={20}
+                                  height={20}
+                                  className="mr-3"
+                                />
+                                Message
+                              </Link>
+
+                              <Block authId={profileData.auth_id} />
+                            </motion.div>
                           </div>
-                        </motion.div>
-                      </div>
-                    )}
-                  </button>
-                </div>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 {FriendshipType && (
                   <FriendCases
                     FriendshipType={FriendshipType.type}
