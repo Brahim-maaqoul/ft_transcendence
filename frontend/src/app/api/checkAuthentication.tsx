@@ -157,6 +157,15 @@ export async function unblockFriend(auth_id: string) {
   }
 }
 
+async function getFriends(auth_id: string) {
+  const response: AxiosResponse = await API.get("/friends/Friend?auth_id=" + auth_id);
+  return response.data;
+}
+
+export function usegetFriends(auth_id:string): UseQueryResult<any> {
+  return useQuery({ queryKey: ["Friends"], queryFn: () => getFriends(auth_id) });
+}
+
 // export function useAddFriend(auth_id: string) {
 //   return useQuery(["AddFriend", auth_id], () => addFriend(auth_id));
 // }
@@ -182,29 +191,29 @@ export async function unblockFriend(auth_id: string) {
 
 // Groups
 
-async function getGroups() {
-  const response: AxiosResponse = await API.get("/chat/Groups");
-  return response.data;
-}
-export function usegetGroups(): UseQueryResult<any> {
-  return useQuery({ queryKey: ["dataGroups"], queryFn: getGroups });
-}
+// async function getGroups() {
+//   const response: AxiosResponse = await API.get("/chat/Groups");
+//   return response.data;
+// }
+// export function usegetGroups(): UseQueryResult<any> {
+//   return useQuery({ queryKey: ["dataGroups"], queryFn: getGroups });
+// }
 
-async function getFriends() {
-  const response: AxiosResponse = await API.get("/chat/FriendsRome");
-  return response.data;
-}
-export function usegetFriends(): UseQueryResult<any> {
-  return useQuery({ queryKey: ["dataFriend"], queryFn: getFriends });
-}
+// async function getFriends() {
+//   const response: AxiosResponse = await API.get("/chat/FriendsRome");
+//   return response.data;
+// }
+// export function usegetFriends(): UseQueryResult<any> {
+//   return useQuery({ queryKey: ["dataFriend"], queryFn: getFriends });
+// }
 
-export async function creatGroup(data: GroupCreate) {
-  const response: AxiosResponse = await API.post("/chat/createGroups", data);
-  console.log("responseeeeeeeee :", response.data.message);
-  return response.data;
-}
+// export async function creatGroup(data: GroupCreate) {
+//   const response: AxiosResponse = await API.post("/chat/createGroups", data);
+//   console.log("responseeeeeeeee :", response.data.message);
+//   return response.data;
+// }
 
-export async function getMessages(data: messagesData) {
-  const response: AxiosResponse = await API.post("/chat/getAllMessage", data);
-  return response.data.allMessage;
-}
+// export async function getMessages(data: messagesData) {
+//   const response: AxiosResponse = await API.post("/chat/getAllMessage", data);
+//   return response.data.allMessage;
+// }

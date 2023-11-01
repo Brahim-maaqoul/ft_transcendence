@@ -11,8 +11,9 @@ import Infos from "@/components/infos";
 import RecentGames from "@/components/recentGames";
 import { getUser } from "@/app/api/checkAuthentication";
 import { Link } from "lucide-react";
+import Friends from "@/components/friends";
 
-const spinner = (
+export const spinner = (
   <svg
     aria-hidden="true"
     className="w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-[#18181B]"
@@ -61,30 +62,7 @@ export default function Profile() {
               <div className="flex flex-col h-[720px]">
                 <div className="h-full bg-black bg-opacity-40 rounded-2xl shadow-black shadow-xl p-4 mx-2 my-3 overflow-y-auto no-scrollbar">
                   <span className="text-white text-2xl font-mono">Friends</span>
-                  <div className="flex justify-between px-4 mx-2 mt-6">
-                    <div className="flex gap-x-4 items-center">
-                      <div className="w-16 h-16 flex items-center">
-                        <div
-                          className="h-16 w-16 rounded-full bg-cover"
-                          style={{
-                            backgroundImage: `url(${dataUser?.picture!})`,
-                          }}></div>
-                      </div>
-                      <span className="text-sm xl:text-2xl text-white">
-                        {dataUser?.displayname}
-                      </span>
-                    </div>
-                    <div className="flex gap-x-4 items-center">
-                      <div className="flex justify-around">
-                        <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg ">
-                          Play Now
-                        </button>
-                        <button className="bg-black hover:bg-cyan-600 text-white p-2  ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg">
-                          Message
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <Friends auth_id={profileData?.auth_id} />
                 </div>
                 {params.user !== dataUser?.nickname && <Stats />}
                 <Achievement />

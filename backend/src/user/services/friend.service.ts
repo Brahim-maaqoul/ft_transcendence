@@ -8,7 +8,7 @@ export class FriendService {
     async firendshipState(user1Id: string, user2Id: string)
     {
         if(user1Id === user2Id)
-            throw new HttpException('invalid userId', 403);
+            throw new HttpException('invalid userId', 200);
         const block = await this.prisma.blockedUser.findFirst({
             where: {
             OR: [
@@ -109,10 +109,10 @@ export class FriendService {
         const existingFriendship = await this.firendshipState(user1Id, user2Id)
 
         if (!existingFriendship) {
-            return 'Friendship request not found';
+          throw new HttpException('Friendship request not found', 400);
         }
           
-        const friendship = await this.prisma.friends.delete({
+        this.prisma.friends.delete({
             where: {
               friendship_id: existingFriendship.friendship_id
             }
@@ -144,7 +144,9 @@ export class FriendService {
               auth_id: {
                 in: friendIds,
               },
-            },
+          },
         });
+      console.log(friendDetails);
+      return friendDetails;
     }
 }
