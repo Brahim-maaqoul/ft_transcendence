@@ -27,64 +27,6 @@ export class UserService {
     });
     return user
   }
-  
-  
-  async deblockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
-    try {
-      const existingBlock = await this.prisma.blockedUser.findMany({
-        where: {
-          blocked_id: blockedUserId,
-          blocker_id: blockerUserId,
-        },
-      });
-      
-      if (!existingBlock[0]) {
-        return 'User is not blocked.';
-      }
-      for (const block of existingBlock) {
-        await this.prisma.blockedUser.delete({
-          where: {
-            block_id: block.block_id,
-          },
-        });
-      }
-
-      return 'User deblocked successfully.';
-    } catch (error) {
-      return 'An error occurred while deblocking the user.';
-    }
-  }
-  async blockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
-    try {
-      const existingBlock = await this.prisma.blockedUser.findFirst({
-        where: {
-          OR: [
-            {
-              blocked_id: blockedUserId,
-              blocker_id: blockerUserId,
-            },
-            {
-              blocked_id: blockerUserId,
-              blocker_id: blockedUserId,
-            },
-          ],
-        },
-      });
-
-      if (existingBlock) {
-        return 'User is already blocked.';
-      }
-      await this.prisma.blockedUser.create({
-        data: {
-          blocked_id: blockedUserId,
-          blocker_id: blockerUserId,
-        },
-      });
-      return 'User blocked successfully.';
-    } catch (error) {
-      return 'An error occurred while blocking the user.';
-    }
-  }
   async  createDefaultAchievements() {
     try {
       const achievements = [

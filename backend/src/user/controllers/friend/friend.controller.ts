@@ -1,6 +1,6 @@
 import { Controller,Get,Req,Body,Res ,Post,UseGuards,Delete} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { FriendService } from '../services/friend.service';
+import { FriendService } from '../../services/friend.service';
 
 @Controller('/v1/api/friends')
 export class FriendController {
@@ -10,11 +10,11 @@ export class FriendController {
     @UseGuards(AuthGuard('jwt'))
     async getFriendStats(@Res() res, @Req() req) {
         try {
-        const friendType = await this.FriendService.getFriendshiptype(req.user.auth_id, req.query['id']);
-        return res.status(200).json({type: friendType})
+            const friendType = await this.FriendService.getFriendshiptype(req.user.auth_id, req.query['id']);
+            return res.status(200).json({type: friendType})
         }
         catch {
-        return res.status(500).json({ message: 'An error occurred while fetching the user state.' });
+            return res.status(500).json({ message: 'An error occurred while fetching the user state.' });
         }
     }
     @Post('/addFriend')
@@ -39,14 +39,9 @@ export class FriendController {
       try {
         const  user1Id = request.user.auth_id
         const {auth } = friendData;
-        
+
         const result = await this.FriendService.acceptFriend(user1Id, auth);
-  
-        if (result === 'Friendship request accepted successfully.') {
           return res.status(200).json({ message: result });
-        } else {
-          return res.status(400).json({ message: result });
-        }
       } catch (error) {
         return res.status(500).json({ message: 'Internal server error' });
       }

@@ -1,0 +1,68 @@
+import { Injectable, HttpException, Delete } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { FriendService } from './friend.service';
+
+@Injectable()
+export class BlockService {
+    constructor(private prisma: PrismaService, private FriendService:FriendService) {}
+    async deblockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
+    try {
+      const existingBlock = await this.prisma.blockedUser.findMany({
+        where: {
+          blocked_id: blockedUserId,
+          blocker_id: blockerUserId,
+        },
+      });
+      
+      if (!existingBlock[0]) {
+        return 'User is not blocked.';
+      }
+      for (const block of existingBlock) {
+        await this.prisma.blockedUser.delete({
+          where: {
+            block_id: block.block_id,
+          },
+        });
+      }
+
+      return 'User deblocked successfully.';
+    } catch (error) {
+      return 'An error occurred while deblocking the user.';
+    }
+  }
+    async blockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
+        const existingBlock = await this.prisma.blockedUser.findFirst({
+            where: {
+            OR: [
+                {
+                blocked_id: blockedUserId,
+                blocker_id: blockerUserId,
+                },
+                {
+                blocked_id: blockerUserId,
+                blocker_id: blockedUserId,
+                },
+            ],
+            },
+        });
+        if (existingBlock) {
+            throw new HttpException('User is already blocked!', 201);
+        }
+        try{
+            this.FriendService.deleteFriend(blockedUserId, blockerUserId);
+        }
+        catch(error)
+        {
+            
+        }
+        await this.prisma.blockedUser.create({
+            data: 
+            {
+                blocked_id: blockedUserId,
+                blocker_id: blockerUserId,
+            },
+        });
+        return 'User blocked successfully.';
+        
+  }
+}
