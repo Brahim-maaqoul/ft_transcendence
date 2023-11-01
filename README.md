@@ -1,17 +1,4 @@
-run docker 
+To use this, you should currently run the database using
+`docker compose up -d`
 
-docker compose up 
-
-for more dependence
-    docker ps 
-    docker exec -it id_contaner bash 
-
-for dtabases 
-    docker ps 
-    docker exec -it id_contaner bash 
-    psql -U user -d db 
-    
-
-
-
-
+then go to the backend and frontend folders and follow the instructions in there

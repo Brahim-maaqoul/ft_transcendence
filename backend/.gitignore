@@ -13,8 +13,8 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-
 prisma/migrations
+.env
 
 # Tests
 /coverage
