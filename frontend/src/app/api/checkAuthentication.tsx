@@ -158,12 +158,30 @@ export async function unblockFriend(auth_id: string) {
 }
 
 async function getFriends(auth_id: string) {
-  const response: AxiosResponse = await API.get("/friends/Friend?auth_id=" + auth_id);
+  const response: AxiosResponse = await API.get(
+    "/friends/Friend?auth_id=" + auth_id
+  );
   return response.data;
 }
 
-export function usegetFriends(auth_id:string): UseQueryResult<any> {
-  return useQuery({ queryKey: ["Friends"], queryFn: () => getFriends(auth_id) });
+export function usegetFriends(auth_id: string): UseQueryResult<any> {
+  return useQuery({
+    queryKey: ["Friends"],
+    queryFn: () => getFriends(auth_id),
+  });
+}
+async function getUsersbyname(name: string) {
+  const response: AxiosResponse = await API.get(
+    "/user/userByName?name=" + name
+  );
+  return response.data;
+}
+
+export function usegetUsersbyname(name: string): UseQueryResult<any> {
+  return useQuery({
+    queryKey: ["getUsersbyname", name],
+    queryFn: () => getUsersbyname(name),
+  });
 }
 
 // export function useAddFriend(auth_id: string) {

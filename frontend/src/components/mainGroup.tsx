@@ -5,10 +5,47 @@ import Link from "next/link";
 import Toggle from "./toggle";
 import styles from "../app/styles.module.css";
 import Image from "next/image";
-import {useAuth} from "@/components/providers/AuthContext";
+import { UserProfile, useAuth } from "@/components/providers/AuthContext";
+import { useEffect, useRef, useState } from "react";
+import { usegetUsersbyname } from "@/app/api/checkAuthentication";
 
 export default function MainGroup() {
-  const { isAuthenticated, } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [searchText, setSearchText] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<UserProfile[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef<HTMLDivElement | null>(null);
+  const { data: getUsersbyname } = usegetUsersbyname(searchText);
+  console.log(searchText);
+  console.log(suggestions);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchText(query);
+    setShowSuggestions(true);
+
+    // const suggestedUsers = allUsers.filter((user) =>
+    //   user.name.toLowerCase().includes(query)
+    // );
+    setSuggestions(getUsersbyname);
+  };
+
+  const handleDocumentClick = (e: MouseEvent) => {
+    if (
+      suggestionsRef.current &&
+      !suggestionsRef.current.contains(e.target as Node)
+    ) {
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleDocumentClick);
+
+    return () => {
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, []);
   const PingPong = (
     <svg
       className="w-[80%] lg:w-[55%] md:w-[65%]"
@@ -16,8 +53,7 @@ export default function MainGroup() {
       // height="80"
       viewBox="0 0 630 80"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <path
         d="M0 80V20H60V30H70V50H60V60H20V80H0ZM20 50H50V30H20V50ZM110 10V0H130V10H110ZM90 70V60H110V30H100V20H130V60H150V70H90ZM160 70V20H220V30H230V70H210V30H180V70H160ZM250 80V70H290V60H250V50H240V30H250V20H310V70H300V80H250ZM260 50H290V30H260V50ZM320 80V20H380V30H390V50H380V60H340V80H320ZM340 50H370V30H340V50ZM410 70V60H400V30H410V20H460V30H470V60H460V70H410ZM420 60H450V30H420V60ZM480 70V20H540V30H550V70H530V30H500V70H480ZM570 80V70H610V60H570V50H560V30H570V20H630V70H620V80H570ZM580 50H610V30H580V50Z"
         fill="white"
@@ -32,7 +68,7 @@ export default function MainGroup() {
       <div className="  p-2 md:p-3 md:mt-6   md:mx-auto pt-6  w-full flex justify-between items-center ">
         <Toggle />
         <div className=" w-2/3 md:w-1/5 flex">
-          <button>
+          {/* <button>
             <Image
               className="active:w-7 active:h-7"
               src="search_icon.svg"
@@ -40,12 +76,51 @@ export default function MainGroup() {
               width={32}
               height={32}
             />
-          </button>
-          <input
-            type="text"
-            placeholder="Browse"
-            className="pl-4 h-8 w-full rounded-xl opacity-10 placeholder-slate-800 ml-4"
-          />
+          </button> */}
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder="Browse Profiles"
+              className="pl-4 h-8 w-full rounded-xl opacity-10 placeholder-slate-800 ml-4 border-black border-2"
+              value={searchText}
+              onChange={handleSearch}
+            />
+            {showSuggestions && getUsersbyname && getUsersbyname.length > 0 && (
+              <div
+                ref={suggestionsRef}
+                className=" bg-white  mt-1  ml-4 rounded-xl shadow-black w-full absolute z-50">
+                {getUsersbyname.map(
+                  (user: UserProfile, index: number) =>
+                    searchText && (
+                      <Link
+                        href={"/" + user?.nickname + "/profile"}
+                        key={index}
+                        className="  w-full h-full">
+                        <div className="flex hover:bg-slate-200">
+                          <div className="flex gap-x-4 items-center mx-3 py-3">
+                            <div className="w-14 h-14 flex items-center">
+                              <div
+                                className="h-14 w-14 rounded-full bg-cover"
+                                style={{
+                                  backgroundImage: `url(${user?.picture})`,
+                                }}></div>
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="flex items-center">
+                                {user?.displayname}
+                              </span>
+                              <span className="flex text-sm text-slate-500">
+                                @{user.nickname}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    )
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <span className=" mt-8">{PingPong}</span>
@@ -58,29 +133,24 @@ export default function MainGroup() {
             Ping Pong
           </span>
           <div
-            className={` ${styles.notch} w-full h-12 mt-6 flex items-center justify-end`}
-          >
+            className={` ${styles.notch} w-full h-12 mt-6 flex items-center justify-end`}>
             <span
               className="h-4 w-4 mx-2  rounded-full text-6xl "
-              style={{ backgroundColor: "#F495D9" }}
-            ></span>
+              style={{ backgroundColor: "#F495D9" }}></span>
             <span
               className="h-4 w-4 mx-2 rounded-full text-6xl"
-              style={{ backgroundColor: "#D9D9D9" }}
-            ></span>
+              style={{ backgroundColor: "#D9D9D9" }}></span>
 
             <span
               className="h-4 w-4 mx-2 rounded-full text-6xl "
-              style={{ backgroundColor: "#95F4C6" }}
-            ></span>
+              style={{ backgroundColor: "#95F4C6" }}></span>
           </div>
           <div className="w-full h-[200px] sm:h-[300px] border-2 grid grid-cols-2 relative">
             <div className="p-4 border-r-8 border-dashed">
               <span className="absolute h-16 border-2"></span>
               <span
                 className="absolute h-2 w-2 m-24 rounded-full text-6xl "
-                style={{ backgroundColor: "#fff" }}
-              ></span>
+                style={{ backgroundColor: "#fff" }}></span>
             </div>
             <div className="p-4 flex justify-end items-end">
               <span className="absolute h-16 border-2"></span>
@@ -89,12 +159,10 @@ export default function MainGroup() {
         </div>
 
         <Link
-           href={isAuthenticated ? "/play" : "/login"}
-          className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}
-        >
+          href={isAuthenticated ? "/play" : "/login"}
+          className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}>
           <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute ">
-          
-      {isAuthenticated ? "Play Now " : "Sign In"}
+            {isAuthenticated ? "Play Now " : "Sign In"}
           </div>
         </Link>
       </div>

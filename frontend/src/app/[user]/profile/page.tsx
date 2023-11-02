@@ -64,7 +64,9 @@ export default function Profile() {
                   <span className="text-white text-2xl font-mono">Friends</span>
                   <Friends auth_id={profileData?.auth_id} />
                 </div>
-                {params.user !== dataUser?.nickname && <Stats />}
+                {params.user !== dataUser?.nickname && (
+                  <Stats profileData={profileData} />
+                )}
                 <Achievement />
               </div>
             </div>

@@ -19,8 +19,6 @@ export class FriendController {
         try {
             const  user1Id = request.user.auth_id
             const {auth} = friendData;
-            console.log("user")
-            console.log(user1Id, auth)
             const result = await this.FriendService.addFriend(user1Id, auth);
             return res.status(200).json({ message: result });
         } catch (error) {

@@ -27,6 +27,28 @@ export class UserService {
     });
     return user
   }
+  async getUsersbyName(name: string)
+  {
+    const users = this.prisma.users.findMany({
+      where: {
+        OR: [
+          {
+            nickname: {
+              startsWith: name,
+            },
+          },
+          { displayname: {
+              startsWith: name,
+            }, },
+        ]
+    },
+    })
+    return users;
+  }
+
+
+
+
   async  createDefaultAchievements() {
     try {
       const achievements = [

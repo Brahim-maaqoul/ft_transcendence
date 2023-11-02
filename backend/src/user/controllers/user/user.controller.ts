@@ -33,6 +33,15 @@ export class UserController {
         return res.status(500).json({ message: 'An error occurred while fetching the user state.' });
       }
     }
+  
+    @Get('/userByName')
+    async getUsersByName(@Res() res, @Req() req)
+    {
+      const users = await this.UserService.getUsersbyName(req.query['name']);
+      console.log(req.query['name'],"her");
+      console.log( users);
+      return res.status(200).json(users);
+    }
 
   
     @Get("/Achievement")
