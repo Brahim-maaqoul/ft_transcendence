@@ -2,14 +2,15 @@ import {
   Controller,
   Get,
   Req,
-  Body,
   Res,
   Post,
   UseGuards,
+  Body,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../../services/user.service';
 import { getOtpAuthUrl, getqrcode } from 'src/2fa/2fa';
+
 @Controller('/v1/api/user')
 export class UserController {
   constructor(private UserService: UserService) {}
@@ -50,6 +51,14 @@ export class UserController {
     }
     return res.status(200).json(isEnabled);
   }
+
+  @Get('/tfaStatus')
+  @UseGuards(AuthGuard('jwt'))
+  async tfaStatus(@Res() res, @Req() request) {
+    const isEnabled = await this.UserService.tfaStatus(request.user.nickname);
+    return res.status(200).json(isEnabled);
+  }
+
   @Get('/getqrcode')
   @UseGuards(AuthGuard('jwt'))
   async getqrcode(@Res() res, @Req() request) {

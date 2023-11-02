@@ -12,7 +12,7 @@ import RecentGames from "@/components/recentGames";
 import { getUser } from "@/app/api/checkAuthentication";
 import { Link } from "lucide-react";
 import Friends from "@/components/friends";
-import PostButton from "@/components/tfaButton";
+import TfaToggle from "@/components/tfaToggle";
 
 export const spinner = (
   <svg
@@ -53,7 +53,7 @@ export default function Profile() {
         <div>
           <div className="w-full p-4 flex justify-center">
             <Infos profileData={profileData} />
-            <PostButton />
+            <TfaToggle />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4">
             <div className="col-span-2">

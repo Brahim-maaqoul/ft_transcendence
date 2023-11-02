@@ -6,6 +6,17 @@ import { generateSecret } from '../../2fa/2fa';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
+  async tfaStatus(nickname: string) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: { nickname: nickname },
+      });
+      return user.isTfaEnabled;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async enableTFA(nickname: string) {
     try {
       const user = await this.prisma.users.update({
@@ -31,7 +42,7 @@ export class UserService {
         },
         data: {
           isTfaEnabled: false,
-          tfaSecret: '',
+          tfaSecret: null,
         },
       });
       return user.isTfaEnabled;
