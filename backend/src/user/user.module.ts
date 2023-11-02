@@ -9,7 +9,6 @@ import { BlockController } from './controllers/block/block.controller';
 
 @Module({
   controllers: [UserController, FriendController, BlockController],
-  providers: [FriendService, UserService, PrismaService, BlockService]
+  providers: [FriendService, UserService, PrismaService, BlockService],
 })
-export class UserModule {
-}
+export class UserModule {}

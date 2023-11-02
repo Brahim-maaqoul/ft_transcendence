@@ -12,16 +12,16 @@ services:
     ports:
       - "5432:5432"
 
-  app:
-    build: ./backend
-    container_name: api
-    image: api
-    env_file:
-      - backend/.env
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app/
-      - /app/node_modules
-    depends_on:
-      - db
+  # app:
+  #   build: ./backend
+  #   container_name: api
+  #   image: api
+  #   env_file:
+  #     - backend/.env
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ./backend:/app/
+  #     - /app/node_modules
+  #   depends_on:
+  #     - db
