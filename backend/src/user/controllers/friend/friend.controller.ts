@@ -45,16 +45,20 @@ export class FriendController {
     @UseGuards(AuthGuard('jwt'))
     async unFriend(@Body() friendData, @Res() res,@Req() request) {
       
+      try {
         const  user1Id = request.user.auth_id
         const {auth } = friendData;
-        
+        console.log("herebadr")
         const result = await this.FriendService.deleteFriend(user1Id, auth);
-  
-        if (result === 'Friendship deleted successfully') {
-          return res.status(200).json({ message: result });
-        } else {
-          return res.status(401).json({ message: result });
-        }
+        console.log(result)
+        return res.status(200).json({ message: result });
+      }
+      catch (err)
+      {}
+        // if (result === 'Friendship deleted successfully') {
+        // } else {
+        //   return res.status(401).json({ message: result });
+        // }
      
     }
 

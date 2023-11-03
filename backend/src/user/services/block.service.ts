@@ -49,7 +49,7 @@ export class BlockService {
           throw new HttpException({ type:'User is already blocked!'}, 201);
         }
       try {
-        this.FriendService.deleteFriend(blockedUserId, blockerUserId);  
+        await this.FriendService.deleteFriend(blockedUserId, blockerUserId);  
       }
       catch (err)
       {

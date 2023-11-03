@@ -112,11 +112,13 @@ export class FriendService {
           throw new HttpException('Friendship request not found', 400);
         }
           
-        this.prisma.friends.delete({
-            where: {
-              friendship_id: existingFriendship.friendship_id
-            }
+     
+        const result = await this.prisma.friends.delete({
+          where: {
+            friendship_id: existingFriendship.friendship_id
+          }
         });
+     
         return 'Friendship deleted successfully';
     }
     
