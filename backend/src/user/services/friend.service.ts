@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus} from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FriendService {
@@ -8,7 +8,7 @@ export class FriendService {
     async firendshipState(user1Id: string, user2Id: string)
     {
         if(user1Id === user2Id)
-            throw new HttpException('invalid userId', 403);
+            throw new HttpException('invalid userId', 200);
         const block = await this.prisma.blockedUser.findFirst({
             where: {
             OR: [

@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
-import { GatewayModule } from './gateway/gateway.module';
 import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
 
@@ -16,7 +15,6 @@ import { GameModule } from './game/game.module';
     }),
     AuthModule,
     UserModule,
-    GatewayModule,
     ChatModule,
     GameModule
   ],

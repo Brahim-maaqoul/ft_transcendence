@@ -9,13 +9,11 @@ export class FriendController {
     @Get('/FriendStats')
     @UseGuards(AuthGuard('jwt'))
     async getFriendStats(@Res() res, @Req() req) {
-        try {
-            const friendType = await this.FriendService.getFriendshiptype(req.user.auth_id, req.query['id']);
-            return res.status(200).json({type: friendType})
-        }
-        catch {
-            return res.status(500).json({ message: 'An error occurred while fetching the user state.' });
-        }
+        
+      const friendType = await this.FriendService.getFriendshiptype(req.user.auth_id, req.query['id']);
+      return res.status(200).json({type: friendType})
+        
+        
     }
     @Post('/addFriend')
     @UseGuards(AuthGuard('jwt'))

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -11,11 +11,15 @@ export class UserService {
         nickname: nickname,
       }
     });
+    console.log(user);
+    if (!user)
+      throw new HttpException("not found", 404)
     const stats = await this.prisma.stats.findUnique({
       where: {
         user_id: user.auth_id,
       }
     });
+    console.log(stats);
     return stats
   }
 

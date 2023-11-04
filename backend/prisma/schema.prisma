@@ -21,10 +21,12 @@ model Users {
   stats          Stats?
   friends1       Friends[]     @relation("User1ToFriends")
   friends2       Friends[]     @relation("User2ToFriends")
-  blockedByUsers BlockedUser[] @relation("BlockedByUsers")
-  blockingUsers  BlockedUser[] @relation("BlockingUsers")
-  Member         Member[]
+  blocked BlockedUser[] @relation("BlockedByUsers")
+  blocker  BlockedUser[] @relation("BlockingUsers")
+  Member         Members[]
   Message        Message[]
+  NoticationSource Notification[] @relation("Source")
+  NoticationRecipient Notification[] @relation("Recipient")
 }
 
 model Stats {
@@ -61,7 +63,7 @@ model BlockedUser {
   blockingUsers  Users  @relation("BlockingUsers", fields: [blocker_id], references: [auth_id])
 }
 
-model Group {
+model Groups {
   id        Int       @id @default(autoincrement())
   name      String    @unique
   type      String
@@ -69,27 +71,31 @@ model Group {
   password  String?
   picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
   timestamp DateTime  @default(now())
-  members   Member[]
+  members   Members[]
   messages  Message[]
+  notification Notification[]
 }
 
-model Member {
+
+
+model Members {
   id      Int     @id @default(autoincrement())
-  userId  String
-  groupId Int
+  user_id  String
+  group_id Int
   isAdmin Boolean
-  user    Users   @relation(fields: [userId], references: [auth_id])
-  group   Group   @relation(fields: [groupId], references: [id])
+  banned  Boolean
+  user    Users   @relation(fields: [user_id], references: [auth_id])
+  group   Groups   @relation(fields: [group_id], references: [id])
 }
 
 model Message {
   id          Int      @id @default(autoincrement())
-  senderId    String
-  groupId     Int
+  sender_id    String
+  group_id     Int
   messageText String
-  timestamp   DateTime @default(now())
-  sender      Users    @relation(fields: [senderId], references: [auth_id])
-  group       Group    @relation(fields: [groupId], references: [id])
+  lastmodif   DateTime @default(now())
+  sender      Users    @relation(fields: [sender_id], references: [auth_id])
+  group       Groups    @relation(fields: [group_id], references: [id])
 }
 
 model Achievement {
@@ -99,4 +105,16 @@ model Achievement {
   goal_conceded  Int
   goal_scoared   Int
   clean_sheets   Int
+}
+
+model Notification{
+  notification_id Int @id @default(autoincrement())
+  type    String
+  sender_id  String
+  reciever_id String
+  group_id Int
+  seen  Boolean @default(false)
+  Recipient Users  @relation("Recipient", fields: [reciever_id], references: [auth_id])
+  Source Users  @relation("Source", fields: [sender_id], references: [auth_id])
+  group Groups @relation(fields: [group_id], references: [id])
 }

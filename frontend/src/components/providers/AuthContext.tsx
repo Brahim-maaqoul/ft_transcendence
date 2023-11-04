@@ -10,6 +10,7 @@ interface AuthContextType {
   setuserdata: (data: UserProfile) => void;
   setuserdatanull: () => void;
 }
+
 export interface UserProfile {
   auth_id: string;
   nickname: string;
@@ -26,7 +27,13 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [dataUser, setDataUser] = useState<UserProfile | null>(null);
+  const [dataUser, setDataUser] = useState<UserProfile | null>({
+    auth_id: "",
+    nickname: "",
+    displayname: "",
+    picture: "",
+    bio: "",
+  });
   const login = () => {
     setIsAuthenticated(true);
   };
@@ -38,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setDataUser(data);
   };
   const setuserdatanull = () => {
-    setDataUser(null);
+    null
   };
 
   const contextValue: AuthContextType = {
@@ -49,7 +56,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setuserdata,
     setuserdatanull,
   };
-
+  if(!AuthContext)
+  {
+    console.log("waiting");
+    return <>waiting</>
+  }
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
@@ -57,9 +68,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    console.log("here");
+    // throw new Error("useAuth must be used within an AuthProvider");
   }
 
   return context;

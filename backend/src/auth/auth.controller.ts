@@ -19,7 +19,7 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     const userId =  req.user.auth_id ;
     let user = await this.authService.findUserById(userId.toString())
-    const  redirectUrl =  req.user.firstSignIn ?`http://localhost:3000/${userId}/Edit`: `http://localhost:3000/`;
+    const  redirectUrl =  req.user.firstSignIn ? `http://localhost:3000/${userId}/Edit`: `http://localhost:3000/`;
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return { url: redirectUrl };

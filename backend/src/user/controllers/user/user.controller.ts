@@ -1,4 +1,4 @@
-import { Controller,Get,Req,Body,Res ,Post,UseGuards,Param} from '@nestjs/common';
+import { Controller, Get, Req, Body, Res, Post, UseGuards, Param, HttpException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {UserService} from '../../services/user.service'
 @Controller('/v1/api/user')
@@ -7,15 +7,12 @@ export class UserController {
     @Get('/Stats')
     @UseGuards(AuthGuard('jwt'))
     async getStats(@Res() res, @Req() request) {
-        try {
-          const userState = await this.UserService.getUserStats(request.query['nickname']);
-            if (!userState) {
-                return res.status(400).json({ message: 'User not found.' });
-            }
-            return res.status(200).json(userState);
-        } catch (error) {
-            return res.status(500).json({ message: 'An error occurred while fetching the user state.' });
+        
+      const userState = await this.UserService.getUserStats(request.query['nickname']);
+        if (!userState) {
+            return res.status(400).json({ message: 'User not found.' });
         }
+        return res.status(200).json(userState);
     }
   
     @Get('/profile')
