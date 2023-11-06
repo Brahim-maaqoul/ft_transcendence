@@ -3,8 +3,6 @@ import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as otplib from 'otplib'
-import * as qrcode from 'qrcode';
 
 
 @Injectable()

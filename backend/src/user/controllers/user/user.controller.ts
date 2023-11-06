@@ -7,7 +7,6 @@ export class UserController {
     @Get('/Stats')
     @UseGuards(AuthGuard('jwt'))
     async getStats(@Res() res, @Req() request) {
-        
       const userState = await this.UserService.getUserStats(request.query['nickname']);
         if (!userState) {
             return res.status(400).json({ message: 'User not found.' });

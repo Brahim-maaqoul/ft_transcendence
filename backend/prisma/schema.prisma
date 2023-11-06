@@ -8,25 +8,24 @@ datasource db {
 }
 
 model Users {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  auth_id       String   @unique
-  nickname      String?  @unique
-  firstSignIn   Boolean  @default(true)
-  displayname   String?
-  bio           String?  @default("bio")
-  emailVerified Boolean?
-  picture       String?  @default("https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg")
-
-  stats          Stats?
-  friends1       Friends[]     @relation("User1ToFriends")
-  friends2       Friends[]     @relation("User2ToFriends")
-  blocked BlockedUser[] @relation("BlockedByUsers")
-  blocker  BlockedUser[] @relation("BlockingUsers")
-  Member         Members[]
-  Message        Message[]
-  NoticationSource Notification[] @relation("Source")
+  id                  Int            @id @default(autoincrement())
+  email               String         @unique
+  auth_id             String         @unique
+  nickname            String?        @unique
+  firstSignIn         Boolean        @default(true)
+  displayname         String?
+  bio                 String?        @default("bio")
+  emailVerified       Boolean?
+  picture             String?        @default("https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg")
+  blocked             BlockedUser[]  @relation("BlockedByUsers")
+  blocker             BlockedUser[]  @relation("BlockingUsers")
+  friends1            Friends[]      @relation("User1ToFriends")
+  friends2            Friends[]      @relation("User2ToFriends")
+  Member              Members[]
+  Message             Message[]
   NoticationRecipient Notification[] @relation("Recipient")
+  NoticationSource    Notification[] @relation("Source")
+  stats               Stats?
 }
 
 model Stats {
@@ -39,8 +38,7 @@ model Stats {
   clean_sheets  Int    @default(0)
   points        Int    @default(0)
   leaderboard   Int    @default(1500)
-
-  user Users @relation(fields: [user_id], references: [auth_id])
+  user          Users  @relation(fields: [user_id], references: [auth_id])
 }
 
 model Friends {
@@ -50,9 +48,8 @@ model Friends {
   status        String
   request_date  DateTime @default(now())
   accept_date   DateTime @default(now())
-
-  user1 Users @relation("User1ToFriends", fields: [user1_id], references: [auth_id])
-  user2 Users @relation("User2ToFriends", fields: [user2_id], references: [auth_id])
+  user1         Users    @relation("User1ToFriends", fields: [user1_id], references: [auth_id])
+  user2         Users    @relation("User2ToFriends", fields: [user2_id], references: [auth_id])
 }
 
 model BlockedUser {
@@ -64,38 +61,36 @@ model BlockedUser {
 }
 
 model Groups {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  type      String
-  Privacy   String    @default("private")
-  password  String?
-  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
-  timestamp DateTime  @default(now())
-  members   Members[]
-  messages  Message[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  type         String         @default("chat")
+  privacy      String         @default("private")
+  password     String?
+  picture      String?        @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  lastChange    DateTime       @default(now())
+  members      Members[]
+  messages     Message[]
   notification Notification[]
 }
 
-
-
 model Members {
-  id      Int     @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   user_id  String
   group_id Int
-  isAdmin Boolean
-  banned  Boolean
-  user    Users   @relation(fields: [user_id], references: [auth_id])
-  group   Groups   @relation(fields: [group_id], references: [id])
+  type     String @default("member")
+  banned   Boolean @default(false)
+  group    Groups  @relation(fields: [group_id], references: [id])
+  user     Users   @relation(fields: [user_id], references: [auth_id])
 }
 
 model Message {
   id          Int      @id @default(autoincrement())
-  sender_id    String
-  group_id     Int
   messageText String
+  group_id    Int
   lastmodif   DateTime @default(now())
+  sender_id   String
+  group       Groups   @relation(fields: [group_id], references: [id])
   sender      Users    @relation(fields: [sender_id], references: [auth_id])
-  group       Groups    @relation(fields: [group_id], references: [id])
 }
 
 model Achievement {
@@ -107,14 +102,14 @@ model Achievement {
   clean_sheets   Int
 }
 
-model Notification{
-  notification_id Int @id @default(autoincrement())
-  type    String
-  sender_id  String
-  reciever_id String
-  group_id Int
-  seen  Boolean @default(false)
-  Recipient Users  @relation("Recipient", fields: [reciever_id], references: [auth_id])
-  Source Users  @relation("Source", fields: [sender_id], references: [auth_id])
-  group Groups @relation(fields: [group_id], references: [id])
+model Notification {
+  notification_id Int     @id @default(autoincrement())
+  type            String
+  sender_id       String
+  reciever_id     String
+  group_id        Int
+  seen            Boolean @default(false)
+  group           Groups  @relation(fields: [group_id], references: [id])
+  Recipient       Users   @relation("Recipient", fields: [reciever_id], references: [auth_id])
+  Source          Users   @relation("Source", fields: [sender_id], references: [auth_id])
 }
