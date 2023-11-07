@@ -1,7 +1,21 @@
-import { spinner } from "@/app/[user]/profile/page";
-import { usegetFriends } from "@/app/api/checkAuthentication";
-import { UserProfile, useAuth } from "./providers/AuthContext";
+import { useState } from "react";
 import Link from "next/link";
+import { usegetFriends } from "@/app/api/getFriends";
+import { UserProfile, useAuth } from "./providers/AuthContext";
+import { spinner } from "@/app/[user]/profile/page";
+
+function FriendButton() {
+  return (
+    <div className="flex justify-around">
+      <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg ">
+        Play Now
+      </button>
+      <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl relative flex justify-center items-center px-5 text-xs md.text-sm xl:text-lg">
+        Message
+      </button>
+    </div>
+  );
+}
 
 export default function Friends({ auth_id }: { auth_id: string }) {
   const { data, isLoading, isError } = usegetFriends(auth_id);
@@ -9,7 +23,7 @@ export default function Friends({ auth_id }: { auth_id: string }) {
 
   if (isLoading) return <>{spinner}</>;
 
-  if (isError || !data) return <>u have no friend like davies</>;
+  if (isError || !data) return <>You have no friends like Davies</>;
 
   return (
     <>
@@ -30,18 +44,8 @@ export default function Friends({ auth_id }: { auth_id: string }) {
                 </span>
               </div>
             </Link>
-            {dataUser?.auth_id !== element?.auth_id && (
-              <div className="flex gap-x-4 items-center">
-                <div className="flex justify-around">
-                  <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg ">
-                    Play Now
-                  </button>
-                  <button className="bg-black hover:bg-cyan-600 text-white p-2  ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg">
-                    Message
-                  </button>
-                </div>
-              </div>
-            )}
+
+            {dataUser?.auth_id !== element?.auth_id && <FriendButton />}
           </div>
         ))}
     </>

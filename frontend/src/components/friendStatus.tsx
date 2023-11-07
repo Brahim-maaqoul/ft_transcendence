@@ -1,12 +1,10 @@
 import Image from "next/image";
-import {
-  acceptFriend,
-  addFriend,
-  blockFriend,
-  unFriend,
-  unblockFriend,
-  useFriendType,
-} from "@/app/api/checkAuthentication";
+import { addFriend } from "@/app/api/addFriend";
+import { acceptFriend } from "@/app/api/acceptFriend";
+import { blockFriend } from "@/app/api/blockFriend";
+import { unFriend } from "@/app/api/unfriend";
+import { unblockFriend } from "@/app/api/unBlock";
+import { useFriendType } from "@/app/api/getFriendtype";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function AddFriend({ authId }: { authId: string }) {

@@ -17,8 +17,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styles from "../../styles.module.css";
 import axios, { AxiosResponse } from "axios";
+import { updateUserProfile } from "@/app/api/checkAuthentication";
 import { useAuth } from "@/components/providers/AuthContext";
-import { updateUserProfile } from "../../api/checkAuthentication";
 import { useRouter } from "next/navigation";
 
 export default function Edit() {
@@ -132,9 +132,9 @@ export default function Edit() {
         </div>
 
         <div className=" py-5">
-          {/* {isError && mutation.error?.response?.data?.message && (
-              <p>{mutation.error.response.data.message}</p>
-            )} */}
+          {isError && mutation.error?.response?.data?.message && (
+            <p>{mutation.error.response.data.message}</p>
+          )}
           <div className=" p-2 flex flex-col my-2  rounded-lg   ">
             <div className="flex items-center justify-between">
               <label className="py-1">Displayname</label>
