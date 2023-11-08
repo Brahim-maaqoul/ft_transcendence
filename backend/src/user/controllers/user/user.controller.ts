@@ -64,16 +64,18 @@ export class UserController {
   }
 
   @Post('/verifyTfa')
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   async verifyTfa(@Res() res, @Req() request) {
+    const userId = request.body.UserInfo.auth_id;
     const isVerified = await this.UserService.verifyTfa(
       request.body.UserInfo.nickname,
       request.body.code,
     );
-    console.log('isVerified: ', isVerified);
     if (!isVerified) {
-      return res.status(400).json({ message: 'Wrong code!' });
+      return res.status(422).json({ message: 'Wrong code!' });
     }
+    const token = this.authService.generateToken({ userId });
+    res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.status(200).json(isVerified);
   }
 
@@ -82,6 +84,7 @@ export class UserController {
   async getQrCode(@Res() res, @Req() request) {
     const url = getOtpAuthUrl(request.user.tfaSecret, request.user.nickname);
     const qrcode = await getQrCode(request.user.tfaSecret, url);
+    res.clearCookie('token');
     return res.status(200).json({ qrcode: qrcode, userInfo: request.user });
   }
 

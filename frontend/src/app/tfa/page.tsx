@@ -30,6 +30,7 @@ const TfaPage = () => {
   const verifyTfaCode = async (e: any) => {
     await API.post("/user/verifyTfa", { code: userInput, UserInfo })
       .then((response) => {
+        console.log("response.data:", response.data);
         if (response.data) {
           e.preventDefault();
           router.push("/");
