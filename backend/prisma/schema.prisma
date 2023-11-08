@@ -8,17 +8,18 @@ datasource db {
 }
 
 model Users {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  auth_id       String   @unique
-  nickname      String?  @unique
-  firstSignIn   Boolean  @default(true)
-  displayname   String?
-  bio           String?  @default("bio")
-  emailVerified Boolean?
-  picture       String?  @default("https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg")
-  isTfaEnabled  Boolean  @default(false)
-  tfaSecret     String?
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  auth_id        String   @unique
+  nickname       String?  @unique
+  firstSignIn    Boolean  @default(true)
+  displayname    String?
+  bio            String?  @default("bio")
+  emailVerified  Boolean?
+  picture        String?  @default("https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg")
+  isTfaEnabled   Boolean  @default(false)
+  isTfaValidated Boolean  @default(false)
+  tfaSecret      String?
 
   stats          Stats?
   friends1       Friends[]     @relation("User1ToFriends")

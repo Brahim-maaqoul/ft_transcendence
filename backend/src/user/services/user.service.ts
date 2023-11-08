@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { generateSecret } from '../../2fa/2fa';
+import { generateSecret, verifyTFA } from '../../2fa/2fa';
 
 @Injectable()
 export class UserService {
@@ -46,6 +46,28 @@ export class UserService {
         },
       });
       return user.isTfaEnabled;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async verifyTfa(nickname: string, code: string) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: { nickname: nickname },
+      });
+      const isTfaVerified = verifyTFA(user.tfaSecret, code);
+      if (isTfaVerified) {
+        await this.prisma.users.update({
+          where: {
+            nickname: nickname,
+          },
+          data: {
+            isTfaValidated: true,
+          },
+        });
+      }
+      return isTfaVerified;
     } catch (error) {
       console.log(error);
     }

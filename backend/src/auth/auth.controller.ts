@@ -11,7 +11,6 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthGoogleGuard } from './Guard/auth-google.guard';
-import { PrismaService } from '../prisma/prisma.service';
 import { updatedUser } from './dtos/updateUser.dto';
 
 @Controller('v1/api/auth')
@@ -20,16 +19,18 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGoogleGuard)
-  async googleAuth(@Req() req) {}
+  async googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(AuthGoogleGuard)
   @Redirect('', 302)
   async googleAuthRedirect(@Req() req, @Res() res) {
     const userId = req.user.auth_id;
-    let user = await this.authService.findUserById(userId.toString());
+    const user = await this.authService.findUserById(userId.toString());
     const redirectUrl = req.user.firstSignIn
       ? `http://localhost:3000/${userId}/Edit`
+      : user.isTfaEnabled
+      ? `http://localhost:3000/tfa`
       : `http://localhost:3000/`;
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
@@ -38,7 +39,7 @@ export class AuthController {
 
   @Get('42')
   @UseGuards(AuthGuard('42'))
-  async IntraAuth(@Req() req) {}
+  async IntraAuth() {}
 
   @Get('42/callback')
   @UseGuards(AuthGuard('42'))
@@ -64,9 +65,9 @@ export class AuthController {
 
   @Post('checkauth')
   @UseGuards(AuthGuard('jwt'))
-  async checkAuthentication(@Req() request, @Res() res, @Body() body) {
+  async checkAuthentication(@Req() request, @Res() res) {
     try {
-      let user = await this.authService.findUserById(request.user.auth_id);
+      const user = await this.authService.findUserById(request.user.auth_id);
       return res.json({ isAuthenticated: true, user: user });
     } catch (error) {
       return res.json({ isAuthenticated: false });
@@ -99,31 +100,4 @@ export class AuthController {
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
-
-  // @Get('generate-secret')
-  // @UseGuards(AuthGuard('jwt'))
-  // generateSecret(): { secret: string } {
-  //   const secret = this.authService.generateSecret();
-  //   return { secret };
-  // }
-
-  // @Post('generate-otp')
-  // @UseGuards(AuthGuard('jwt'))
-  // generateOtp(@Body('secret') secret: string): { otp: string } {
-  //   const otp = this.authService.generateOtp(secret);
-  //   return { otp };
-  // }
-
-  // @Post('verify-otp')
-  // @UseGuards(AuthGuard('jwt'))
-  // verifyOtp(@Body() data: { secret: string; token: string }): { isValid: boolean } {
-  //   const isValid = this.authService.verifyOtp(data.secret, data.token);
-  //   return { isValid };
-  // }
-  // @Get('generate-qrcode/:secret/:label')
-  // @UseGuards(AuthGuard('jwt'))
-  // async generateQrCode(@Param('secret') secret: string, @Param('label') label: string): Promise<{ qrCode: string }> {
-  //   const qrCode = await this.authService.generateQrCode(secret, label);
-  //   return { qrCode };
-  // }
 }

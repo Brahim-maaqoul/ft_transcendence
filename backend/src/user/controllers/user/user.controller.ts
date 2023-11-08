@@ -9,11 +9,15 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../../services/user.service';
-import { getOtpAuthUrl, getqrcode } from 'src/2fa/2fa';
+import { AuthService } from '../../../auth/auth.service';
+import { getOtpAuthUrl, getQrCode } from 'src/2fa/2fa';
 
 @Controller('/v1/api/user')
 export class UserController {
-  constructor(private UserService: UserService) {}
+  constructor(
+    private UserService: UserService,
+    public authService: AuthService,
+  ) {}
   @Get('/Stats')
   @UseGuards(AuthGuard('jwt'))
   async getStats(@Res() res, @Req() request) {
@@ -59,12 +63,26 @@ export class UserController {
     return res.status(200).json(isEnabled);
   }
 
-  @Get('/getqrcode')
+  @Post('/verifyTfa')
   @UseGuards(AuthGuard('jwt'))
-  async getqrcode(@Res() res, @Req() request) {
+  async verifyTfa(@Res() res, @Req() request) {
+    const isVerified = await this.UserService.verifyTfa(
+      request.body.UserInfo.nickname,
+      request.body.code,
+    );
+    console.log('isVerified: ', isVerified);
+    if (!isVerified) {
+      return res.status(400).json({ message: 'Wrong code!' });
+    }
+    return res.status(200).json(isVerified);
+  }
+
+  @Get('/getQrCode')
+  @UseGuards(AuthGuard('jwt'))
+  async getQrCode(@Res() res, @Req() request) {
     const url = getOtpAuthUrl(request.user.tfaSecret, request.user.nickname);
-    const qrcode = await getqrcode(request.user.tfaSecret, url);
-    return res.status(200).json(qrcode);
+    const qrcode = await getQrCode(request.user.tfaSecret, url);
+    return res.status(200).json({ qrcode: qrcode, userInfo: request.user });
   }
 
   @Get('/profile')
