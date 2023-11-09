@@ -71,9 +71,9 @@ export class UserController {
       request.body.UserInfo.nickname,
       request.body.code,
     );
-    if (!isVerified) {
-      return res.status(422).json({ message: 'Wrong code!' });
-    }
+    // if (!isVerified) {
+    //   return res.status(422).json({ message: 'Wrong code!' });
+    // }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.status(200).json(isVerified);
@@ -84,8 +84,14 @@ export class UserController {
   async getQrCode(@Res() res, @Req() request) {
     const url = getOtpAuthUrl(request.user.tfaSecret, request.user.nickname);
     const qrcode = await getQrCode(request.user.tfaSecret, url);
-    res.clearCookie('token');
-    return res.status(200).json({ qrcode: qrcode, userInfo: request.user });
+    return res.status(200).json({ qrcode: qrcode });
+  }
+
+  @Get('/getUserInfo')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserInfo(@Res() res, @Req() request) {
+    // res.clearCookie('token');
+    return res.status(200).json({ userInfo: request.user });
   }
 
   @Get('/profile')
