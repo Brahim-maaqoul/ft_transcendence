@@ -9,7 +9,6 @@ const API = axios.create({
 });
 
 const TfaPage = () => {
-  const [UserInfo, setUserInfo] = useState(null);
   const [userInput, setUserInput] = useState("");
 
   const handleUserInput = (event: any) => {
@@ -19,26 +18,34 @@ const TfaPage = () => {
   const router = useRouter();
 
   const verifyTfaCode = async (e: any) => {
-    API.get("/user/getUserInfo").then((response) => {
-      setUserInfo(response.data.userInfo);
-    });
-    await API.post("/user/verifyTfa", { code: userInput, UserInfo })
-      .then((response) => {
-        console.log("response.data:", response.data);
-        if (response.data) {
+    try {
+      const response = await API.get("/user/getUserInfo");
+
+      if (response.data.userInfo) {
+        const verifyResponse = await API.post("/user/verifyTfa", {
+          code: userInput,
+          UserInfo: response.data.userInfo,
+        });
+
+        if (verifyResponse.data) {
           e.preventDefault();
           router.push("/");
+        } else {
+          console.log("Verification failed");
         }
-      })
-      .catch((error) => {
-        console.log("err : ", error);
-      });
+      } else {
+        console.log("User information not available");
+      }
+    } catch (error) {
+      console.log("Error getting user information:", error);
+    }
   };
 
   return (
-    <div className="z-0 w-full md:w-[500px] h-[100vh] md:h-[700px] relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
-      <div className=" w-full  overflow-auto h-full  md:bg-opacity-70 md:bg-slate-950   text-white  m-auto rounded-2xl p-10">
+    <div className="z-0 w-full md:w-[500px] h-1/2 relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
+      <div className="w-full overflow-auto h-full  md:bg-opacity-70 md:bg-slate-950   text-white  m-auto rounded-2xl p-10">
         <div className="flex flex-col items-center justify-center gap-10 h-full">
+          <span>Provide the 6-digit code in your authenticator app</span>
           <input
             type="text"
             placeholder="Enter code"

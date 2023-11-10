@@ -66,14 +66,19 @@ export class UserController {
   @Post('/verifyTfa')
   // @UseGuards(AuthGuard('jwt'))
   async verifyTfa(@Res() res, @Req() request) {
-    const userId = request.body.UserInfo.auth_id;
+    const userId = request.body.UserInfo?.auth_id;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: 'User information not provided.' });
+    }
     const isVerified = await this.UserService.verifyTfa(
       request.body.UserInfo.nickname,
       request.body.code,
     );
-    // if (!isVerified) {
-    //   return res.status(422).json({ message: 'Wrong code!' });
-    // }
+    if (!isVerified) {
+      return res.status(401).json({ message: 'Wrong code! Try Again.' });
+    }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.status(200).json(isVerified);
@@ -90,7 +95,7 @@ export class UserController {
   @Get('/getUserInfo')
   @UseGuards(AuthGuard('jwt'))
   async getUserInfo(@Res() res, @Req() request) {
-    // res.clearCookie('token');
+    res.clearCookie('token');
     return res.status(200).json({ userInfo: request.user });
   }
 

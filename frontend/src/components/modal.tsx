@@ -46,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const [qrCodeData, setQrCodeData] = useState(null);
+  const [qrCodeData, setQrCodeData] = useState<{ qrcode: string } | null>(null);
   useEffect(() => {
     if (isTfaEnabled) {
       API.get("/user/getQrCode").then((response) => {
@@ -62,10 +62,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     >
       <div className="z-0 w-1/3 md:w-[500px] h-2/3 relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
         <div className="w-full overflow-hidden h-full md:bg-opacity-70 md:bg-slate-950 text-white m-auto rounded-2xl p-10 flex flex-col justify-center items-center gap-10">
-          <div className="toggle flex flex-col items-center justify-center gap-5">
-            <span className="text-center">
-              enable/disable 2FA
-            </span>
+          <div className="toggle flex flex-row items-center justify-center gap-20">
+            <span className="text-center">enable/disable 2FA:</span>
             <label
               className={`relative inline-flex items-center cursor-pointer ${
                 isTfaEnabled
@@ -87,8 +85,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           </div>
           {isTfaEnabled ? (
             <div className="flex flex-col justify-center items-center gap-5">
-              <p className="text-center">
-                Scan The QrCode below to login with the password in the
+              <p className="text-center text-sm">
+                Scan The QrCode below to login next time with the 6-digit code in your
                 authenticator app
               </p>
               {qrCodeData ? (
