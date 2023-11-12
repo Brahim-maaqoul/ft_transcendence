@@ -40,7 +40,7 @@ export default function Friends({ auth_id }: { auth_id: string }) {
                     }}></div>
                 </div>
                 <span className="text-sm xl:text-2xl text-white">
-                  {element?.displayname}
+                  {element?.nickname}
                 </span>
               </div>
             </Link>

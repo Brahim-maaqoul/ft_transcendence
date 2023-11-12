@@ -92,7 +92,7 @@ export default function MainGroup() {
                         href={"/" + user?.nickname + "/profile"}
                         key={index}
                         className="  w-full h-full">
-                        <div className="flex hover:bg-slate-200">
+                        <div className="flex hover:bg-slate-200 hover:rounded-xl">
                           <div className="flex gap-x-4 items-center mx-3 py-3">
                             <div className="w-14 h-14 flex items-center">
                               <div

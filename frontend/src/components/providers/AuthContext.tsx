@@ -1,16 +1,25 @@
 // AuthContext.tsx
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import io, { Socket } from "socket.io-client";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   dataUser: UserProfile;
+  socketchat: Socket;
   login: () => void;
   logout: () => void;
   setuserdata: (data: UserProfile) => void;
   setuserdatanull: () => void;
 }
 export interface UserProfile {
+  user: any;
   auth_id: string;
   nickname: string;
   displayname: string;
@@ -27,6 +36,17 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataUser, setDataUser] = useState<UserProfile | null>(null);
+  const [socketchat, setSocketchat] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    if (!socketchat) {
+      const newSocket = io("http://localhost:8000", {
+        withCredentials: true,
+      });
+      setSocketchat(newSocket);
+      console.log(newSocket);
+    }
+  }, [socketchat]);
   const login = () => {
     setIsAuthenticated(true);
   };
@@ -44,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const contextValue: AuthContextType = {
     isAuthenticated,
     dataUser,
+    socketchat,
     login,
     logout,
     setuserdata,

@@ -62,7 +62,7 @@ model BlockedUser {
 }
 
 model Group {
-  id        Int       @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   name      String    @unique
   type      String
   Privacy   String    @default("private")

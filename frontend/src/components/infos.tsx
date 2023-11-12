@@ -61,7 +61,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
           <div className="flex items-start justify-between  pb-14  w-full  text-white text-xs/8  xl:text-xl gap-4">
             <div>
               <span className="flex justify-center text-xl md:text-3xl text-white">
-                {profileData?.displayname}
+                {profileData?.nickname}
               </span>
               <div className="text-white flex  items-center justify-start my-2">
                 <span className="text-2xl">{Stats?.goal_scoared}</span>

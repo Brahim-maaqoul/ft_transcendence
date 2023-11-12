@@ -4,20 +4,14 @@ FROM node:16
 RUN apt-get update && \
     apt-get install -y postgresql-client
 
+RUN mkdir -p app 
+
 WORKDIR /app
-
-
-COPY ./package.json ./
-COPY ./package-lock.json ./
-
-
-
 
 COPY . .
 
-RUN chmod +x script.sh
 
-EXPOSE 8000
+RUN chmod +x script.sh
 
 ENTRYPOINT [ "./script.sh" ]
 CMD npm run start:dev 
