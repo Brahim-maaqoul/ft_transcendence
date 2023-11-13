@@ -35,7 +35,6 @@ const TfaPage = () => {
           code: userInput,
           UserInfo: response.data.userInfo,
         });
-        console.log("verifyResponse.data:", verifyResponse.data);
         if (verifyResponse.data.isVerified) {
           e.preventDefault();
           router.push("/");
