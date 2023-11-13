@@ -23,18 +23,19 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGoogleGuard)
-  @Redirect('', 302)
   async googleAuthRedirect(@Req() req, @Res() res) {
     const userId = req.user.auth_id;
     const user = await this.authService.findUserById(userId.toString());
-    const redirectUrl = req.user.firstSignIn
-      ? `http://localhost:3000/${userId}/Edit`
-      : user.isTfaEnabled
-      ? `http://localhost:3000/tfa`
-      : `http://localhost:3000/`;
+    if (user.isTfaEnabled) {
+      const redirectUrl = `http://localhost:3000/tfa?&nickname=${req.user.nickname}`;
+      return res.redirect(redirectUrl);
+    }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-    return { url: redirectUrl };
+    if (req.user.firstSignIn) {
+      return res.redirect(`http://localhost:3000/${userId}/Edit`);
+    }
+    return res.redirect('http://localhost:3000/');
   }
 
   @Get('42')
@@ -43,18 +44,19 @@ export class AuthController {
 
   @Get('42/callback')
   @UseGuards(AuthGuard('42'))
-  @Redirect('', 302)
   async IntraAuthRedirect(@Req() req, @Res() res) {
     const userId = req.user.auth_id;
     const user = await this.authService.findUserById(userId.toString());
-    const redirectUrl = req.user.firstSignIn
-      ? `http://localhost:3000/${userId}/Edit`
-      : user.isTfaEnabled
-      ? `http://localhost:3000/tfa`
-      : `http://localhost:3000/`;
+    if (user.isTfaEnabled) {
+      const redirectUrl = `http://localhost:3000/tfa?&nickname=${req.user.nickname}`;
+      return res.redirect(redirectUrl);
+    }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-    return { url: redirectUrl };
+    if (req.user.firstSignIn) {
+      return res.redirect(`http://localhost:3000/${userId}/Edit`);
+    }
+    return res.redirect('http://localhost:3000/');
   }
 
   @Get('logout')

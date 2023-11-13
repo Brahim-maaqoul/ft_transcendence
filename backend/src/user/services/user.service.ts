@@ -42,10 +42,11 @@ export class UserService {
         },
         data: {
           isTfaEnabled: false,
+          isTfaValidated: false,
           tfaSecret: null,
         },
       });
-      return user.isTfaEnabled;
+      return !user.isTfaEnabled;
     } catch (error) {
       console.log(error);
     }
@@ -56,6 +57,9 @@ export class UserService {
       const user = await this.prisma.users.findUnique({
         where: { nickname: nickname },
       });
+      if (!user || !user.isTfaEnabled || !user.tfaSecret) {
+        return false;
+      }
       const isTfaVerified = verifyTFA(user.tfaSecret, code);
       if (isTfaVerified) {
         await this.prisma.users.update({
@@ -70,6 +74,17 @@ export class UserService {
       return isTfaVerified;
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async getUserInfo(nickname: string) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: { nickname: nickname },
+      });
+      return user;
+    } catch (error) {
+      return null;
     }
   }
 

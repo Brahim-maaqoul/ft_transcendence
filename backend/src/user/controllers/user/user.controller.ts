@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Req,
-  Res,
-  Post,
-  UseGuards,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Req, Res, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../../auth/auth.service';
@@ -40,9 +32,6 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async enableTfa(@Res() res, @Req() request) {
     const isEnabled = await this.UserService.enableTFA(request.user.nickname);
-    if (!isEnabled) {
-      return res.status(400).json({ message: 'Failed to Enable 2FA!' });
-    }
     return res.status(200).json(isEnabled);
   }
 
@@ -50,9 +39,6 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async disableTfa(@Res() res, @Req() request) {
     const isEnabled = await this.UserService.disableTFA(request.user.nickname);
-    if (isEnabled) {
-      return res.status(400).json({ message: 'Failed to Disable 2FA!' });
-    }
     return res.status(200).json(isEnabled);
   }
 
@@ -64,24 +50,18 @@ export class UserController {
   }
 
   @Post('/verifyTfa')
-  // @UseGuards(AuthGuard('jwt'))
   async verifyTfa(@Res() res, @Req() request) {
-    const userId = request.body.UserInfo?.auth_id;
-    if (!userId) {
-      return res
-        .status(401)
-        .json({ message: 'User information not provided.' });
-    }
     const isVerified = await this.UserService.verifyTfa(
       request.body.UserInfo.nickname,
       request.body.code,
     );
     if (!isVerified) {
-      return res.status(401).json({ message: 'Wrong code! Try Again.' });
+      return res.json({ isVerified: isVerified });
     }
+    const userId = request.body.UserInfo.auth_id;
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-    return res.status(200).json(isVerified);
+    return res.json({ isVerified: isVerified });
   }
 
   @Get('/getQrCode')
@@ -93,10 +73,10 @@ export class UserController {
   }
 
   @Get('/getUserInfo')
-  @UseGuards(AuthGuard('jwt'))
   async getUserInfo(@Res() res, @Req() request) {
-    res.clearCookie('token');
-    return res.status(200).json({ userInfo: request.user });
+    const nickname = request.query.nickname;
+    const userInfo = await this.UserService.getUserInfo(nickname);
+    return res.status(200).json({ userInfo: userInfo });
   }
 
   @Get('/profile')
@@ -118,7 +98,7 @@ export class UserController {
 
   @Get('/Achievement')
   @UseGuards(AuthGuard('jwt'))
-  async Achievement(@Body() Body, @Res() res, @Req() request) {
+  async Achievement(@Res() res, @Req() request) {
     const userId = request.user.auth_id;
     const userStats = await this.UserService.getUserStats(userId);
     const achievements = await this.UserService.getAllAchievements();
