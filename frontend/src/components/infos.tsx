@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { UserProfile, useAuth } from "./providers/AuthContext";
 import { useFriendType } from "@/app/api/getFriendtype";
 import { useGetStats } from "@/app/api/getStats";
+import { getUser } from "@/app/api/getUserByNickname";
 
 import FriendCases, { Block } from "./friendStatus";
 

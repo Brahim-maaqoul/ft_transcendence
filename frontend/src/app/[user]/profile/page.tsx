@@ -9,7 +9,7 @@ import { Achievement } from "@/components/achievement";
 import { useAuth } from "@/components/providers/AuthContext";
 import Infos from "@/components/infos";
 import RecentGames from "@/components/recentGames";
-import { getUser } from "@/app/api/checkAuthentication";
+import { getUser } from "@/app/api/getUserByNickname";
 import { Link } from "lucide-react";
 import Friends from "@/components/friends";
 

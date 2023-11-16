@@ -1,21 +1,14 @@
-import axios, { AxiosResponse } from "axios";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import { API } from "./checkAuthentication";
 
-async function getUserbyNickName(nickname: string) {
+export async function unblockFriend(auth_id: string) {
   try {
-    const response: AxiosResponse = await API.get(
-      "/user/profile?nickname=" + nickname
-    );
+    const response: AxiosResponse = await API.post("/block/unblock", {
+      auth: auth_id,
+    });
     return response.data;
   } catch (error) {
+    console.error("Error fetching user stats:", error);
     throw error;
   }
-}
-
-export function getUser(nickname: string) {
-  return useQuery({
-    queryKey: ["profileData", nickname],
-    queryFn: () => getUserbyNickName(nickname),
-  });
 }

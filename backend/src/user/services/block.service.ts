@@ -4,8 +4,14 @@ import { FriendService } from './friend.service';
 
 @Injectable()
 export class BlockService {
-    constructor(private prisma: PrismaService, private FriendService:FriendService) {}
-    async unblockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
+  constructor(
+    private prisma: PrismaService,
+    private FriendService: FriendService,
+  ) {}
+  async unblockUser(
+    blockedUserId: string,
+    blockerUserId: string,
+  ): Promise<string> {
     try {
       const existingBlock = await this.prisma.blockedUser.findFirst({
         where: {
@@ -13,56 +19,52 @@ export class BlockService {
           blocker_id: blockerUserId,
         },
       });
-      
+
       if (!existingBlock) {
         return 'User is not blocked.';
       }
-     
+
       await this.prisma.blockedUser.delete({
         where: {
           block_id: existingBlock.block_id,
         },
-
-      })
+      });
 
       return 'User deblocked successfully.';
     } catch (error) {
       return 'An error occurred while deblocking the user.';
     }
   }
-    async blockUser(blockedUserId: string, blockerUserId: string): Promise<string> {
-        const existingBlock = await this.prisma.blockedUser.findFirst({
-            where: {
-            OR: [
-                {
-                blocked_id: blockedUserId,
-                blocker_id: blockerUserId,
-                },
-                {
-                blocked_id: blockerUserId,
-                blocker_id: blockedUserId,
-                },
-            ],
-            },
-        });
-        if (existingBlock) {
-          throw new HttpException({ type:'User is already blocked!'}, 201);
-        }
-      try {
-        this.FriendService.deleteFriend(blockedUserId, blockerUserId);  
-      }
-      catch (err)
-      {
-
-      }
-        await this.prisma.blockedUser.create({
-            data: 
-            {
-                blocked_id: blockedUserId,
-                blocker_id: blockerUserId,
-            },
-        });
-        return 'User blocked successfully.';
-        
+  async blockUser(
+    blockedUserId: string,
+    blockerUserId: string,
+  ): Promise<string> {
+    const existingBlock = await this.prisma.blockedUser.findFirst({
+      where: {
+        OR: [
+          {
+            blocked_id: blockedUserId,
+            blocker_id: blockerUserId,
+          },
+          {
+            blocked_id: blockerUserId,
+            blocker_id: blockedUserId,
+          },
+        ],
+      },
+    });
+    if (existingBlock) {
+      throw new HttpException({ type: 'User is already blocked!' }, 201);
+    }
+    try {
+      await this.FriendService.deleteFriend(blockedUserId, blockerUserId);
+    } catch (err) {}
+    await this.prisma.blockedUser.create({
+      data: {
+        blocked_id: blockedUserId,
+        blocker_id: blockerUserId,
+      },
+    });
+    return 'User blocked successfully.';
   }
 }
