@@ -7,7 +7,7 @@ import styles from "../app/styles.module.css";
 import Image from "next/image";
 import { UserProfile, useAuth } from "@/components/providers/AuthContext";
 import { useEffect, useRef, useState } from "react";
-import { usegetUsersbyname } from "@/app/api/checkAuthentication";
+import { useSearchByName } from "@/app/api/getSearchbyName";
 
 export default function MainGroup() {
   const { isAuthenticated } = useAuth();
@@ -15,7 +15,7 @@ export default function MainGroup() {
   const [suggestions, setSuggestions] = useState<UserProfile[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement | null>(null);
-  const { data: getUsersbyname } = usegetUsersbyname(searchText);
+  const { data: getUsersbyname } = useSearchByName(searchText);
   console.log(searchText);
   console.log(suggestions);
 
@@ -23,10 +23,6 @@ export default function MainGroup() {
     const query = e.target.value;
     setSearchText(query);
     setShowSuggestions(true);
-
-    // const suggestedUsers = allUsers.filter((user) =>
-    //   user.name.toLowerCase().includes(query)
-    // );
     setSuggestions(getUsersbyname);
   };
 
@@ -96,7 +92,7 @@ export default function MainGroup() {
                         href={"/" + user?.nickname + "/profile"}
                         key={index}
                         className="  w-full h-full">
-                        <div className="flex hover:bg-slate-200">
+                        <div className="flex hover:bg-slate-200 hover:rounded-xl">
                           <div className="flex gap-x-4 items-center mx-3 py-3">
                             <div className="w-14 h-14 flex items-center">
                               <div

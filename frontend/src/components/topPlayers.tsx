@@ -20,7 +20,7 @@ export default function TopPlayers() {
     });
 
   return (
-    <div className=" my-4 p-4  bg-slate-400 bg-opacity-20 rounded-2xl">
+    <div className="h-[250px] my-4 p-4  bg-slate-400 bg-opacity-20 rounded-2xl">
       <span className="text-white text-2xl font-mono px-4">Top Players</span>
       <div className="mt-2 ">
         <Splide

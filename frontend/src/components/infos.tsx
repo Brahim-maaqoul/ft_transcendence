@@ -6,11 +6,8 @@ import { MouseEvent, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { UserProfile, useAuth } from "./providers/AuthContext";
-import {
-  getUser,
-  useGetStats,
-  useFriendType,
-} from "@/app/api/checkAuthentication";
+import { useFriendType } from "@/app/api/getFriendtype";
+import { useGetStats } from "@/app/api/getStats";
 
 import FriendCases, { Block } from "./friendStatus";
 
@@ -20,6 +17,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   const { data: FriendshipType } = useFriendType(profileData.auth_id);
   const [show, setShow] = useState(false);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [logged, setlogged] = useState(true);
   const handleClickOutside = (event: MouseEvent<HTMLElement>) => {
     if (
       toggleButtonRef.current &&
@@ -42,7 +40,6 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       );
     };
   }, []);
-  // console.log("user", profileData);
   console.log("friendship Type: ", FriendshipType);
   const imageUrl = profileData?.picture;
   return (
@@ -50,14 +47,20 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       <div className="flex items-start flex-col md:flex-row  gap-8">
         <div className="w-48 h-48">
           <div
-            className="h-48 w-48 rounded-full bg-cover"
-            style={{ backgroundImage: `url(${imageUrl})` }}></div>
+            className="h-48 w-48 rounded-full bg-cover relative"
+            style={{ backgroundImage: `url(${imageUrl})` }}>
+            {logged ? (
+              <span className="absolute h-5 w-5 rounded-full bg-green-500 mt-40 ml-36 border-2 border-black"></span>
+            ) : (
+              <span className="absolute h-5 w-5 rounded-full bg-red-600 mt-40 ml-36 border-2 border-black"></span>
+            )}
+          </div>
         </div>
         <div className="w-full relative">
           <div className="flex items-start justify-between  pb-14  w-full  text-white text-xs/8  xl:text-xl gap-4">
             <div>
               <span className="flex justify-center text-xl md:text-3xl text-white">
-                {profileData?.displayname}
+                {profileData?.nickname}
               </span>
               <div className="text-white flex  items-center justify-start my-2">
                 <span className="text-2xl">{Stats?.goal_scoared}</span>

@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { constants } from "buffer";
 
-interface UserProfileUpdate {
+export interface UserProfileUpdate {
   nickname: string;
   displayname: string;
   picture: string;
@@ -17,29 +17,12 @@ interface GroupCreate {
 interface messagesData {
   groupId: string;
 }
-const API = axios.create({
+export const API = axios.create({
   baseURL: "http://localhost:8000/v1/api/",
   withCredentials: true,
 });
 
 //
-async function getUserbyName(nickname: string) {
-  try {
-    const response: AxiosResponse = await API.get(
-      "/user/profile?nickname=" + nickname
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export function getUser(nickname: string) {
-  return useQuery({
-    queryKey: ["profileData", nickname],
-    queryFn: () => getUserbyName(nickname),
-  });
-}
 
 // checkAuthentication
 async function checkAuthentication() {
@@ -56,131 +39,6 @@ export function useCheckAuthentication(): UseQueryResult<any> {
   return useQuery({
     queryKey: ["data"],
     queryFn: checkAuthentication,
-    cacheTime: Infinity,
-  });
-}
-
-async function getStats(nickname: string) {
-  try {
-    const response: AxiosResponse = await API.get(
-      "/user/Stats?nickname=" + nickname
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export function useGetStats(nickname: string) {
-  return useQuery(["Stats", nickname], () => getStats(nickname));
-}
-
-async function getFriendType(auth_id: string) {
-  try {
-    const response: AxiosResponse = await API.get(
-      "/friends/FriendStats?id=" + auth_id
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export function useFriendType(auth_id: string) {
-  return useQuery({
-    queryKey: ["FriendshipType"],
-    queryFn: () => getFriendType(auth_id),
-  });
-}
-export async function addFriend(auth_id: string) {
-  try {
-    console.log("here");
-    const response: AxiosResponse = await API.post("/friends/addFriend", {
-      auth: auth_id,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user stats:", error);
-    throw error;
-  }
-}
-
-export async function acceptFriend(auth_id: string) {
-  try {
-    console.log("here");
-    const response: AxiosResponse = await API.post("/friends/accepteFriend", {
-      auth: auth_id,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user stats:", error);
-    throw error;
-  }
-}
-
-export async function unFriend(auth_id: string) {
-  try {
-    console.log("here");
-    const response: AxiosResponse = await API.delete(
-      "/friends/unFriend?auth=" + auth_id
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user stats:", error);
-    throw error;
-  }
-}
-
-export async function blockFriend(auth_id: string) {
-  try {
-    console.log("here");
-    const response: AxiosResponse = await API.post("/block/blockUser", {
-      auth: auth_id,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user stats:", error);
-    throw error;
-  }
-}
-
-export async function unblockFriend(auth_id: string) {
-  try {
-    console.log("here");
-    const response: AxiosResponse = await API.post("/block/unblock", {
-      auth: auth_id,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user stats:", error);
-    throw error;
-  }
-}
-
-async function getFriends(auth_id: string) {
-  const response: AxiosResponse = await API.get(
-    "/friends/Friend?auth_id=" + auth_id
-  );
-  return response.data;
-}
-
-export function usegetFriends(auth_id: string): UseQueryResult<any> {
-  return useQuery({
-    queryKey: ["Friends"],
-    queryFn: () => getFriends(auth_id),
-  });
-}
-async function getUsersbyname(name: string) {
-  const response: AxiosResponse = await API.get(
-    "/user/userByName?name=" + name
-  );
-  return response.data;
-}
-
-export function usegetUsersbyname(name: string): UseQueryResult<any> {
-  return useQuery({
-    queryKey: ["getUsersbyname", name],
-    queryFn: () => getUsersbyname(name),
   });
 }
 
