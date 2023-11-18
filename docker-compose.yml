@@ -6,7 +6,7 @@ services:
     restart: always
     container_name: db
     env_file:
-      - ./backend/.env
+      - .env
     volumes:
       - $PWD/db:/var/lib/postgresql/data
     ports:
@@ -17,23 +17,22 @@ services:
     container_name: backend
     image: backend
     env_file:
-      - ./backend/.env
+      - .env
     ports:
       - "8000:8000"
       - "5555:5555"
     volumes:
       - ./backend:/app
-    depends_on:
-      - db
 
-  # client:
-  #   depends_on: app
-  #   build: ./frontend
-  #   container_name: frontend
-  #   image: frontend
-  #   env_file:
-  #     - ./backend/.env
-  #   ports:
-  #     - "3000:8000"
-  #   volumes:
-  #     - ./frontend:/client
+  client:
+    depends_on:
+    - app
+    build: ./frontend
+    container_name: frontend
+    image: frontend
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/client

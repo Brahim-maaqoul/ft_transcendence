@@ -40,16 +40,27 @@ export class AuthService {
     }
   }
 
+  async createRandomName()
+  {
+    const name = (Math.random() + 1).toString(36).substring(7);
+    if (this.isNicknameUnique(name))
+        return this.createRandomName();
+    return name
+
+  }
 
   async createUser(auth_id: string,
     email: string,
     displayname: string,
     picture: string,
     emailVerified?: boolean) {
+    const nickname = await this.createRandomName();
+
     return this.prisma.users.create({
-      data: {
+        data: {
         auth_id,
         email,
+        nickname,
         displayname,
         picture,
         emailVerified,
@@ -61,8 +72,8 @@ export class AuthService {
               goal_scoared: 0,
               clean_sheets: 0
           }
-      }
-      }
+        }
+        }
     });
   }
 

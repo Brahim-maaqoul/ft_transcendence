@@ -33,8 +33,8 @@ export default function Edit() {
 
   useEffect(() => {
     if (dataUser) {
-      setDisplayname(dataUser.nickname || "");
       setDisplayname(dataUser.displayname || "");
+      setNickname(dataUser.nickname || "");
       setAvatar(dataUser.picture || "");
       setBio(dataUser.bio || "");
     }

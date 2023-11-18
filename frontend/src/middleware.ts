@@ -7,41 +7,44 @@ const API = axios.create({
   withCredentials: true,
 });
 export async function middleware(request: NextRequest) {
-  try {
+  console.log("req", request);
+  // try {
     const jwtCookie = request.cookies.get('token')?.value;
     const isAuthorized = await checkAuthorization(jwtCookie);
-    if (!isAuthorized) {
-      return NextResponse.redirect(new URL('/login', request.url).toString());
-    }
-  } catch (error) {
-    return NextResponse.redirect(new URL('/login', request.url).toString());
-  }
+    console.log("isQuth", isAuthorized)
+  //   if (!isAuthorized) {
+  //     return NextResponse.redirect(new URL('/login', request.url).toString());
+  //   }
+  // } catch (error) {
+  //   return NextResponse.redirect(new URL('/login', request.url).toString());
+  // }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/chat/:path*','/:id/Edit','/:user/profile'],
+  matcher: ['/chat/:path*','/:user/Edit','/:user/profile'],
 };
 
 async function checkAuthorization(jwtCookie: string | undefined): Promise<boolean> {
   try {
     const apiUrl = 'http://localhost:8000/v1/api/auth/checkauth';
     const response = await fetch(apiUrl, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: jwtCookie ? `Bearer ${jwtCookie}` : '',
       },
-      credentials: 'include',
-      body: JSON.stringify({ token: jwtCookie }),
     });
+    console.log("response\t\t\t\t", response.ok)
+    console.log("response\t\t\t\t")
     if (response.ok) {
-      const result = await response.json();
-      return result.isAuthenticated === true;
+      return true;
     } else {
       return false;
     }
   } catch (error) {
+    console.log("response1\t\t\t\t")
     return false;
   }
 }

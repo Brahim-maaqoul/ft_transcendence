@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
+import { ChatModule } from './chat/chat.module';
 
 
 
@@ -14,7 +15,8 @@ import { GameModule } from './game/game.module';
     }),
     AuthModule,
     UserModule,
-    GameModule
+    GameModule,
+    ChatModule
   ],
 providers:[PrismaService],
 

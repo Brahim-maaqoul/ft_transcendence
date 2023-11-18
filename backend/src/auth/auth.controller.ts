@@ -51,16 +51,34 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   async checkAuthentication( @Req() request, @Res() res,@Body() body) {
     try {
-      let user = await this.authService.findUserById(request.user.auth_id) 
-      return res.json({ isAuthenticated: true , user :user});
+      console.log("user")
+      let user = await this.authService.findUserById(request.user.auth_id)
+      console.log(user)
+      return res.status(200).json({ isAuthenticated: true , user :user});
     } catch (error) {
-      return res.json({ isAuthenticated: false });
+      return res.status(200).json({ isAuthenticated: false });
     }
   }
 
   @Post('UpdateData')
   @UseGuards(AuthGuard('jwt'))
   async UpdateUserData(@Req() request, @Res() res, @Body() updatedUser:updatedUser) {
+    try{
+      if(await this.authService.isNicknameUnique(updatedUser.nickname))
+      {
+        await this.authService.updateUser(request.user.auth_id,updatedUser.nickname,updatedUser.displayname,updatedUser.picture,updatedUser.bio,false);
+        return res.status(200).json({ message: 'User data updated successfully' });
+      }
+      else
+        return res.status(404).json({ message: 'Nickname is already in use' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+  
+  @Get('UpdateData')
+  @UseGuards(AuthGuard('jwt'))
+  async UpdateUserData1(@Req() request, @Res() res, @Body() updatedUser:updatedUser) {
     try{
       if(await this.authService.isNicknameUnique(updatedUser.nickname))
       {
