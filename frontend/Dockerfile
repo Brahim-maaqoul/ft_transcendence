@@ -8,4 +8,5 @@ WORKDIR /client
 
 COPY . .
 
+
 CMD npm i && npm run dev
