@@ -4,6 +4,8 @@ import { groupDto } from 'src/chat/dto/group.dto';
 import * as bcrypt from 'bcrypt';
 import { memberDto } from '../../dto/member.dto';
 import { joinRequest } from 'src/chat/dto/joinRequest.dto';
+import { muteDto } from 'src/chat/dto/mute.dto';
+import { changePrivacyDto } from 'src/chat/dto/changePrivacy.dto';
 
 @Injectable()
 export class GroupsService {
@@ -103,7 +105,7 @@ export class GroupsService {
     async addMember(creator_id: string, add_member:memberDto)
     {
         const admin = await this.checkAdmin(creator_id, add_member.group)
-        if (!admin || admin === "member")
+        if (!admin || admin === "member" || admin === "notMember")
             throw new HttpException("you're not an admin!", 401);
         const member = await this.checkAdmin(add_member.userId, add_member.group)
         if (member)
@@ -118,6 +120,31 @@ export class GroupsService {
         })
         return new_member
     }
+    async changeRole(creator_id: string, add_member:memberDto)
+    {
+        const admin = await this.checkAdmin(creator_id, add_member.group)
+        if (!admin || admin !== "creator" )
+            throw new HttpException("you're not an admin!", 401);
+        const member = await this.checkAdmin(add_member.userId, add_member.group)
+        if (member)
+           throw new HttpException("already exist", 200);
+        const relation = await this.prisma.members.findFirst({
+            where:{
+                group_id: add_member.group,
+                user_id: add_member.userId
+            },
+        })
+        const new_member = await this.prisma.members.update({
+            where:{
+                id: relation.id
+            },
+            data:{
+                type: "admin",
+            }
+        })
+        return new_member
+    }
+
     async getMembers(group_id: number)
     {
         const members = this.prisma.members.findMany(
@@ -164,6 +191,44 @@ export class GroupsService {
             }
         })
     }
+    async mute(member:muteDto)
+    {
+        const relation = await this.prisma.members.findFirst({
+            where:{
+                group_id: member.group,
+                user_id: member.userId
+            },
+        })
+
+        return await this.prisma.members.update({
+            where:{
+                id: relation.id
+            },
+            data:{
+                muted: member.date
+            }
+        })
+    }
+    async unmute(member:memberDto)
+    {
+        const relation = await this.prisma.members.findFirst({
+            where:{
+                group_id: member.group,
+                user_id: member.userId
+            },
+        })
+        return await this.prisma.members.update({
+            where:{
+                id: relation.id
+            },
+            data:{
+                muted: new Date()
+            }
+        })
+    }
+
+
+
     async deleteUser(member:memberDto)
     {
         const relation = await this.prisma.members.findFirst({
@@ -234,5 +299,32 @@ export class GroupsService {
                 }
             }
         )
+    }
+    async getMembership(user_id:string, group_id: number)
+    {
+        const member = await this.prisma.members.findFirst({
+            where:{
+                user_id: user_id,
+                group_id: group_id
+            }
+        })
+        if (!member)
+            throw new HttpException("not a member", HttpStatus.NOT_FOUND);
+        return member
+    }
+    async  changePrivacy(group:changePrivacyDto)
+    {
+        const salt = await bcrypt.genSalt();
+        const hash = await bcrypt.hash(group.password, salt)
+        await this.prisma.groups.update({
+            where:{
+                id: group.group_id
+            },
+            data:
+            {
+                privacy: "protected",
+                password: hash,
+            }
+        })
     }
 }
