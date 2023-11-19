@@ -67,7 +67,7 @@ model Groups {
   privacy      String         @default("private")
   password     String?
   picture      String?        @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
-  lastChange    DateTime       @default(now())
+  lastChange   DateTime       @default(now())
   members      Members[]
   messages     Message[]
   notification Notification[]
@@ -77,8 +77,9 @@ model Members {
   id       Int     @id @default(autoincrement())
   user_id  String
   group_id Int
-  type     String @default("member")
+  type     String  @default("member")
   banned   Boolean @default(false)
+  muted    DateTime?
   group    Groups  @relation(fields: [group_id], references: [id])
   user     Users   @relation(fields: [user_id], references: [auth_id])
 }
