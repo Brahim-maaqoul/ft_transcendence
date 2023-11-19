@@ -79,7 +79,7 @@ export async function banUserFromGroup(data: banUser) {
 }
 
 export async function joinToGroup(data: Chat) {
-  const response: AxiosResponse = await API.post("/chat/jounGroup", data);
+  const response: AxiosResponse = await API.post("/groups/joinGroup", data);
   return response.data;
 }
 
