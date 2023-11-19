@@ -1,22 +1,11 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { MouseEvent, useEffect, useState, useRef } from "react";
+
+import { useEffect, useState } from "react";
 import { TbPhotoEdit } from "react-icons/tb";
-import { IoClose } from "react-icons/io5";
-import { IoIosAdd } from "react-icons/io";
-import {
-  FaLinkedinIn,
-  FaInstagram,
-  FaGithub,
-  FaTwitter,
-  FaDribbble,
-} from "react-icons/fa";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styles from "../../styles.module.css";
-import axios, { AxiosResponse } from "axios";
 import { useAuth } from "@/components/providers/AuthContext";
 import { updateUserProfile } from "../../api/checkAuthentication";
 import { useRouter } from "next/navigation";

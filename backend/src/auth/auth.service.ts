@@ -34,17 +34,18 @@ export class AuthService {
           nickname,
         },
       });
-      return !user;
+      console.log(user)
+      return user != null ? false : true;
     } catch (error) {
-      throw new Error('An error occurred while checking nickname uniqueness.');
+      return false;
     }
   }
 
   async createRandomName()
   {
     const name = (Math.random() + 1).toString(36).substring(7);
-    if (this.isNicknameUnique(name))
-        return this.createRandomName();
+    // if (await this.isNicknameUnique(name))
+    //     return this.createRandomName();
     return name
 
   }
