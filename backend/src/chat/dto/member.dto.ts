@@ -1,6 +1,6 @@
 import { IsString, IsInt } from 'class-validator';
 
-export class addMemberDto
+export class memberDto
 {
     @IsInt()
     group: number

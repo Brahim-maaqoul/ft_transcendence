@@ -3,7 +3,7 @@ import React, { use, useState,useRef,useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from "next/image";
 import Link from 'next/link';
-import {  usegetGroups, creatGroup } from '@/app/api/checkAuthentication';
+import {  usegetGroups, creatGroup } from '@/app/api/chatApi/chatApiFunctions';
 import { set } from 'react-hook-form';
 import Toggle from './toggle';
 import { stringify } from 'querystring';
@@ -11,11 +11,10 @@ import { group } from 'console';
 import { useMutation } from '@tanstack/react-query';
 import { m } from 'framer-motion';
 interface CreatGroupProps {
-    newGroup: boolean; // Assuming newGroup is a string, you can adjust the type as needed
-    setNewGroup: React.Dispatch<React.SetStateAction<boolean>>; // Assuming setNewGroup is a React state setter for a string
+    newGroup: boolean;
+    setNewGroup: React.Dispatch<React.SetStateAction<boolean>>;
   }
 export const CreatGroup: React.FC<CreatGroupProps> = ({newGroup,setNewGroup})=> {
-console.log("1");
   const [typegroup,  setTypeGroup] = useState('public');
   const [GroupName,  setGroupName] = useState('');
   const [GroupPassword,  setGroupPassword] = useState('');
@@ -28,13 +27,6 @@ const handelCreatGroup = () =>
 {
     mutation.mutate({ groupName: GroupName, password: GroupPassword, type: typegroup});
 }
-
-  const aboutRef = useRef<HTMLDivElement>(null);
-  // const handleAboutRef = (event: MouseEvent) => {
-  //   if (aboutRef.current && !aboutRef.current.contains(event.target as Node)) {
-  //     setNewGroup(false);
-  //   }
-  // };
 
   useEffect(() => 
   {
@@ -49,9 +41,15 @@ const handelCreatGroup = () =>
     }
 
     }, [mutation.isSuccess, mutation.isError,newGroup]);
-
+    
+    function isStrongPassword(password: string) {
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasLowercase = /[a-z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      return hasUppercase && hasLowercase && hasNumber;
+    }
     function checkInfoCreatGroup() {
-        if (GroupName.length < 3 || (typegroup == "protected" && GroupPassword.length < 3)) {
+        if (GroupName.length < 3 || (typegroup == "protected" && GroupPassword.length < 3 && !isStrongPassword(GroupPassword) )) {
           return false;
         }
         return true;
@@ -80,27 +78,26 @@ const handelCreatGroup = () =>
           <input type="text" onChange={(input) => setGroupName(input.target.value)}  name="text" maxLength={parseInt("13")} className="font-mono w-[78%]  ml-8 px-3 py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white text-sm" pattern="\d+" placeholder="Group Name"></input>
           </div>
           <div className=' ml-6 mt-4 ' >
-          <select onChange={(select) => setTypeGroup(select.target.value)} name="text" className="font-mono w-[78%]  ml-8 px-3  py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white" pattern="\d+" placeholder="Group Name">
+          <select onChange={(select) => setTypeGroup(select.target.value)} name="text" className="font-mono w-[78%]  ml-8 px-3  py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white"  placeholder="Group Name">
           <option value="public"> public </option>
           <option value="private"> private </option>
           <option value="protected"> protected </option>
           </select>
            </div>
-           { typegroup == "protected"  && <div className='-500 ml-6 ' >
-          <input type="password" onChange={(input) => setGroupPassword(input.target.value)}  name="text" className="text-sm w-[78%]  ml-8 px-3 py-3 mt-6 border bg-black border-gray-300 font-mono rounded focus:outline-none text-white" pattern="\d+" placeholder="Password"></input>
+           {typegroup == "protected"  && <div className='-500 ml-6'>
+          <input type="password" onChange={(input) => setGroupPassword(input.target.value)}  name="text" className="text-sm w-[78%] min-[5]:  ml-8 px-3 py-3 mt-6 border bg-black border-gray-300 font-mono rounded focus:outline-none text-white" pattern="\d+" placeholder="Password"></input>
           </div>}
-        <div className=' w-[100%] flex justify-center mt-8  mb-8'>
-        { checkInfoCreatGroup() && <button onClick={handelCreatGroup} className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer">
+          <div className=' w-[100%] flex justify-center mt-8  mb-8'>
+        {checkInfoCreatGroup() && <button onClick={handelCreatGroup} className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer">
         <span className=" text-xl leading-6 text-black font-mono">Creat</span>
         </button>}
-        { !checkInfoCreatGroup() &&<button  className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-gray-400  rounded-full cursor-not-allowed">
+        {!checkInfoCreatGroup() &&<button  className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-gray-400  rounded-full cursor-not-allowed">
         <span className=" text-xl leading-6 text-black font-mono ">Creat</span>
         </button>}
         </div>
-        { isError && <p className=" text-sm leading-6 text-[#c4c5ba] font-mono mb-2  text-center">Group name Already exist</p>}
+        {isError && <p className=" text-sm leading-6 text-[#c4c5ba] font-mono mb-2  text-center">Group name Already exist</p>}
       </div>}
-      { isCreated && <div className='flex justify-center items-center  mt-14 mb-8'>
-
+      {isCreated && <div className='flex justify-center items-center  mt-14 mb-8'>
       <h1 className="text-2xl text-white  font-mono">Group created successfully</h1>
       </div>}
     </div>
