@@ -7,7 +7,7 @@ import Image from "next/image";
 import emailjs from "emailjs-com";
 import styles from "../app/styles.module.css";
 
-const close = (
+export const close = (
   <svg
     aria-label="Close"
     className="text-gray-300 hover:text-white x1lliihq x1n2onr6 x5n08af"
