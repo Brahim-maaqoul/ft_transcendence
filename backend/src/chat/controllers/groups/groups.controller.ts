@@ -47,6 +47,21 @@ export class GroupsController {
         return res.status(200).json(members);
     }
     
+    @Delete('/deleteUser')
+    @UseGuards(AuthGuard('jwt'))
+    async deleteUser(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
+    {
+        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, member.group);
+        const checkMember = await this.GroupsService.checkAdmin(member.userId, member.group);
+        if (checkMember === "notMember")
+            return res.status(401, "not a member")
+        if (checkMember === "creator")
+            return res.status(401, "can't ban this user")
+            if (checkAdmin === "member" || checkAdmin === "notMember" || checkAdmin === "banned")
+            return res.status(401, "you,re not an admin")
+        await this.GroupsService.banUser(member)
+        return res.status(204, "user deleted");
+    }
     @Post('/banUser')
     @UseGuards(AuthGuard('jwt'))
     async banUser(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
@@ -54,13 +69,29 @@ export class GroupsController {
         const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, member.group);
         const checkMember = await this.GroupsService.checkAdmin(member.userId, member.group);
         if (checkMember === "notMember")
-            return res.status(405, "not a member")
+            return res.status(401, "not a member")
         if (checkMember === "creator")
-            return res.status(405, "can't ban this user")
-        if (checkAdmin === "member" || checkAdmin === "notMember")
-            return res.status(405, "you,re not an admin")
+            return res.status(401, "can't ban this user")
+        if (checkAdmin === "member" || checkAdmin === "notMember" || checkAdmin === "banned")
+            return res.status(401, "you,re not an admin")
         await this.GroupsService.banUser(member)
         return res.status(201, "user banned");
+    }
+
+    @Post('/unBanUser')
+    @UseGuards(AuthGuard('jwt'))
+    async unBanUser(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
+    {
+        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, member.group);
+        const checkMember = await this.GroupsService.checkAdmin(member.userId, member.group);
+        if (checkMember === "notMember")
+            return res.status(401, "not a member")
+        if (checkMember === "creator")
+            return res.status(401, "can't ban this user")
+            if (checkAdmin === "member" || checkAdmin === "notMember" || checkAdmin === "banned")
+            return res.status(401, "you,re not an admin")
+        await this.GroupsService.unBanUser(member)
+        return res.status(201, "user unbanned");
     }
 
     @Post('/joinGroup')
@@ -68,9 +99,31 @@ export class GroupsController {
     async joinGroup(@Res() res, @Req() req,@Body(new ValidationPipe()) joinRequest:joinRequest)
     {
         const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, joinRequest.group);
+        if (checkAdmin === "banned")
+            return res.status(401, "you're banned from this group");
         if (checkAdmin !== "notMember")
-            return res.status(405, "you're already a member");
+            return res.status(401, "you're already a member");
         await this.GroupsService.joinGroup(req.user.auth_id, joinRequest)
         return res.status(201);
+    }
+    @Delete('/delete')
+    @UseGuards(AuthGuard('jwt'))
+    async deleteGroup(@Res() res, @Req() req,@Body('groupID', ParseIntPipe) group_id:number)
+    {
+        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, group_id);
+        if (checkAdmin !== "creator")
+            return res.status(401, "you're not the creator");
+        await this.GroupsService.deleteGroup(group_id);
+        return res.status(204);
+    }
+    @Delete('/quit')
+    @UseGuards(AuthGuard('jwt'))
+    async quitGroup(@Res() res, @Req() req,@Body('groupID', ParseIntPipe) group_id:number)
+    {
+        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, group_id);
+        if (checkAdmin === "creator")
+            return res.status(401, "you're the creator");
+        await this.GroupsService.quitGroup(req.user.auth_id, group_id);
+        return res.status(204);
     }
 }
