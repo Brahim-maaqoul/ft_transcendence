@@ -28,7 +28,15 @@ export class GroupsService {
                                 },
                             },
                         },
-                    ]
+                    ],
+                    NOT:{
+                        members:{
+                            some:{
+                                user_id: user_id,
+                                banned: true,
+                            }
+                        }
+                    }
               },
             orderBy: {
                 lastChange: 'desc',
@@ -88,6 +96,8 @@ export class GroupsService {
         })
         if (!member)
             return "notMember";
+        if (member.banned)
+            return "banned"
         return member.type
     }
     async addMember(creator_id: string, add_member:memberDto)
@@ -137,6 +147,37 @@ export class GroupsService {
             }
         })
     }
+    async unBanUser(member:memberDto)
+    {
+        const relation = await this.prisma.members.findFirst({
+            where:{
+                group_id: member.group,
+                user_id: member.userId
+            },
+        })
+        return await this.prisma.members.update({
+            where:{
+                id: relation.id
+            },
+            data:{
+                banned: false
+            }
+        })
+    }
+    async deleteUser(member:memberDto)
+    {
+        const relation = await this.prisma.members.findFirst({
+            where:{
+                group_id: member.group,
+                user_id: member.userId
+            },
+        })
+        return await this.prisma.members.delete({
+            where:{
+                id: relation.id
+            },
+        })
+    }
 
     async joinGroup(user_id: string, joinRequest: joinRequest)
     {
@@ -163,7 +204,35 @@ export class GroupsService {
                 type: "member",
                 banned: false,
             }
-        })
-        
+        }) 
+    }
+
+    async deleteGroup(group_id: number)
+    {
+        await this.prisma.members.deleteMany(
+            {
+                where:
+                {
+                    group_id: group_id
+                }
+            }
+        )
+        await this.prisma.groups.delete(
+            {
+                where:{id: group_id}
+            }
+        )
+    }
+    async quitGroup(user_id:string, group_id: number)
+    {
+        await this.prisma.members.deleteMany(
+            {
+                where:
+                {
+                    group_id: group_id,
+                    user_id: user_id,
+                }
+            }
+        )
     }
 }
