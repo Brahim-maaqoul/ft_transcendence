@@ -62,6 +62,7 @@ export class GroupsService {
         })
         return groups;
     }
+
     async createGroup(creator_id: string, group:groupDto)
     {
         let hash:null|string = null;
@@ -88,6 +89,7 @@ export class GroupsService {
         })
         return createdGroup
     }
+
     async checkAdmin(user_id: string, group_id : number): Promise<string>
     {
         const member = await this.prisma.members.findFirst({

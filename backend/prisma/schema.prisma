@@ -63,7 +63,7 @@ model BlockedUser {
 model Groups {
   id           Int            @id @default(autoincrement())
   name         String
-  type         String         @default("chat")
+  type         String         @default("duo")
   privacy      String         @default("private")
   password     String?
   picture      String?        @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
