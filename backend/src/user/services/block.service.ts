@@ -70,5 +70,6 @@ export class BlockService {
       });
       return 'User blocked successfully.';
     }
+    
   }
   
