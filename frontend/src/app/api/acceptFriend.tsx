@@ -3,7 +3,6 @@ import { API } from "./checkAuthentication";
 
 export async function acceptFriend(auth_id: string) {
   try {
-    console.log("here");
     const response: AxiosResponse = await API.post("/friends/accepteFriend", {
       auth: auth_id,
     });

@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Req, UseGuards, Post, Body, ValidationPipe, ParseIntPipe, Delete } from '@nestjs/common';
+import { Controller, Get, Res, Req, UseGuards, Post, Body, ValidationPipe, ParseIntPipe, Delete, Query } from '@nestjs/common';
 import { GroupsService } from 'src/chat/services/groups/groups.service';
 import { AuthGuard } from '@nestjs/passport';
 import { groupDto } from 'src/chat/dto/group.dto';
@@ -44,17 +44,17 @@ export class GroupsController {
 
     @Get('/memberType')
     @UseGuards(AuthGuard('jwt'))
-    async getMemberType(@Res() res, @Req() req)
+    async getMemberType(@Res() res, @Req() req, @Query('groupId', ParseIntPipe) groupId: number)
     {
-        const type = await this.GroupsService.checkAdmin(req.user.auth_id, req.query['groupId'])
+        const type = await this.GroupsService.checkAdmin(req.user.auth_id, groupId)
         return res.status(200).json({type: type});
     }
 
     @Get('/getMembers')
     @UseGuards(AuthGuard('jwt'))
-    async getMembers(@Res() res, @Req() req)
+    async getMembers(@Res() res, @Req() req, @Query('groupId', ParseIntPipe) groupId: number)
     {
-        const members = await this.GroupsService.getMembers(req.query['groupId'])
+        const members = await this.GroupsService.getMembers(groupId)
         return res.status(200).json(members);
     }
     

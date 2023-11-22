@@ -41,7 +41,6 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       );
     };
   }, []);
-  console.log("friendship Type: ", FriendshipType);
   const imageUrl = profileData?.picture;
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">

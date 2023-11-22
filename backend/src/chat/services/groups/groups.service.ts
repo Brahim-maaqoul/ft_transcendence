@@ -46,9 +46,9 @@ export class GroupsService {
             select:{
                 id: true,
                 name: true,
-                type: true,
                 privacy: true,
                 picture: true,
+                lastChange:true,
                 members:
                 {
                     where: {

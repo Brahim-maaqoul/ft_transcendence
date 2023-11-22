@@ -30,14 +30,13 @@ const handleJoninGroup = () => {
     if(joinId.Privacy == "protected")
     {
          joinGroupMutution.mutate({groupId: joinId.id, password: joinId.password, type: joinId.Privacy});
-         console.log("Is Protected",joinGroupMutution.data);
+     
     }
     else
         joinGroupMutution.mutate({groupId: joinId.id, password:"", type: joinId.Privacy});
         
     if(joinGroupMutution.isSuccess)
-    {   
-        console.log("joinGroupMutution.isSuccess",joinGroupMutution.data);
+    {
         setJoinConfirm(true);
     }
 

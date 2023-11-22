@@ -7,11 +7,9 @@ const API = axios.create({
   withCredentials: true,
 });
 export async function middleware(request: NextRequest) {
-  console.log("req", request);
   // try {
     const jwtCookie = request.cookies.get('token')?.value;
     const isAuthorized = await checkAuthorization(jwtCookie);
-    console.log("isQuth", isAuthorized)
   //   if (!isAuthorized) {
   //     return NextResponse.redirect(new URL('/login', request.url).toString());
   //   }
@@ -36,15 +34,12 @@ async function checkAuthorization(jwtCookie: string | undefined): Promise<boolea
         Authorization: jwtCookie ? `Bearer ${jwtCookie}` : '',
       },
     });
-    console.log("response\t\t\t\t", response.ok)
-    console.log("response\t\t\t\t")
     if (response.ok) {
       return true;
     } else {
       return false;
     }
   } catch (error) {
-    console.log("response1\t\t\t\t")
     return false;
   }
 }

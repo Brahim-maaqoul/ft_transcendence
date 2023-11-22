@@ -29,7 +29,6 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   useEffect(() => {
     socketchat?.on("isTyping", (newMessage: any) => {
       setisTyping(true);
-      console.log(newMessage);
     });
     return () => {
       socketchat?.off("isTyping");

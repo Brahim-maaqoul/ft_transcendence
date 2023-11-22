@@ -184,7 +184,6 @@ export default function FriendCases({
   FriendshipType: string;
   authId: string;
 }) {
-  console.log(FriendshipType);
   switch (FriendshipType) {
     case "not friend":
       return <AddFriend authId={authId} />;

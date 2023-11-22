@@ -16,8 +16,8 @@ export default function MainGroup() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement | null>(null);
   const { data: getUsersbyname } = useSearchByName(searchText);
-  console.log(searchText);
-  console.log(suggestions);
+ 
+  
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;

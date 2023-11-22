@@ -34,7 +34,6 @@ export class AuthService {
           nickname,
         },
       });
-      console.log(user)
       return user != null ? false : true;
     } catch (error) {
       return false;
