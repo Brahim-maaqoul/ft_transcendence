@@ -11,7 +11,6 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../../auth/auth.service';
-import { getOtpAuthUrl, getQrCode } from 'src/2fa/2fa';
 
 @Controller('/v1/api/user')
 export class UserController {
@@ -58,8 +57,6 @@ export class UserController {
   @Get('/userByName')
   async getUsersByName(@Res() res, @Req() req) {
     const users = await this.UserService.getUsersbyName(req.query['name']);
-    // console.log(req.query['name'],"her");
-    // console.log( users);
     return res.status(200).json(users);
   }
 
@@ -121,14 +118,6 @@ export class UserController {
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.json({ isVerified: isVerified });
-  }
-
-  @Get('/getQrCode')
-  @UseGuards(AuthGuard('jwt'))
-  async getQrCode(@Res() res, @Req() request) {
-    const url = getOtpAuthUrl(request.user.tfaSecret, request.user.nickname);
-    const qrcode = await getQrCode(request.user.tfaSecret, url);
-    return res.status(200).json({ qrcode: qrcode });
   }
 
   @Get('/getUserInfo')

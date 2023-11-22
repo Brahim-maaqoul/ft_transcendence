@@ -1,19 +1,18 @@
-
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as otplib from 'otplib'
-import * as qrcode from 'qrcode';
-
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly configService: ConfigService,private readonly  prisma: PrismaService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
 
-    private get secretKey(): string {
-      return this.configService.get<string>('JWT_SECRET_KEY');
-    }
+  private get secretKey(): string {
+    return this.configService.get<string>('JWT_SECRET_KEY');
+  }
 
   generateToken(payload: any): string {
     return jwt.sign(payload, this.secretKey);
@@ -40,12 +39,13 @@ export class AuthService {
     }
   }
 
-
-  async createUser(auth_id: string,
+  async createUser(
+    auth_id: string,
     email: string,
     displayname: string,
     picture: string,
-    emailVerified?: boolean) {
+    emailVerified?: boolean,
+  ) {
     return this.prisma.users.create({
       data: {
         auth_id,
@@ -55,14 +55,14 @@ export class AuthService {
         emailVerified,
         stats: {
           create: {
-              wins: 0,
-              losses: 0,
-              goal_conceded: 0,
-              goal_scoared: 0,
-              clean_sheets: 0
-          }
-      }
-      }
+            wins: 0,
+            losses: 0,
+            goal_conceded: 0,
+            goal_scoared: 0,
+            clean_sheets: 0,
+          },
+        },
+      },
     });
   }
 
@@ -74,32 +74,21 @@ export class AuthService {
     return user;
   }
 
-  async updateUser(auth_id : string ,nickname: string, displayname: string, picture: string, bio: string,firstSignIn:boolean) {
+  async updateUser(
+    auth_id: string,
+    nickname: string,
+    displayname: string,
+    picture: string,
+    bio: string,
+    firstSignIn: boolean,
+  ) {
     const updatedUser = await this.prisma.users.update({
       where: { auth_id },
-      data: { nickname, displayname, picture,bio ,firstSignIn},
+      data: { nickname, displayname, picture, bio, firstSignIn },
     });
     if (!updatedUser) {
       throw new NotFoundException(`User with ID ${auth_id} not found`);
     }
     return updatedUser;
   }
-  // generateSecret(): string {
-  //   return otplib.authenticator.generateSecret();
-  // }
-
-  // generateOtp(secret: string): string {
-  //   return otplib.authenticator.generate(secret);
-  // }
-
-  // verifyOtp(secret: string, token: string): boolean {
-  //   return otplib.authenticator.verify({ token, secret });
-  // }
-  // async generateQrCode(secret: string, label: string): Promise<string> {
-  //   const otpauthURL = otplib.authenticator.keyuri('user', label, secret);
-  //   const qrCode = await qrcode.toDataURL(otpauthURL);
-
-  //   return qrCode;
-  // }
-
 }

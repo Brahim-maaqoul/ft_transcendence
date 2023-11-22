@@ -11,10 +11,7 @@ const API = axios.create({
 const TfaPage = () => {
   const [userInput, setUserInput] = useState("");
   const [nickname, setNickname] = useState("");
-
-  const handleUserInput = (event: any) => {
-    setUserInput(event.target.value);
-  };
+  const [isButtonAvailable, setIsButtonAvailable] = useState(false);
 
   const router = useRouter();
 
@@ -49,17 +46,45 @@ const TfaPage = () => {
     }
   };
 
-  const handleKeyPress = (e: any) => {
-    if (e.key === "Enter") {
-      verifyTfaCode(e);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsButtonAvailable(true);
+    }, 2 * 60 * 1000);
+
+    return () => clearTimeout(timer);
+  }, [isButtonAvailable]);
+
+  const resendCode = async () => {
+    setIsButtonAvailable(false);
+    try {
+      const response = await API.get("/user/getUserInfo", {
+        params: { nickname: nickname },
+      });
+      if (response.data.userInfo) {
+        await API.post("/auth/sendEmail", {
+          UserInfo: response.data.userInfo,
+        });
+      }
+    } catch (e) {
+      console.log("Failed to resend the email.");
     }
+  };
+
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      verifyTfaCode(event);
+    }
+  };
+
+  const handleUserInput = (event: any) => {
+    setUserInput(event.target.value);
   };
 
   return (
     <div className="z-0 w-full md:w-[500px] h-1/2 relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="w-full overflow-auto h-full  md:bg-opacity-70 md:bg-slate-950   text-white  m-auto rounded-2xl p-10">
         <div className="flex flex-col items-center justify-center gap-4 h-full">
-          <span>Provide the 6-digit code in your authenticator app</span>
+          <span>Provide the 6-digit code received in your email.</span>
           <input
             placeholder="Enter code"
             value={userInput}
@@ -68,12 +93,23 @@ const TfaPage = () => {
             className="rounded-full text-center text-black h-[40px] w-[150px]"
           />
           {error !== "" ? <p className="text-red-600">Try Again!</p> : null}
-          <button
-            onClick={verifyTfaCode}
-            className="text-white bg-blue-700 hover:bg-blue-800 w-[100px] h-[30px] rounded-full text-sm dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            Verify Code
-          </button>
+          <div className="buttons flex gap-10">
+            <button
+              onClick={resendCode}
+              disabled={!isButtonAvailable}
+              className={`text-white bg-blue-700 hover:bg-blue-800 w-[100px] h-[30px] rounded-full text-sm dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 ${
+                !isButtonAvailable && "opacity-50 cursor-not-allowed"
+              }`}
+            >
+              Resend
+            </button>
+            <button
+              onClick={verifyTfaCode}
+              className="text-white bg-blue-700 hover:bg-blue-800 w-[100px] h-[30px] rounded-full text-sm dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            >
+              Verify
+            </button>
+          </div>
         </div>
       </div>
     </div>

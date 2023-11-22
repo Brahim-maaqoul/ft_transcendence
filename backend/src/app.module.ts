@@ -5,8 +5,6 @@ import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
 
-
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -14,9 +12,8 @@ import { GameModule } from './game/game.module';
     }),
     AuthModule,
     UserModule,
-    GameModule
+    GameModule,
   ],
-providers:[PrismaService],
-
+  providers: [PrismaService],
 })
 export class AppModule {}

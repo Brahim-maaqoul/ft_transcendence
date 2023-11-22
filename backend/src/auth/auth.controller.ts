@@ -7,7 +7,6 @@ import {
   Param,
   Res,
   UseGuards,
-  Redirect,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,6 +14,7 @@ import { AuthService } from './auth.service';
 import { AuthGoogleGuard } from './Guard/auth-google.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import { updatedUser } from './dtos/updateUser.dto';
+import { sendEmail, generateTotpCode } from 'src/2fa/2fa';
 
 @Controller('v1/api/auth')
 export class AuthController {
@@ -30,15 +30,18 @@ export class AuthController {
     const userId = req.user.auth_id;
     const user = await this.authService.findUserById(userId.toString());
     if (user.isTfaEnabled) {
-      const redirectUrl = `http://localhost:3000/tfa?&nickname=${req.user.nickname}`;
-      return res.redirect(redirectUrl);
+      sendEmail(user.email, generateTotpCode(user.tfaSecret));
+      return res.redirect(
+        `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
+      );
     }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-    if (req.user.firstSignIn) {
-      return res.redirect(`http://localhost:3000/${userId}/Edit`);
-    }
-    return res.redirect('http://localhost:3000/');
+    return res.redirect(
+      req.user.firstSignIn
+        ? `http://localhost:3000/${userId}/Edit`
+        : 'http://localhost:3000/',
+    );
   }
 
   @Get('42')
@@ -51,15 +54,24 @@ export class AuthController {
     const userId = req.user.auth_id;
     const user = await this.authService.findUserById(userId.toString());
     if (user.isTfaEnabled) {
-      const redirectUrl = `http://localhost:3000/tfa?&nickname=${req.user.nickname}`;
-      return res.redirect(redirectUrl);
+      sendEmail(user.email, generateTotpCode(user.tfaSecret));
+      return res.redirect(
+        `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
+      );
     }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-    if (req.user.firstSignIn) {
-      return res.redirect(`http://localhost:3000/${userId}/Edit`);
-    }
-    return res.redirect('http://localhost:3000/');
+    return res.redirect(
+      req.user.firstSignIn
+        ? `http://localhost:3000/${userId}/Edit`
+        : 'http://localhost:3000/',
+    );
+  }
+
+  @Post('sendEmail')
+  async sendEmail(@Req() req) {
+    const { email, tfaSecret } = req.body.UserInfo;
+    sendEmail(email, generateTotpCode(tfaSecret));
   }
 
   @Get('logout')

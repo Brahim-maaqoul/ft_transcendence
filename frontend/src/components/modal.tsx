@@ -1,6 +1,5 @@
 import React, { MouseEvent, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import Image from "next/image";
 
 type ModalProps = {
   isOpen: boolean;
@@ -46,15 +45,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const [qrCodeData, setQrCodeData] = useState<{ qrcode: string } | null>(null);
-  useEffect(() => {
-    if (isTfaEnabled) {
-      API.get("/user/getQrCode").then((response) => {
-        setQrCodeData(response.data.qrcode);
-      });
-    }
-  }, [isTfaEnabled]);
-
   return isOpen ? (
     <div
       className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
@@ -83,22 +73,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               ></div>
             </label>
           </div>
-          {isTfaEnabled ? (
-            <div className="flex flex-col justify-center items-center gap-5">
-              <p className="text-center text-sm">
-                Scan The QrCode below to login next time with the 6-digit code
-                in your authenticator app
-              </p>
-              {qrCodeData ? (
-                <Image
-                  src={qrCodeData.qrcode}
-                  alt="QR Code"
-                  width={200}
-                  height={200}
-                />
-              ) : null}
-            </div>
-          ) : null}
         </div>
       </div>
     </div>
