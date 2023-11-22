@@ -52,23 +52,23 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
   const [data, setData] = useState<MessageInfo[]>([]);
   const [friendToGroup, setFriendToGroup] = useState(false);
 
-  useEffect(() => {
-    socketchat?.emit("join", { id: id });
-    return () => {
-      socketchat?.emit("leave", { id: id });
-      socketchat?.off("join");
-      socketchat?.off("leave");
-    };
-  }, [socketchat]);
+  // useEffect(() => {
+  //   socketchat?.emit("join", { id: id });
+  //   return () => {
+  //     socketchat?.emit("leave", { id: id });
+  //     socketchat?.off("join");
+  //     socketchat?.off("leave");
+  //   };
+  // }, [socketchat]);
 
-  useEffect(() => {
-    socketchat?.on("message", (newMessage: MessageInfo) => {
-      setData((prevMessages) => [...prevMessages, newMessage]);
-    });
-    return () => {
-      socketchat?.off("message");
-    };
-  }, [socketchat]);
+  // useEffect(() => {
+  //   socketchat?.on("message", (newMessage: MessageInfo) => {
+  //     setData((prevMessages) => [...prevMessages, newMessage]);
+  //   });
+  //   return () => {
+  //     socketchat?.off("message");
+  //   };
+  // }, [socketchat]);
 
   const mutation = useMutation(getMessages);
   const handegetAllmessage = () => {

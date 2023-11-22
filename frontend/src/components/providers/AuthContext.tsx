@@ -48,7 +48,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         withCredentials: true,
       });
       setSocketchat(newSocket);
-      console.log(newSocket);
     }
   }, [socketchat]);
 

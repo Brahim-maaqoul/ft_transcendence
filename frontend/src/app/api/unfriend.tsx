@@ -3,7 +3,6 @@ import { API } from "./checkAuthentication";
 
 export async function unFriend(auth_id: string) {
   try {
-    console.log("here");
     const response: AxiosResponse = await API.delete(
       "/friends/unFriend?auth=" + auth_id
     );

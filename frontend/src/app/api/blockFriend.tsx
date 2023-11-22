@@ -3,7 +3,6 @@ import { API } from "./checkAuthentication";
 
 export async function blockFriend(auth_id: string) {
   try {
-    console.log("here");
     const response: AxiosResponse = await API.post("/block/blockUser", {
       auth: auth_id,
     });

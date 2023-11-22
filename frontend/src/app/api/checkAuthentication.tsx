@@ -85,7 +85,6 @@ export function useCheckAuthentication(): UseQueryResult<any> {
 
 // export async function creatGroup(data: GroupCreate) {
 //   const response: AxiosResponse = await API.post("/chat/createGroups", data);
-//   console.log("responseeeeeeeee :", response.data.message);
 //   return response.data;
 // }
 

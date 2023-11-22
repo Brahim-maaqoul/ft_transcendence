@@ -1,6 +1,17 @@
 
 import {Ball, Brick, PSize, Paddle} from "./component"
 
+
+
+interface keys{
+	left: boolean,
+	right: boolean,
+	turnr: boolean,
+	turnl: boolean,
+	
+}
+
+
 export interface GameConfig {
 	bricks: Array<PSize>
 	ball: Array<PSize>

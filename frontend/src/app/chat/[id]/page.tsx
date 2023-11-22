@@ -9,7 +9,6 @@ import { Search } from "@/components/search";
 import { useState } from "react";
 
 export default function Chat({ params }: { params: any }) {
-  console.log(params.id);
   const { show } = useAuth();
   let hidden: string;
   let hidden1: string;

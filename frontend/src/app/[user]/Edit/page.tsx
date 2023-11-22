@@ -35,7 +35,6 @@ export default function Edit() {
       queryClient.invalidateQueries(["data"]);
     },
   });
-  console.log(mutation);
   const { isSuccess, isLoading, isError } = mutation;
   useEffect(() => {
     if (isSuccess) {

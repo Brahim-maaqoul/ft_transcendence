@@ -7,12 +7,11 @@ import Link from "next/link";
 import {
   usegetGroups,
   creatGroup,
-  checkIsGroupMember,
+  useCheckIsGroupMember,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { set } from "react-hook-form";
 import Toggle from "./toggle";
 import { stringify } from "querystring";
-import { group } from "console";
 import { useMutation } from "@tanstack/react-query";
 import { m } from "framer-motion";
 import { CreatGroup } from "./creatGroup";
@@ -22,14 +21,18 @@ interface Message {
   timestamp: string;
 }
 
+interface member{
+  type: string
+}
+
 interface Chat {
   id: number;
   name: string;
   picture: string;
   password: string;
-  timestamp: string;
+  lastChange: string;
   Privacy: string;
-  messages: Message[];
+  members: member[];
 }
 
 export const Groups = () => {
@@ -40,27 +43,24 @@ export const Groups = () => {
 
   const { dataUser, showTrue, showFalse } = useAuth();
   const { data, error, isLoading } = usegetGroups();
-
-  const socket = io("http://localhost:8000");
-  const isMemberMutution = useMutation(checkIsGroupMember);
+  // const {data: groupId} = useCheckIsGroupMember({groupId: group.id})
   if (error) return <div>error</div>;
   if (isLoading) return <div>loading</div>;
   const route = useRouter();
   const pushId = (id: string) => {
     route.push(`/chat/${id}`);
-    socket.emit("joinRoom", { id: id });
   };
   const sortedData = data;
   const handleJoninGroup = (group: Chat) => {
     showTrue();
-    isMemberMutution.mutate({ groupId: group.id });
-    if (isMemberMutution.isSuccess) {
-      if (isMemberMutution.data.isMember) {
-        pushId(String(group.id));
-      } else {
-        setJoinId(group);
-      }
+    if (!group.members.length || group.members[0].type === "notMember" || group.members[0].type === "banned") {
+      setJoinId(group);
+    } else {
+      console.log("here")
+      console.log(group.members[0].type)
+      pushId(String(group.id));
     }
+
   };
   return (
     <div className="">

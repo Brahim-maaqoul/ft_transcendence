@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { API } from "../checkAuthentication";
+import { error } from "console";
 
 interface GroupCreate {
   groupName: string;
@@ -83,7 +84,21 @@ export async function joinToGroup(data: Chat) {
   return response.data;
 }
 
-export async function checkIsGroupMember(data: idGroup) {
-  const response: AxiosResponse = await API.post("/groups/memberType", data);
-  return response.data;
+async function checkIsGroupMember(data: idGroup) {
+  try{
+    const response: AxiosResponse = await API.get("/groups/memberType/"+"?groupId="+data.groupId);
+    console.log("res........................", response)
+    return response.data;
+  }
+  catch(err)
+  {
+    console.log("err", err)
+  }
+}
+
+export function useCheckIsGroupMember(data: idGroup){
+  return useQuery({
+    queryKey:['groupId', data.groupId],
+    queryFn: () => checkIsGroupMember(data)
+  })
 }

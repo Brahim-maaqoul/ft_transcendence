@@ -18,7 +18,6 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
   newGroup,
   setNewGroup,
 }) => {
-  console.log("1");
   const [typegroup, setTypeGroup] = useState("public");
   const [GroupName, setGroupName] = useState("");
   const [GroupPassword, setGroupPassword] = useState("");

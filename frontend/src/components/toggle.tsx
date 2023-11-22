@@ -47,7 +47,6 @@ const Toggle = () => {
         form.current!,
         "HlsseG9BiS6Ux9W7m"
       );
-      console.log(result.text);
       setContact(false);
     } catch (error) {
       console.error(error);

@@ -1,5 +1,4 @@
 import React from "react";
-console.log("search");
 export const Search = () => {
   return (
     <div className="flex py-2 items-center justify-center ">
