@@ -7,10 +7,17 @@ import { UserService } from './services/user.service';
 import { FriendService } from './services/friend.service';
 import { BlockController } from './controllers/block/block.controller';
 import { DuoService } from 'src/chat/services/chats/chats.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   controllers: [UserController, FriendController, BlockController],
-  providers: [FriendService, UserService, PrismaService, BlockService, DuoService],
+  providers: [
+    FriendService,
+    UserService,
+    PrismaService,
+    BlockService,
+    DuoService,
+    AuthService,
+  ],
 })
-export class UserModule {
-}
+export class UserModule {}

@@ -9,7 +9,7 @@ import { UserProfile, useAuth } from "./providers/AuthContext";
 import { useFriendType } from "@/app/api/getFriendtype";
 import { useGetStats } from "@/app/api/getStats";
 import { getUser } from "@/app/api/getUserByNickname";
-
+import TfaToggle from "./tfaToggle";
 import FriendCases, { Block } from "./friendStatus";
 
 function Infos({ profileData }: { profileData: UserProfile }) {
@@ -73,7 +73,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                 <span className="text-sm ml-2">Matches</span>
               </div>
             </div>
-            {profileData?.nickname !== dataUser?.nickname && (
+            {profileData?.nickname !== dataUser?.nickname ? (
               <div className="flex items-start justify-end">
                 {FriendshipType?.type !== "blocking" &&
                   FriendshipType?.type !== "blocked" && (
@@ -135,7 +135,8 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                   />
                 )}
               </div>
-            )}
+            ) : <TfaToggle />
+          }
           </div>
           <div className="w-full  absolute  left-0 right-0 bottom-0 z-0">
             <div className="flex flex-col items-center text-white mb-4">
