@@ -17,6 +17,9 @@ model Users {
   bio                 String?        @default("bio")
   emailVerified       Boolean?
   picture             String?        @default("https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg")
+  isTfaEnabled        Boolean        @default(false)
+  isTfaValidated      Boolean        @default(false)
+  tfaSecret           String?
   blocked             BlockedUser[]  @relation("BlockedByUsers")
   blocker             BlockedUser[]  @relation("BlockingUsers")
   friends1            Friends[]      @relation("User1ToFriends")
@@ -74,14 +77,14 @@ model Groups {
 }
 
 model Members {
-  id       Int     @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   user_id  String
   group_id Int
-  type     String  @default("member")
-  banned   Boolean @default(false)
+  type     String    @default("member")
+  banned   Boolean   @default(false)
   muted    DateTime?
-  group    Groups  @relation(fields: [group_id], references: [id])
-  user     Users   @relation(fields: [user_id], references: [auth_id])
+  group    Groups    @relation(fields: [group_id], references: [id])
+  user     Users     @relation(fields: [user_id], references: [auth_id])
 }
 
 model Message {
