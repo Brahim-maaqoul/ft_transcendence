@@ -23,8 +23,9 @@ export class GroupsController {
     @UseGuards(AuthGuard('jwt'))
     async createGroup(@Res() res, @Req() req, @Body(new ValidationPipe()) group:groupDto)
     {
-        this.GroupsService.createGroup(req.user.auth_id, group);
-        return res.status(201);
+        const groups = this.GroupsService.createGroup(req.user.auth_id, group);
+        console.log("here")
+        return res.status(200).json(groups);    
     }
     @Post('/addMember')
     @UseGuards(AuthGuard('jwt'))
