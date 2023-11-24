@@ -8,7 +8,7 @@ import { set } from "react-hook-form";
 import Toggle from "./toggle";
 import { stringify } from "querystring";
 import { group } from "console";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { m } from "framer-motion";
 interface CreatGroupProps {
   newGroup: boolean; // Assuming newGroup is a string, you can adjust the type as needed
@@ -24,8 +24,13 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
   const [isCreated, setIsCreated] = useState(false);
   const [message, setmessage] = useState("");
   const [isError, setIsErro] = useState(false);
-
-  const mutation = useMutation(creatGroup);
+  const queryClient = useQueryClient();
+  const mutation = useMutation({mutationFn:  creatGroup,
+    onSuccess: () => {setIsCreated(true);
+      queryClient.invalidateQueries(['dataGroups'])
+    },
+    onError: () => setIsErro(true)
+  });
   const handelCreatGroup = () => {
     mutation.mutate({
       groupName: GroupName,
@@ -34,15 +39,16 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
     });
   };
 
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      setmessage(mutation.data.message);
-      setIsCreated(true);
-    }
-    if (mutation.isError) {
-      setIsErro(true);
-    }
-  }, [mutation.isSuccess, mutation.isError, newGroup]);
+  // useEffect(() => {
+  //   console.log("mutation", mutation)
+  //   if (mutation.isSuccess) {
+  //     setmessage(mutation.data.message);
+  //     // setIsCreated(true);
+  //   }
+  //   if (mutation.isError) {
+  //     setIsErro(true);
+  //   }
+  // }, [mutation.isLoading]);
   function isStrongPassword(password: string) {
     const hasUppercase = /[A-Z]/.test(password);
     const hasLowercase = /[a-z]/.test(password);
@@ -137,14 +143,14 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
                 onClick={handelCreatGroup}
                 className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer">
                 <span className=" text-xl leading-6 text-black font-mono">
-                  Creat
+                  Create
                 </span>
               </button>
             )}
             {!checkInfoCreatGroup() && (
               <button className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-gray-400  rounded-full cursor-not-allowed">
                 <span className=" text-xl leading-6 text-black font-mono ">
-                  Creat
+                  Create
                 </span>
               </button>
             )}
