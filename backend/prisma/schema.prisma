@@ -89,7 +89,7 @@ model Members {
 
 model Message {
   id          Int      @id @default(autoincrement())
-  messageText String
+  message_text String
   group_id    Int
   lastmodif   DateTime @default(now())
   sender_id   String

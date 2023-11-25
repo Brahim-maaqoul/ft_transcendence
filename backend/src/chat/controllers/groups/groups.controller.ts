@@ -16,7 +16,7 @@ export class GroupsController {
     async getGroups(@Res() res, @Req() req)
     {
         const groups = await this.GroupsService.getGroups(req.user.auth_id);
-        return res.status(200).json(groups);          
+        return res.status(200).json(groups);
     }
 
     @Post('/createGroup')
@@ -25,7 +25,7 @@ export class GroupsController {
     {
         const groups = this.GroupsService.createGroup(req.user.auth_id, group);
         console.log("here")
-        return res.status(200).json(groups);    
+        return res.status(200).json(groups);
     }
     @Post('/addMember')
     @UseGuards(AuthGuard('jwt'))
@@ -58,7 +58,7 @@ export class GroupsController {
         const members = await this.GroupsService.getMembers(groupId)
         return res.status(200).json(members);
     }
-    
+
     @Delete('/deleteUser')
     @UseGuards(AuthGuard('jwt'))
     async deleteUser(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
@@ -138,7 +138,7 @@ export class GroupsController {
         await this.GroupsService.unmute(member)
         return res.status(201, "user unbanned");
     }
-    
+
     @Post('/joinGroup')
     @UseGuards(AuthGuard('jwt'))
     async joinGroup(@Res() res, @Req() req,@Body(new ValidationPipe()) joinRequest:joinRequest)
