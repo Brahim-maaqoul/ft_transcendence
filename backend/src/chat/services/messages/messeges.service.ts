@@ -11,16 +11,27 @@ export class MessagesService {
         return await this.prisma.message.findMany({
             where:{
                 group_id: group_id
+            },
+            orderBy: {
+                lastmodif: 'desc',
             }
         })
     }
     async createMessage(sender_id:string, messageDto: messageDto)
     {
-        return this.prisma.message.create({
+        const message = await this.prisma.message.create({
             data:{
-                sender_id,
-                group_id:messageDto.groupID,
                 message_text: messageDto.message,
+                group_id:messageDto.groupID,
+                sender_id,
+            }
+        })
+        await this.prisma.groups.update({
+            where:{
+                id: messageDto.groupID
+            },
+            data:{
+                lastChange: new Date()
             }
         })
     }

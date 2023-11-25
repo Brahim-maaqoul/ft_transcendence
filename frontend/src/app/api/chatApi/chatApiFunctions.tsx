@@ -9,7 +9,8 @@ interface GroupCreate {
   type: string;
 }
 interface Message {
-  timestamp: string;
+  groupId: number
+  message: string
 }
 
 interface Chat {
@@ -58,18 +59,29 @@ export async function creatGroup(data: GroupCreate) {
   catch(err){
     console.log(err)
   }
-  
 }
 
-export async function getMessages(data: messagesData) {
-  const response: AxiosResponse = await API.post("/chat/getAllMessage", data);
+async function getMessages(data: messagesData) {
+  const response: AxiosResponse = await API.get("/messages/getMessages?groupId=" + data.groupId);
   return response.data.allMessage;
 }
+
+export async function useGetMessages(data: messagesData)
+{
+  return useQuery({ queryKey: ["getMessages"], queryFn: () => getMessages(data) });
+}
+
 
 export async function deleteGroup(data: idGroup) {
   const response: AxiosResponse = await API.post("/chat/removeRome", data);
   return response.data;
 }
+
+export async function sendMessages(data: Message) {
+  const response: AxiosResponse = await API.post("/messages/sendMessages", data);
+  return response.data;
+}
+
 
 export async function addFriendToGroup(data: idGroup) {
   const response: AxiosResponse = await API.post("/chat/addFriendToGroup",data
@@ -95,7 +107,6 @@ export async function joinToGroup(data: Chat) {
 async function checkIsGroupMember(data: idGroup) {
   try{
     const response: AxiosResponse = await API.get("/groups/memberType/"+"?groupId="+data.groupId);
-    console.log("res........................", response)
     return response.data;
   }
   catch(err)
