@@ -73,7 +73,6 @@ model Groups {
   lastChange   DateTime       @default(now())
   members      Members[]
   messages     Message[]
-  notification Notification[]
 }
 
 model Members {
@@ -110,10 +109,9 @@ model Notification {
   notification_id Int     @id @default(autoincrement())
   type            String
   sender_id       String
-  reciever_id     String
-  group_id        Int
+  receiver_id     String
   seen            Boolean @default(false)
-  group           Groups  @relation(fields: [group_id], references: [id])
-  Recipient       Users   @relation("Recipient", fields: [reciever_id], references: [auth_id])
+  last_change     DateTime       @default(now())
+  Recipient       Users   @relation("Recipient", fields: [receiver_id], references: [auth_id])
   Source          Users   @relation("Source", fields: [sender_id], references: [auth_id])
 }
