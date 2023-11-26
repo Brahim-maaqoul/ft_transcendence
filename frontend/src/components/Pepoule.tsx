@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usegetFriends } from '@/app/api/getFriends';
+import { spinner } from '@/app/[user]/profile/page';
 // import { usegetUserChat } from '@/app/api/checkAuthentication';
 export const Pepoule = () => {
 
@@ -13,7 +14,7 @@ export const Pepoule = () => {
   const [isClicked, setIsClicked] = useState(false);
   const { data, error, isLoading } = usegetFriends();
   if(error) return <div>error</div>
-  if (isLoading) return <div>loading</div>
+  if (isLoading) return <div className="h-full flex justify-center items-center">{spinner}</div>;
   return (
     <div  className="h-[100%] ">
       <div className="flex   ">

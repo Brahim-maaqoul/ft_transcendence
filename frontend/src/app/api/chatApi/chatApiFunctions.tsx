@@ -61,12 +61,14 @@ export async function creatGroup(data: GroupCreate) {
   }
 }
 
-async function getMessages(data: messagesData) {
-  const response: AxiosResponse = await API.get("/messages/getMessages?groupId=" + data.groupId);
-  return response.data.allMessage;
+async function getMessages(data: string) {
+  console.log(23450000)
+  const response: AxiosResponse = await API.get("/messages/getMessages?groupId=" + data);
+  console.log(2345)
+  return response.data;
 }
 
-export async function useGetMessages(data: messagesData)
+export function useGetMessages(data: string)
 {
   return useQuery({ queryKey: ["getMessages"], queryFn: () => getMessages(data) });
 }

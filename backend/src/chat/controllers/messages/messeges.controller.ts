@@ -1,5 +1,6 @@
 import { Body, Controller, Get, ParseIntPipe, Post, Query, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { group } from 'console';
 import { messageDto } from 'src/chat/dto/message.dto';
 import { GroupsService } from 'src/chat/services/groups/groups.service';
 import { MessagesService } from 'src/chat/services/messages/messeges.service';
@@ -11,8 +12,10 @@ export class MessagesController {
 
     @Get("/getMessages")
     @UseGuards(AuthGuard('jwt'))
-    async getMessages(@Res() res, @Req() req, @Query('groupId',ParseIntPipe) groupId: number)
+    async getMessages(@Res() res, @Req() req)
     {
+        console.log(123456)
+        const groupId = req.Query['groupId']
         const user = await this.GroupsService.checkAdmin(req.user.auth_id, groupId)
         if (user === "notMember" ||  user === "banned")
             return res.status(401).send()

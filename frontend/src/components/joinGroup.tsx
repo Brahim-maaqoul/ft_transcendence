@@ -2,18 +2,11 @@ import {  joinToGroup } from '@/app/api/chatApi/chatApiFunctions';
 import { useMutation } from '@tanstack/react-query';
 import Router from 'next/navigation'
 import React, { use, useState,useRef,useEffect } from 'react'
+import { Chat } from './Groups';
 interface Message {
     timestamp: string;
   }
-interface Chat {
-    id: number;
-    name: string;
-    picture: string;
-    timestamp: string;
-    Privacy : string;
-    password: string ;
-    messages: Message[];
-  }
+
 
 interface CreatGroupProps 
 {

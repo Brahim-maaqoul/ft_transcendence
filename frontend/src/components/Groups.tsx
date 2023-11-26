@@ -17,6 +17,7 @@ import { m } from "framer-motion";
 import { CreatGroup } from "./creatGroup";
 import { useAuth } from "@/components/providers/AuthContext";
 import { JoinGroup } from "./joinGroup";
+import { spinner } from "@/app/[user]/profile/page";
 interface Message {
   timestamp: string;
 }
@@ -25,7 +26,7 @@ interface member{
   type: string
 }
 
-interface Chat {
+export interface Chat {
   id: number;
   name: string;
   picture: string;
@@ -33,6 +34,7 @@ interface Chat {
   lastChange: string;
   Privacy: string;
   members: member[];
+
 }
 
 export const Groups = () => {
@@ -45,7 +47,7 @@ export const Groups = () => {
   const { data, error, isLoading } = usegetGroups();
   // const {data: groupId} = useCheckIsGroupMember({groupId: group.id})
   if (error) return <div>error</div>;
-  if (isLoading) return <div>loading</div>;
+  if (isLoading) return <div className="h-full flex justify-center items-center">{spinner}</div>;
   const route = useRouter();
   const pushId = (id: string) => {
     route.push(`/chat/${id}`);

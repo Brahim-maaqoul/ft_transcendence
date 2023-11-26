@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import { useAuth } from "@/components/providers/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { get } from "http";
-import { deleteGroup, getMessages } from "@/app/api/chatApi/chatApiFunctions";
+import { deleteGroup, useGetMessages } from "@/app/api/chatApi/chatApiFunctions";
 import { AboutGroup } from "./aboutGroup";
 import { FriendsToGroup } from "./friendsToGroup";
 import { GroupManagement } from "./GroupManagement";
@@ -17,10 +17,10 @@ import Profile from "@/app/[user]/profile/page";
 import { ProfileMessages } from "./profileMessage";
 
 export interface MessageInfo {
-  senderId: String;
-  groupId: string;
-  messageText: string;
-  timestamp: any;
+  sender_id: string;
+  group_id: string;
+  message_text: string;
+  lastmodif: Date;
 }
 interface ConversationProps {
   id: string;
@@ -49,44 +49,18 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
   const [message, setMessage] = useState("");
   const [more, setMore] = useState(false);
   const { dataUser, socketchat } = useAuth();
-  const [data, setData] = useState<MessageInfo[]>([]);
+  // const [data, setData] = useState<MessageInfo[]>([]);
   const [friendToGroup, setFriendToGroup] = useState(false);
 
-  // useEffect(() => {
-  //   socketchat?.emit("join", { id: id });
-  //   return () => {
-  //     socketchat?.emit("leave", { id: id });
-  //     socketchat?.off("join");
-  //     socketchat?.off("leave");
-  //   };
-  // }, [socketchat]);
-
-  // useEffect(() => {
-  //   socketchat?.on("message", (newMessage: MessageInfo) => {
-  //     setData((prevMessages) => [...prevMessages, newMessage]);
-  //   });
-  //   return () => {
-  //     socketchat?.off("message");
-  //   };
-  // }, [socketchat]);
-
-  const mutation = useMutation(getMessages);
-  const handegetAllmessage = () => {
-    mutation.mutate({ groupId: id });
-  };
-
-  useEffect(() => {
-    handegetAllmessage();
-  }, []);
-  useEffect(() => {
-    if (mutation.isSuccess) setData(mutation.data);
-  }, [mutation.isSuccess, mutation.isError, id]);
+  // }, [mutation.isSuccess, mutation.isError, id]);
+  const {data: getMessages, isSuccess, isError} = useGetMessages(id);  
+  console.log('data', getMessages, isSuccess, isError)
 
   return (
     <div className="relative h-full">
-      {(id === "id" || mutation.isError) && <>{selectMessage}</>}
+      {(id === "id" || isError) && <>{selectMessage}</>}
 
-      {id !== "id" && mutation.isSuccess && (
+      {id !== "id" && isSuccess && (
         <div>
           <ProfileMessages id={id} more={more} setMore={setMore} />
           {more && !friendToGroup && (
@@ -114,8 +88,8 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
             <>
               <Messages
                 id={id}
-                data={data}
-                setData={setData}
+                data={getMessages}
+               
                 dataUser={dataUser}
               />
               <SendMessages
