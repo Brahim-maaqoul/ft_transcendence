@@ -53,7 +53,7 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
   const [friendToGroup, setFriendToGroup] = useState(false);
 
   // }, [mutation.isSuccess, mutation.isError, id]);
-  const {data: getMessages, isSuccess, isError} = useGetMessages(id);  
+  const {data: getMessages, isSuccess, isError} = useGetMessages(id);
   console.log('data', getMessages, isSuccess, isError)
 
   return (
@@ -89,7 +89,6 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
               <Messages
                 id={id}
                 data={getMessages}
-               
                 dataUser={dataUser}
               />
               <SendMessages

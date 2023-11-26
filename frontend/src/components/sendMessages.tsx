@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./providers/AuthContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInfo } from "./Conversation";
+import { sendMessages } from "@/app/api/chatApi/chatApiFunctions";
 
 // interface messageProps {
 //     id: string;
@@ -26,13 +27,14 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   dataUser,
   socketchat,
 }) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: sendMessages,
+    onSuccess:() => {queryClient.invalidateQueries(['getMessages']); setMessage("");},
+    onError: () => console.log("nasr")
+  })
   const handleSubmitNewMessage = () => {
-    socketchat?.emit("message", {
-      senderId: dataUser?.auth_id,
-      groupId: id,
-      messageText: message,
-    });
-    setMessage("");
+    mutation.mutate({groupId: Number(id) , message: message});
   };
 
   return (

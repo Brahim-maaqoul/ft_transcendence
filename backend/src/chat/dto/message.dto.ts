@@ -2,7 +2,7 @@ import { IsInt, IsSemVer, IsString } from "class-validator";
 
 export class messageDto{
     @IsInt()
-    groupID:number
+    groupId:number
     @IsString()
     message:string
 

@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { DuoService } from 'src/chat/services/chats/chats.service';
 import { group } from 'console';
 
-@Controller('/duo')
+@Controller('/v1/api/duo')
 export class DuoController {
     constructor(private  DuoService:DuoService){}
 
@@ -11,8 +11,8 @@ export class DuoController {
     @UseGuards(AuthGuard('jwt'))
     async createDuo(@Res() res, @Req() req, @Body('user_id') user_id:string)
     {
-        const group = await this.DuoService.createDuo(req.user.auth, user_id)
-        return res.redirect(302, 'http://localhost:3000/chat/' + group.id);
+        const group = await this.DuoService.createDuo(req.user.auth_id, user_id)
+        return res.status(302).redirect('/chat/' + group.id);
     }
 
     @Get('/get')

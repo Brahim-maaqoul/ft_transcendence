@@ -59,7 +59,7 @@ export const Messages: React.FC<messageProps> = ({
                     : "mr-auto ml-0 "
                 }`}
               >
-                {getTime(message.lastmodif)}
+                {/* {getTime(message.lastmodif)} */}
               </p>
             </div>
           </div>

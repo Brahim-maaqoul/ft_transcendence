@@ -62,9 +62,7 @@ export async function creatGroup(data: GroupCreate) {
 }
 
 async function getMessages(data: string) {
-  console.log(23450000)
   const response: AxiosResponse = await API.get("/messages/getMessages?groupId=" + data);
-  console.log(2345)
   return response.data;
 }
 
@@ -75,7 +73,7 @@ export function useGetMessages(data: string)
 
 
 export async function deleteGroup(data: idGroup) {
-  const response: AxiosResponse = await API.post("/chat/removeRome", data);
+  const response: AxiosResponse = await API.post("/chat/removeRoom", data);
   return response.data;
 }
 
@@ -122,4 +120,9 @@ export function useCheckIsGroupMember(data: idGroup){
     queryKey:['groupId', data.groupId],
     queryFn: () => checkIsGroupMember(data)
   })
+}
+
+export async function createDuo(friendId:string){
+  const response: AxiosResponse = await API.post("/duo/create", {user_id: friendId});
+  return response.data;
 }

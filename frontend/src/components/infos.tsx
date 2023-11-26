@@ -11,6 +11,8 @@ import { useGetStats } from "@/app/api/getStats";
 import { getUser } from "@/app/api/getUserByNickname";
 import TfaToggle from "./tfaToggle";
 import FriendCases, { Block } from "./friendStatus";
+import { useMutation } from "@tanstack/react-query";
+import { createDuo } from "@/app/api/chatApi/chatApiFunctions";
 
 function Infos({ profileData }: { profileData: UserProfile }) {
   const { dataUser } = useAuth();
@@ -42,6 +44,9 @@ function Infos({ profileData }: { profileData: UserProfile }) {
     };
   }, []);
   const imageUrl = profileData?.picture;
+  const mutation = useMutation({
+    mutationFn: createDuo
+  })
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
       <div className="flex items-start flex-col md:flex-row  gap-8">
@@ -103,14 +108,16 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                 href={""}>
                                 <Image
                                   src={"/challenge.png"}
-                                  alt="Send Message"
+                                  alt="Challenge"
                                   width={20}
                                   height={20}
                                   className="mr-3"
                                 />
                                 Challenge
                               </Link>
-                              <Link className="flex  items-center " href={""}>
+                              <button className="flex  items-center " onClick={() => {
+                                mutation.mutate(profileData.auth_id)
+                              }}>
                                 <Image
                                   src={"/Message.png"}
                                   alt="Send Message"
@@ -119,7 +126,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                   className="mr-3"
                                 />
                                 Message
-                              </Link>
+                              </button>
 
                               <Block authId={profileData.auth_id} />
                             </motion.div>
