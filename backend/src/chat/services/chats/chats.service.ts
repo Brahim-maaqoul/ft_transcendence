@@ -66,7 +66,7 @@ export class DuoService {
 
     async getDuos(auth_id: string)
     {
-        return this.prisma.groups.findMany({
+        return await this.prisma.groups.findMany({
             where:{
                 type: "duo",
                 members: {
@@ -81,7 +81,7 @@ export class DuoService {
             },
             select:{
                 id: true,
-                type: true,
+                lastChange:true,
                 members:
                 {
                     where: {
@@ -89,6 +89,17 @@ export class DuoService {
                             user_id: auth_id
                         }
                     },
+                    select:{
+                        user: true
+                    },
+                    take: 1
+                },
+                messages:{
+                    orderBy: {lastmodif: 'desc'},
+                    take: 1,
+                    select:{
+                        message_text: true
+                    }
                 }
               },
         })
@@ -132,7 +143,7 @@ export class DuoService {
             return ;
         this.prisma.members.update({
             where:{
-                id: membership.id 
+                id: membership.id
             },
             data:{
                 banned: false

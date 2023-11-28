@@ -27,7 +27,6 @@ export const Messages: React.FC<messageProps> = ({
     );
     return time;
   }
-  console.log(data);
   return (
     <div className="w-full absolute overflow-auto bottom-11 top-16 no-scrollbar flex flex-col-reverse">
       <div>

@@ -30,8 +30,7 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: sendMessages,
-    onSuccess:() => {queryClient.invalidateQueries(['getMessages']); setMessage("");},
-    onError: () => console.log("nasr")
+    onSuccess:() => {queryClient.invalidateQueries(['getMessages']);queryClient.invalidateQueries(['dataGroups']); queryClient.invalidateQueries(['getChat']);setMessage("");},
   })
   const handleSubmitNewMessage = () => {
     mutation.mutate({groupId: Number(id) , message: message});

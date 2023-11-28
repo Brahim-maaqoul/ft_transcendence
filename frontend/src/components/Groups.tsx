@@ -34,6 +34,7 @@ export interface Chat {
   lastChange: string;
   Privacy: string;
   members: member[];
+  messages: any[];
 
 }
 
@@ -44,7 +45,7 @@ export const Groups = () => {
   const [joinConfirm, setJoinConfirm] = useState(false);
 
   const { dataUser, showTrue, showFalse } = useAuth();
-  const { data, error, isLoading } = usegetGroups();
+  const { data:dataGroups, error, isLoading } = usegetGroups();
   // const {data: groupId} = useCheckIsGroupMember({groupId: group.id})
   if (error) return <div>error</div>;
   if (isLoading) return <div className="h-full flex justify-center items-center">{spinner}</div>;
@@ -52,14 +53,11 @@ export const Groups = () => {
   const pushId = (id: string) => {
     route.push(`/chat/${id}`);
   };
-  const sortedData = data;
   const handleJoninGroup = (group: Chat) => {
     showTrue();
     if (!group.members.length || group.members[0].type === "notMember" || group.members[0].type === "banned") {
       setJoinId(group);
     } else {
-      console.log("here")
-      console.log(group.members[0].type)
       pushId(String(group.id));
     }
 
@@ -113,7 +111,7 @@ export const Groups = () => {
         </button>
       </div>
       <div className="overflow-y-auto h-[81.5%] no-scrollbar">
-        {sortedData.map((user: Chat, key: number) => {
+        {dataGroups.map((user: Chat, key: number) => {
           return (
             <div
               key={key}
@@ -135,7 +133,7 @@ export const Groups = () => {
                 id="info"
                 className="pt-1 col-span-3 text-xm font-mono tracking-normal">
                 {user.name}
-                <p className="text-sm text-gray-400">reda</p>
+                <p className="text-sm text-gray-400">{user.messages.length ? user.messages[0].message_text : ""}</p>
                 <p className="text-xs text-gray-300">{}</p>
               </div>
               <div className="col-span-2 flex flex-row-reverse items-center w-[100%] pr-2">
