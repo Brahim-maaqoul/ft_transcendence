@@ -8,11 +8,11 @@ interface Message {
   }
 
 
-interface CreatGroupProps 
+interface CreatGroupProps
 {
-    joinId: Chat; 
+    joinId: Chat;
     setJoinId: React.Dispatch<React.SetStateAction<Chat | null>>;
-    joinConfirm: boolean; 
+    joinConfirm: boolean;
     setJoinConfirm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -23,11 +23,9 @@ const handleJoninGroup = () => {
     if(joinId.Privacy == "protected")
     {
          joinGroupMutution.mutate({groupId: joinId.id, password: joinId.password, type: joinId.Privacy});
-     
     }
     else
         joinGroupMutution.mutate({groupId: joinId.id, password:"", type: joinId.Privacy});
-        
     if(joinGroupMutution.isSuccess)
     {
         setJoinConfirm(true);

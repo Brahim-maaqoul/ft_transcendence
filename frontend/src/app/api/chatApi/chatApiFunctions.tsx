@@ -52,12 +52,9 @@ export function usegetFriends(): UseQueryResult<any> {
 export async function creatGroup(data: GroupCreate) {
   try{
     const response: AxiosResponse = await API.post("/groups/createGroup", data);
-    console.log("APicaht",response.data)
     return response.data;
-
   }
   catch(err){
-    console.log(err)
   }
 }
 
@@ -111,7 +108,6 @@ async function checkIsGroupMember(data: idGroup) {
   }
   catch(err)
   {
-    console.log("err", err)
   }
 }
 

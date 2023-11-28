@@ -15,3 +15,19 @@ export function usegetFriends(auth_id: string): UseQueryResult<any> {
     queryFn: () => getFriends(auth_id),
   });
 }
+
+async function getChat()
+{
+  const response: AxiosResponse = await API.get(
+    "/duo/get"
+  );
+  return response.data;
+}
+
+export function useGetChat(): UseQueryResult<any> {
+  return useQuery({
+    queryKey: ["getChat"],
+    queryFn: () => getChat(),
+  });
+}
+

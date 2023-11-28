@@ -121,7 +121,6 @@ export class UserService {
       });
       return user.isTfaEnabled;
     } catch (error) {
-      console.log(error);
     }
   }
   async enableTFA(nickname: string) {
@@ -137,7 +136,6 @@ export class UserService {
       });
       return user.isTfaEnabled;
     } catch (error) {
-      console.log(error);
     }
   }
   async disableTFA(nickname: string) {
@@ -154,7 +152,6 @@ export class UserService {
       });
       return !user.isTfaEnabled;
     } catch (error) {
-      console.log(error);
     }
   }
   async verifyTfa(nickname: string, code: string) {
@@ -178,7 +175,6 @@ export class UserService {
       }
       return isTfaVerified;
     } catch (error) {
-      console.log(error);
     }
   }
   async getUserInfo(nickname: string) {

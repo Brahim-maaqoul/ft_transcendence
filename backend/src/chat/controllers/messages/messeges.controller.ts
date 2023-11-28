@@ -11,9 +11,8 @@ export class MessagesController {
 
     @Get("/getMessages")
     @UseGuards(AuthGuard('jwt'))
-    async getMessages(@Res() res, @Req() req)
+    async getMessages(@Res() res, @Req() req, @Query("groupId", ParseIntPipe) groupId: number)
     {
-        const groupId = 1
         const user = await this.GroupsService.checkAdmin(req.user.auth_id, groupId)
         if (user === "notMember" ||  user === "banned")
             return res.status(401).send()
@@ -24,7 +23,6 @@ export class MessagesController {
     @UseGuards(AuthGuard('jwt'))
     async sendMessage(@Res() res, @Req() req, @Body() messageDto:messageDto)
     {
-        console.log("badr", messageDto)
         const user = await this.GroupsService.checkAdmin(req.user.auth_id, messageDto.groupId)
         if (user === "notMember" ||  user === "banned")
             return res.status(401).send()

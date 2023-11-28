@@ -57,6 +57,13 @@ export class GroupsService {
                     select:{
                         type: true
                         }
+                },
+                messages:{
+                    orderBy: {lastmodif: 'desc'},
+                    take: 1,
+                    select:{
+                        message_text: true
+                    }
                 }
               },
         })

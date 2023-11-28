@@ -40,10 +40,8 @@ const TfaPage = () => {
           setError(verifyResponse.data.message);
         }
       } else {
-        console.log("User information not available");
       }
     } catch (error) {
-      console.log("Error getting user information:", error);
     }
   };
 
@@ -66,7 +64,6 @@ const TfaPage = () => {
         });
       }
     } catch (e) {
-      console.log("Failed to resend the email.");
     }
   };
 

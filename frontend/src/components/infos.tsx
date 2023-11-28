@@ -11,8 +11,10 @@ import { useGetStats } from "@/app/api/getStats";
 import { getUser } from "@/app/api/getUserByNickname";
 import TfaToggle from "./tfaToggle";
 import FriendCases, { Block } from "./friendStatus";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createDuo } from "@/app/api/chatApi/chatApiFunctions";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function Infos({ profileData }: { profileData: UserProfile }) {
   const { dataUser } = useAuth();
@@ -21,21 +23,20 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   const [show, setShow] = useState(false);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const [logged, setlogged] = useState(true);
+  const router = useRouter()
   const handleClickOutside = (event: MouseEvent<HTMLElement>) => {
     if (
       toggleButtonRef.current &&
       !toggleButtonRef.current.contains(event.target as HTMLElement)
-    ) {
-      setShow(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener(
+      ) {
+        setShow(false);
+      }
+    };
+    useEffect(() => {
+      document.addEventListener(
       "click",
       handleClickOutside as unknown as (event: Event) => void
-    );
-
+      );
     return () => {
       document.removeEventListener(
         "click",
@@ -44,9 +45,14 @@ function Infos({ profileData }: { profileData: UserProfile }) {
     };
   }, []);
   const imageUrl = profileData?.picture;
+  const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: createDuo
+    mutationFn: createDuo,
   })
+  if (mutation.isSuccess)
+  {
+    router.push("/chat/"+ mutation.data.id)
+  }
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
       <div className="flex items-start flex-col md:flex-row  gap-8">

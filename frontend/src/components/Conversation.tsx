@@ -54,7 +54,6 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
 
   // }, [mutation.isSuccess, mutation.isError, id]);
   const {data: getMessages, isSuccess, isError} = useGetMessages(id);
-  console.log('data', getMessages, isSuccess, isError)
 
   return (
     <div className="relative h-full">

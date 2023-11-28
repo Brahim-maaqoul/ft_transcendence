@@ -12,14 +12,14 @@ export class DuoController {
     async createDuo(@Res() res, @Req() req, @Body('user_id') user_id:string)
     {
         const group = await this.DuoService.createDuo(req.user.auth_id, user_id)
-        return res.status(302).redirect('/chat/' + group.id);
+        return res.status(201).json(group);
     }
 
     @Get('/get')
     @UseGuards(AuthGuard('jwt'))
     async getDuos(@Res() res, @Req() req)
     {
-        const duos = this.DuoService.getDuos(req.user.auth_id)
+        const duos = await this.DuoService.getDuos(req.user.auth_id)
         return res.status(200).json(duos);
     }
 }

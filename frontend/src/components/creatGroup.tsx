@@ -39,16 +39,6 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
     });
   };
 
-  // useEffect(() => {
-  //   console.log("mutation", mutation)
-  //   if (mutation.isSuccess) {
-  //     setmessage(mutation.data.message);
-  //     // setIsCreated(true);
-  //   }
-  //   if (mutation.isError) {
-  //     setIsErro(true);
-  //   }
-  // }, [mutation.isLoading]);
   function isStrongPassword(password: string) {
     const hasUppercase = /[A-Z]/.test(password);
     const hasLowercase = /[a-z]/.test(password);
