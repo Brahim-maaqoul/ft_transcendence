@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useGetChat, usegetFriends } from '@/app/api/getFriends';
 import { spinner } from '@/app/[user]/profile/page';
+import { useAuth } from './providers/AuthContext';
 
 interface duo
 {
@@ -15,9 +16,10 @@ interface duo
 
 // import { usegetUserChat } from '@/app/api/checkAuthentication';
 export const Pepoule = () => {
-
+  const { showTrue } = useAuth();
   const route = useRouter()
   const pushId = (id:number) => {
+    showTrue();
     route.push(`/chat/` + id)
   }
   const [isClicked, setIsClicked] = useState(false);
@@ -52,13 +54,16 @@ export const Pepoule = () => {
                       style={{ backgroundImage: `url(${group.members[0].user.picture})` }}></div>
                   </div>
             </div>
-            <div  id="info" className="p-2  col-span-3 text-gray-300 ">
-              {group.members[0].user.nickname}
+            <div  id="info" className=" col-span-5  flex justify-between text-gray-300 ">
+              <div className='flex flex-col justify-start'>
+                <span className='text-xl font-bold'>{group.members[0].user.nickname}</span>
+              <div className='text-xs text-gray-400'> {group.messages.length ? group.messages[0].message_text.slice(0,20) : ""} </div>
+
+              </div>
               {/* <p className='text-xs text-gray-300'>{user.username}</p> */}
+              <p className='m-2 text-gray-400 text-var-selver font-roboto text-xs font-light tracking-tighter'>Today 9.12am</p>
             </div>
-            <div> {group.messages.length ? group.messages[0].message_text : ""} </div>
             <div className=' col-span-2 flex flex-row-reverse   items-center w-[100%] pr-2'>
-              <p className=' text-gray-400 text-var-selver font-roboto text-xs font-light tracking-tighter'>Today 9.12am</p>
               {/* <p className= "bg-orange-700 px-1 text-sm  rounded-3xl  mr-2">12</p> */}
             </div>
           </div>

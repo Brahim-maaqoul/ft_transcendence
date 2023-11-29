@@ -44,10 +44,10 @@ export const Groups = () => {
   const [joinId, setJoinId] = useState<Chat | null>(null);
   const [joinConfirm, setJoinConfirm] = useState(false);
 
-  const { dataUser, showTrue, showFalse } = useAuth();
-  const { data:dataGroups, error, isLoading } = usegetGroups();
+  const { dataUser, showTrue } = useAuth();
+  const { data:dataGroups, isError, isLoading } = usegetGroups();
   // const {data: groupId} = useCheckIsGroupMember({groupId: group.id})
-  if (error) return <div>error</div>;
+  if (isError) return <div>error</div>;
   if (isLoading) return <div className="h-full flex justify-center items-center">{spinner}</div>;
   const route = useRouter();
   const pushId = (id: string) => {
@@ -131,7 +131,7 @@ export const Groups = () => {
               </div>
               <div
                 id="info"
-                className="pt-1 col-span-3 text-xm font-mono tracking-normal">
+                className="pt-1 col-span-3 text-xm font-mono tracking-normal text-white">
                 {user.name}
                 <p className="text-sm text-gray-400">{user.messages.length ? user.messages[0].message_text : ""}</p>
                 <p className="text-xs text-gray-300">{}</p>
