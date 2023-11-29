@@ -57,6 +57,7 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
 
   // }, [mutation.isSuccess, mutation.isError, id]);
   const {data: getMessages, isSuccess, isError} = useGetMessages(id);
+  console.log("more", more)
   return (
     <div className="relative h-full">
       {(isError) && <>Error</>}
@@ -81,7 +82,9 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
                 <FriendsToGroup
                   friendToGroup={friendToGroup}
                   setFriendToGroup={setFriendToGroup}
-                  idGroup={id}></FriendsToGroup>
+                  idGroup={id}
+                  FriendToGroup={getMessages.members}
+                  ></FriendsToGroup>
               )}
             </>
           )}

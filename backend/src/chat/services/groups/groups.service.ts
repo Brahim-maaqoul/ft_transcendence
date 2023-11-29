@@ -209,6 +209,13 @@ export class GroupsService {
                 user_id: true,
                 type: true,
                 banned: true,
+                user:{
+                    select:{
+                        nickname: true,
+                        picture: true,
+                        auth_id: true,
+                    }
+                }
             }
         })
         return members

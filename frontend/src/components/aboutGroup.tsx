@@ -3,6 +3,7 @@ import {
   getMemberGroup,
   usegetGroups,
   banUserFromGroup,
+  useGetMembers,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { useMutation } from "@tanstack/react-query";
 import { use, useEffect, useRef, useState } from "react";
@@ -141,22 +142,15 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id, more, setMore }) =
   const [data, setData] = useState<UserProfile[]>([]);
   const [ids, setId] = useState(0);
 
-  const getMembersGroup = useMutation(getMemberGroup);
-  useEffect(() => {
-    getMembersGroup.mutate({ groupId: Number(id) });
-  }, []);
-
-  useEffect(() => {
-    setId(Number(id));
-
-    if (getMembersGroup.isSuccess) setData(getMembersGroup.data);
-  }, [getMembersGroup.isSuccess, getMembersGroup.isError, id]);
-
+  const {data:getMembers, isSuccess, isError} = useGetMembers(id)
+  console.log("members", getMembers)
+  if(!isSuccess)
+    return <>wait bitch</>
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">
-        {getMembersGroup.data &&
-          getMembersGroup.data.map((user: UserProfile, key: number) => {
+        {getMembers &&
+          getMembers.map((user: UserProfile, key: number) => {
             return (
               <div
                 key={key}
@@ -175,9 +169,9 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id, more, setMore }) =
                   id="info"
                   className="pt-1 col-span-3 flex items-center text-white text-lg font-mono tracking-normal"
                 >
-                  {user.user?.displayname}
+                  {user.user?.nickname}
                 </div>
-                <GroupUserManagement userId={user.user?.id} idG = {id}/>
+                <GroupUserManagement userId={user.user?.auth_id} idG = {id}/>
               </div>
             );
           })}
