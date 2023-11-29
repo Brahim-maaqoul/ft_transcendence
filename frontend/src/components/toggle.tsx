@@ -3,6 +3,7 @@ import { MouseEvent, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import About from "./about";
+import Game from "./StartGame";
 import Image from "next/image";
 import emailjs from "emailjs-com";
 import styles from "../app/styles.module.css";
@@ -28,10 +29,12 @@ const Toggle = () => {
   const [show, setShow] = useState(false);
   const [about, setAbout] = useState(false);
   const [contact, setContact] = useState(false);
+  const [game, setGame] = useState(false);
   const [subject, setSubject] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const aboutRef = useRef<HTMLDivElement>(null);
+  const gameRef = useRef<HTMLDivElement>(null);
 
   const form = useRef<HTMLFormElement | null>(null);
 
@@ -80,6 +83,11 @@ const Toggle = () => {
       setContact(false);
     }
   };
+  const handleGameRef = (event: MouseEvent) => {
+    if (gameRef.current && !gameRef.current.contains(event.target as Node)) {
+      setGame(false);
+    }
+  };
   useEffect(() => {
     if (about) {
       document.addEventListener(
@@ -103,6 +111,17 @@ const Toggle = () => {
         handleContactRef as unknown as (event: Event) => void
       );
     }
+    if (game) {
+      document.addEventListener(
+        "click",
+        handleGameRef as unknown as (event: Event) => void
+      );
+    } else {
+      document.removeEventListener(
+        "click",
+        handleGameRef as unknown as (event: Event) => void
+      );
+    }
 
     return () => {
       document.removeEventListener(
@@ -114,7 +133,7 @@ const Toggle = () => {
         handleContactRef as unknown as (event: Event) => void
       );
     };
-  }, [about, contact]);
+  }, [about, contact, game]);
   return (
     <>
       <div>
@@ -132,13 +151,17 @@ const Toggle = () => {
             About Us
           </button>
           <Link
-            href={"https://discord.gg/YUXWWWJvJb"}
+            // href={"https://discord.gg/YUXWWWJvJb"}
+            href={"#"}
             target="blank"
             className="">
             Discord
           </Link>
           <button onClick={() => setContact(true)} className="">
             Contact Us
+          </button>
+          <button onClick={() => setGame(true)} className="">
+            Start Game
           </button>
         </div>
       </div>
@@ -170,6 +193,11 @@ const Toggle = () => {
               onClick={() => setContact(true)}
               className="flex hover:text-xl">
               Contact Us
+            </button>
+            <button
+              onClick={() => setGame(true)}
+              className="flex hover:text-xl">
+              Start Game
             </button>
           </motion.div>
         </div>
@@ -243,6 +271,15 @@ const Toggle = () => {
               </div>
             </div>
           </form>
+        </div>
+      )}
+      {game && (
+        <div className="absolute top-0 left-0 bottom-0 right-0 z-50 backdrop-blur-sm">
+          <div
+            ref={gameRef}
+            className="mx-5 mt-24 p-5  bg-opacity-80  font-[Guji] text-md font-bold text-black rounded-2xl bg-white">
+            <Game />
+          </div>
         </div>
       )}
     </>

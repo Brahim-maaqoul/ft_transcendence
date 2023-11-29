@@ -1,38 +1,37 @@
-
-import {Ball, Brick, PSize, Paddle} from "./component"
-
-export interface GameConfig {
-	bricks: Array<PSize>
-	ball: Array<PSize>
-	paddle1: PSize
-	paddle2: PSize
-	score: {p1: number, p2: number}
-	sec: number
-	
-}
-// interface key {
-// 	left: boolean
-// 	right: boolean
-// 	turn_left: boolean
-// 	turn_right: boolean
-// }
+import { Ball } from './ball.class';
+import { Paddle, Brick } from './paddle.class';
+import { GameConfig, key } from '../interfaces/utils.interface';
 
 
 export class Game 
 {
-	world: {h:number, w:number}
-	ball: Array<Ball>
-	paddle: [Paddle, Paddle]
-	bricks: Array<Brick>
-	score: {p1: number, p2: number}
+	gameId: number;
+	playerId1: number;
+	playerId2?: number;
+	socket: {player1Socket: string, player2Socket?: string};
+	playerAI: boolean;
+	world: {h:number, w:number};
+	ball: Array<Ball>;
+	// ball: Ball;
+	paddle: [Paddle, Paddle];
+	bricks: Array<Brick>;
+	score: {p1: number, p2: number};
 	keysPressed: Set<string>;
-	sec: number
-	time : Date
-	start: boolean
+	sec: number;
+	time : Date;
+	start: boolean;
+	status: string;
+	turn: number;
+	round: number;
+	createAt: Date;
+	startedAt: Date;
+	updatedAt: Date;
 	constructor()
 	{
+		this.gameId = Math.floor(Math.random() * 1000);
 		this.world = {h: 1000, w: 600}
 		this.ball = new Array();
+		// this.ball = new Ball(1000, 500, 20, 100);
 		this.paddle = [new Paddle(40, 250, 150, 30), new Paddle(970, 250, 150, 30)]
 		this.bricks = new Array();
 		this.score = {p1: 0, p2: 0};
@@ -43,7 +42,7 @@ export class Game
 	}
 	get_data():GameConfig
 	{
-		const b = new Array(this.bricks)
+		this.update();
 		const data: GameConfig = {
 			ball: this.ball.map(value => value.get_data(this.world.h, this.world.w, 0xffffff)),
 			paddle1: this.paddle[0].get_data(this.world.h, this.world.w, 0xffffff),
@@ -71,27 +70,27 @@ export class Game
 				this.paddle[1].move_right(1, 600)
 		}
 	}
-	check_keys()
+	check_keys(keys: key)
 	{
 
 		this.paddle[0].rotate(0)
-		// this.paddle[0].restScale()
-		if (this.keysPressed.has('a') || this.keysPressed.has('A'))
-			this.paddle[0].changeScale(1.5)
-		if (this.keysPressed.has("ArrowUp") || this.keysPressed.has("ArrowLeft"))
+
+		this.start = keys.start
+		if (keys.left)
 			this.paddle[0].move_left(1, 0)
-		if (this.keysPressed.has("ArrowDown") || this.keysPressed.has("ArrowRight"))
+		if (keys.right)
 			this.paddle[0].move_right(1, 600)
-		if (this.keysPressed.has('x'))
+		if (keys.rotate_pos)
 			this.paddle[0].rotate(Math.PI/6)
-		else if (this.keysPressed.has('c'))
+		else if (keys.rotate_neg)
 			this.paddle[0].rotate(-Math.PI/6)
 		// if (this.keysPressed.has('w') || this.keysPressed.has('W'))
 		// 	this.paddle[1].move_left(1, 0)
 		// if (this.keysPressed.has('s') || this.keysPressed.has('S'))
 		// 	this.paddle[1].move_right(1, 600)
-		if (this.keysPressed.has(' '))
-			this.start = true
+
+		// if (this.keysPressed.has(' '))
+		// 	this.start = true
 		
 	}
 	check_intersection()
@@ -139,7 +138,6 @@ export class Game
 	}
 	update()
 	{
-		this.check_keys()
 		if(!this.start)
 		{
 			this.time = new Date()
@@ -152,6 +150,7 @@ export class Game
 			if (this.sec >= 3)
 			{
 				this.ball.push(new Ball(1000, 500, 20, 100))
+				// this.ball = (new Ball(1000, 500, 20, 100))
 				this.sec = -1
 			}
 		}

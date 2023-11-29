@@ -1,12 +1,11 @@
-import { Controller, Get, Post, Res, Req } from '@nestjs/common';
+import { Controller, Get, Post, Res, Req, Request } from '@nestjs/common';
 
 @Controller('/GameQueue')
 export class GameMatchController {
     constructor(){}
 
     @Get()
-    async createGame(@Res() res, @Req() request)
-    {
-        
+    async createGame(@Res() res, @Req() Request) {
+		;
     }
 }
