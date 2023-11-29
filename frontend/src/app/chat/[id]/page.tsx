@@ -6,15 +6,27 @@ import { Pepoule } from "@/components/Pepoule";
 import NavBar from "@/components/navBar";
 import { useAuth } from "@/components/providers/AuthContext";
 import { Search } from "@/components/search";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:8000/chat")
 
 export default function Chat({ params }: { params: any }) {
-  const { show } = useAuth();
+  const { dataUser, show } = useAuth();
   let hidden: string;
   let hidden1: string;
   !show ? (hidden = "hidden") : (hidden = "");
   !show ? (hidden1 = "") : (hidden1 = "hidden");
+  const queryClient = useQueryClient()
 
+  socket.emit("getId", {auth_id: dataUser?.auth_id})
+  socket.on("reload", () =>{
+    console.log("reload")
+    queryClient.invalidateQueries(["getMessages"]);
+    queryClient.invalidateQueries(["dataFriend"]);
+    queryClient.invalidateQueries(["dataGroups"]);
+  })
   return (
     <div className="h-[767px]  z-0 w-full md:w-[83%]  relative md:p-2 md:rounded-3xl md:bg-slate-500 md:bg-opacity-40  md:shadow-black md:shadow-2xl overflow-y-scroll  no-scrollbar">
       <div className="flex h-full w-full ">

@@ -21,7 +21,7 @@ export interface GameConfig {
 	sec: number
 }
 
-export class Game 
+export class Game
 {
 	world: {h:number, w:number}
 	ball: Array<Ball>

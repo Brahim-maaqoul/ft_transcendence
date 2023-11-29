@@ -10,7 +10,6 @@ import { changePrivacyDto } from 'src/chat/dto/changePrivacy.dto';
 @Injectable()
 export class GroupsService {
     constructor(private prisma: PrismaService){}
-
     async getGroups(user_id: string)
     {
         const groups = await this.prisma.groups.findMany({
@@ -68,6 +67,50 @@ export class GroupsService {
               },
         })
         return groups;
+    }
+    async getGroup(group_id: number, user_id: string)
+    {
+        const group = await this.prisma.groups.findUnique({
+            where: {
+                    id: group_id
+              },
+            select:{
+                id: true,
+                name: true,
+                type: true,
+                picture: true,
+                members:
+                {
+                    where: {
+                        NOT:{
+                            user_id: user_id
+                        }
+                    },
+                    select:{
+                        type: true,
+                        banned: true,
+                        user:{
+                            select:{
+                                auth_id: true,
+                                nickname: true,
+                                picture: true,
+                            }
+                        }
+
+                    }
+                },
+                messages:{
+                    orderBy: {lastmodif: 'asc'},
+                    select:{
+                        sender_id: true,
+                        group_id: true,
+                        lastmodif: true,
+                        message_text: true
+                    }
+                }
+              },
+        })
+        return group;
     }
 
     async createGroup(creator_id: string, group:groupDto)
@@ -160,6 +203,12 @@ export class GroupsService {
         {
             where:{
                 group_id: group_id
+            },
+            select:
+            {
+                user_id: true,
+                type: true,
+                banned: true,
             }
         })
         return members
@@ -278,7 +327,7 @@ export class GroupsService {
                 type: "member",
                 banned: false,
             }
-        }) 
+        })
     }
 
     async deleteGroup(group_id: number)

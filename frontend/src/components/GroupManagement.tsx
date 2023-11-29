@@ -29,7 +29,6 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
     // setisDelete(true);
   };
 
-  
   return (
     <div className="flex bottom-0 justify-between items-center absolute w-[100%]">
       <div className="flex">
