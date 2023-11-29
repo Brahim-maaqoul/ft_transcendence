@@ -59,7 +59,7 @@ export async function creatGroup(data: GroupCreate) {
 }
 
 async function getMessages(data: string) {
-  const response: AxiosResponse = await API.get("/messages/getMessages?groupId=" + data);
+  const response: AxiosResponse = await API.get("/groups/get?groupId=" + data);
   return response.data;
 }
 
@@ -96,7 +96,7 @@ export async function banUserFromGroup(data: banUser) {
   return response.data;
 }
 
-export async function joinToGroup(data: Chat) {
+export async function joinToGroup(data: {group:number, password: string}) {
   const response: AxiosResponse = await API.post("/groups/joinGroup", data);
   return response.data;
 }

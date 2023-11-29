@@ -3,21 +3,14 @@ import { useAuth } from "./providers/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInfo } from "./Conversation";
 import { sendMessages } from "@/app/api/chatApi/chatApiFunctions";
+import { io } from "socket.io-client";
 
-// interface messageProps {
-//     id: string;
-//     data: MessageInfo[];
-//     setData: React.Dispatch<React.SetStateAction<MessageInfo[]>>;
-//     dataUser: any;
-//     socketchat: any;
-// }
-
+const socket = io("http://localhost:8000/chat")
 interface sendMessagesProps {
   id: string;
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   dataUser: any;
-  socketchat: any;
 }
 
 export const SendMessages: React.FC<sendMessagesProps> = ({
@@ -25,26 +18,26 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   message,
   setMessage,
   dataUser,
-  socketchat,
 }) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: sendMessages,
-    onSuccess:() => {queryClient.invalidateQueries(['getMessages']);queryClient.invalidateQueries(['dataGroups']); queryClient.invalidateQueries(['getChat']);setMessage("");},
+    onSuccess:() => {
+      setMessage("");
+      socket.emit("sendMessage", {group_id: id})
+    },
   })
   const handleSubmitNewMessage = () => {
     mutation.mutate({groupId: Number(id) , message: message});
   };
-
+  
   return (
     <div className="w-full flex bottom-0 absolute ">
       <input
         value={message}
         onFocus={() => {
-          socketchat?.emit("isTyping", { id: id });
         }}
         onBlur={() => {
-          socketchat?.emit("leaveTyping", { id: id });
         }}
         onChange={(input) => setMessage(input.target.value)}
         id="msg"

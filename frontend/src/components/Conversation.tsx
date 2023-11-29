@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef, use } from "react";
 import Image from "next/image";
 import styles from "../app/styles.module.css";
 import Link from "next/link";
-import io from "socket.io-client";
 import { useAuth } from "@/components/providers/AuthContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { get } from "http";
 import { deleteGroup, useGetMessages } from "@/app/api/chatApi/chatApiFunctions";
 import { AboutGroup } from "./aboutGroup";
@@ -15,6 +14,8 @@ import { Messages } from "./messages";
 import { SendMessages } from "./sendMessages";
 import Profile from "@/app/[user]/profile/page";
 import { ProfileMessages } from "./profileMessage";
+
+
 
 export interface MessageInfo {
   sender_id: string;
@@ -46,22 +47,23 @@ const selectMessage = (
   </div>
 );
 export const Conversation: React.FC<ConversationProps> = ({ id }) => {
+  if(isNaN(Number(id)))
+    return <>{selectMessage}</>
   const [message, setMessage] = useState("");
   const [more, setMore] = useState(false);
-  const { dataUser, socketchat } = useAuth();
+  const { dataUser } = useAuth();
   // const [data, setData] = useState<MessageInfo[]>([]);
   const [friendToGroup, setFriendToGroup] = useState(false);
 
   // }, [mutation.isSuccess, mutation.isError, id]);
   const {data: getMessages, isSuccess, isError} = useGetMessages(id);
-
   return (
     <div className="relative h-full">
-      {(id === "id" || isError) && <>{selectMessage}</>}
+      {(isError) && <>Error</>}
 
-      {id !== "id" && isSuccess && (
+      {isSuccess && (
         <div>
-          <ProfileMessages id={id} more={more} setMore={setMore} />
+          <ProfileMessages group={getMessages} more={more} setMore={setMore} />
           {more && !friendToGroup && (
             <AboutGroup id={id} more={more} setMore={setMore}></AboutGroup>
           )}
@@ -83,11 +85,11 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
               )}
             </>
           )}
-          {!more && (
+          {!more && isSuccess && (
             <>
               <Messages
                 id={id}
-                data={getMessages}
+                data={getMessages.messages}
                 dataUser={dataUser}
               />
               <SendMessages
@@ -95,7 +97,6 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
                 message={message}
                 setMessage={setMessage}
                 dataUser={dataUser}
-                socketchat={socketchat}
               />
             </>
           )}

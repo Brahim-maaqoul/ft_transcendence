@@ -2,7 +2,6 @@ import Router from "next/navigation";
 import React, { use, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import io from "socket.io-client";
 import Link from "next/link";
 import {
   usegetGroups,

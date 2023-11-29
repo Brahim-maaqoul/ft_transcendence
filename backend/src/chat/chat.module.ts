@@ -6,10 +6,11 @@ import { DuoController } from './controllers/chats/chats.controller';
 import { DuoService } from './services/chats/chats.service';
 import { MessagesController } from './controllers/messages/messeges.controller';
 import { MessagesService } from './services/messages/messeges.service';
+import { chatGateway } from './gateway.ts/chat.gateway';
 
 @Module({
   controllers: [GroupsController, DuoController, MessagesController],
-  providers: [PrismaService, GroupsService, DuoService,MessagesService],
+  providers: [PrismaService, GroupsService, DuoService,MessagesService, chatGateway],
   exports: [DuoService]
 })
 export class ChatModule {
