@@ -15,7 +15,6 @@ import { AuthService } from './auth.service';
 import { AuthGoogleGuard } from './Guard/auth-google.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import { updatedUser } from './dtos/updateUser.dto';
-import { sendEmail, generateTotpCode } from 'src/2fa/2fa';
 
 @Controller('v1/api/auth')
 export class AuthController {
@@ -31,7 +30,10 @@ export class AuthController {
     const userId = req.user.auth_id;
     const user = await this.authService.findUserById(userId.toString());
     if (user.isTfaEnabled) {
-      sendEmail(user.email, generateTotpCode(user.tfaSecret));
+      this.authService.sendEmail(
+        user.email,
+        this.authService.generateTotpCode(user.tfaSecret),
+      );
       return res.redirect(
         `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
       );
@@ -55,7 +57,10 @@ export class AuthController {
     const userId = req.user.auth_id;
     const user = await this.authService.findUserById(userId.toString());
     if (user.isTfaEnabled) {
-      sendEmail(user.email, generateTotpCode(user.tfaSecret));
+      this.authService.sendEmail(
+        user.email,
+        this.authService.generateTotpCode(user.tfaSecret),
+      );
       return res.redirect(
         `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
       );
@@ -72,7 +77,10 @@ export class AuthController {
   @Post('sendEmail')
   async sendEmail(@Req() req) {
     const { email, tfaSecret } = req.body.UserInfo;
-    sendEmail(email, generateTotpCode(tfaSecret));
+    this.authService.sendEmail(
+      email,
+      this.authService.generateTotpCode(tfaSecret),
+    );
   }
 
   @Get('logout')

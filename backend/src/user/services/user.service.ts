@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { generateSecret, verifyTFA } from 'src/2fa/2fa';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private authService: AuthService,
+  ) {}
 
   async getUserStats(nickname: string) {
     const user = await this.prisma.users.findUnique({
@@ -120,9 +123,9 @@ export class UserService {
         where: { nickname: nickname },
       });
       return user.isTfaEnabled;
-    } catch (error) {
-    }
+    } catch (error) {}
   }
+
   async enableTFA(nickname: string) {
     try {
       const user = await this.prisma.users.update({
@@ -131,13 +134,13 @@ export class UserService {
         },
         data: {
           isTfaEnabled: true,
-          tfaSecret: generateSecret(),
+          tfaSecret: this.authService.generateSecret(),
         },
       });
       return user.isTfaEnabled;
-    } catch (error) {
-    }
+    } catch (error) {}
   }
+
   async disableTFA(nickname: string) {
     try {
       const user = await this.prisma.users.update({
@@ -151,9 +154,9 @@ export class UserService {
         },
       });
       return !user.isTfaEnabled;
-    } catch (error) {
-    }
+    } catch (error) {}
   }
+
   async verifyTfa(nickname: string, code: string) {
     try {
       const user = await this.prisma.users.findUnique({
@@ -162,7 +165,7 @@ export class UserService {
       if (!user || !user.isTfaEnabled || !user.tfaSecret) {
         return false;
       }
-      const isTfaVerified = verifyTFA(user.tfaSecret, code);
+      const isTfaVerified = this.authService.verifyTFA(user.tfaSecret, code);
       if (isTfaVerified) {
         await this.prisma.users.update({
           where: {
@@ -174,9 +177,9 @@ export class UserService {
         });
       }
       return isTfaVerified;
-    } catch (error) {
-    }
+    } catch (error) {}
   }
+
   async getUserInfo(nickname: string) {
     try {
       const user = await this.prisma.users.findUnique({

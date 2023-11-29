@@ -1,19 +1,20 @@
-
 import * as jwt from 'jsonwebtoken';
+import { createTransport } from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as otplib from 'otplib'
-import * as qrcode from 'qrcode';
-
+import { authenticator, totp } from 'otplib';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly configService: ConfigService,private readonly  prisma: PrismaService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
 
-    private get secretKey(): string {
-      return this.configService.get<string>('JWT_SECRET_KEY');
-    }
+  private get secretKey(): string {
+    return this.configService.get<string>('JWT_SECRET_KEY');
+  }
 
   generateToken(payload: any): string {
     return jwt.sign(payload, this.secretKey);
@@ -40,24 +41,24 @@ export class AuthService {
     }
   }
 
-  async createRandomName()
-  {
+  async createRandomName() {
     const name = (Math.random() + 1).toString(36).substring(7);
     // if (await this.isNicknameUnique(name))
     //     return this.createRandomName();
-    return name
-
+    return name;
   }
 
-  async createUser(auth_id: string,
+  async createUser(
+    auth_id: string,
     email: string,
     displayname: string,
     picture: string,
-    emailVerified?: boolean) {
+    emailVerified?: boolean,
+  ) {
     const nickname = await this.createRandomName();
 
     return this.prisma.users.create({
-        data: {
+      data: {
         auth_id,
         email,
         nickname,
@@ -66,14 +67,14 @@ export class AuthService {
         emailVerified,
         stats: {
           create: {
-              wins: 0,
-              losses: 0,
-              goal_conceded: 0,
-              goal_scoared: 0,
-              clean_sheets: 0
-          }
-        }
-        }
+            wins: 0,
+            losses: 0,
+            goal_conceded: 0,
+            goal_scoared: 0,
+            clean_sheets: 0,
+          },
+        },
+      },
     });
   }
 
@@ -85,32 +86,57 @@ export class AuthService {
     return user;
   }
 
-  async updateUser(auth_id : string ,nickname: string, displayname: string, picture: string, bio: string,firstSignIn:boolean) {
+  async updateUser(
+    auth_id: string,
+    nickname: string,
+    displayname: string,
+    picture: string,
+    bio: string,
+    firstSignIn: boolean,
+  ) {
     const updatedUser = await this.prisma.users.update({
       where: { auth_id },
-      data: { nickname, displayname, picture,bio ,firstSignIn},
+      data: { nickname, displayname, picture, bio, firstSignIn },
     });
     if (!updatedUser) {
       throw new NotFoundException(`User with ID ${auth_id} not found`);
     }
     return updatedUser;
   }
-  // generateSecret(): string {
-  //   return otplib.authenticator.generateSecret();
-  // }
 
-  // generateOtp(secret: string): string {
-  //   return otplib.authenticator.generate(secret);
-  // }
+  generateSecret(): string {
+    return authenticator.generateSecret();
+  }
 
-  // verifyOtp(secret: string, token: string): boolean {
-  //   return otplib.authenticator.verify({ token, secret });
-  // }
-  // async generateQrCode(secret: string, label: string): Promise<string> {
-  //   const otpauthURL = otplib.authenticator.keyuri('user', label, secret);
-  //   const qrCode = await qrcode.toDataURL(otpauthURL);
+  generateTotpCode(secret: string): string {
+    totp.options = { step: 120 };
+    return totp.generate(secret);
+  }
 
-  //   return qrCode;
-  // }
+  verifyTFA(secret: string, code: string): boolean {
+    return totp.verify({ secret, token: code });
+  }
 
+  async sendEmail(email: string, code: string) {
+    try {
+      const transporter = createTransport({
+        service: 'gmail',
+        auth: {
+          user: this.configService.get('EMAIL_USER'),
+          pass: this.configService.get('EMAIL_PASS'),
+        },
+      });
+      const mailOptions = {
+        from: 'ft_transcendence <ft.transcendence1337@gmail.com>',
+        to: email,
+        subject: '2FA of ft_transcendence.',
+        text: `Here is your 6-digit code: ${code}
+  It expires in 2 minutes, Hurry up!`,
+      };
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error('Error sending email: ', error);
+      throw new Error('Failed to send email');
+    }
+  }
 }
