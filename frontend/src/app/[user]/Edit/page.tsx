@@ -106,7 +106,7 @@ export default function Edit() {
           </div>
           {/* <img width={120}   className='rounded-full   z-10 mx-auto   '  src={dataUser?.picture} alt="An image" crossOrigin="anonymous" />  */}
           <div className="absolute left-[56%] top-[85px]  bg-[#ffff]   text-[#000000] rounded-full p-1">
-            <label for="image-upload" className="">
+            <label htmlFor="image-upload" className="">
               <TbPhotoEdit className="  cursor-pointer" size={25}></TbPhotoEdit>
             </label>
             <input

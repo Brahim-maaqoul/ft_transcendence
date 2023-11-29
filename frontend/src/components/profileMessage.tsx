@@ -6,6 +6,10 @@ import Image from "next/image";
 import { close } from "./toggle";
 import NextImage from "next/image";
 import Link from "next/link";
+import { usegetGroups } from "@/app/api/chatApi/chatApiFunctions";
+import { group } from "console";
+import { Chat } from "./Groups";
+import { spinner } from "@/app/[user]/profile/page";
 
 interface ProfileMessagesProps {
   id: string;
@@ -25,23 +29,25 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
 }) => {
   const [isTyping, setisTyping] = useState<boolean>(false);
   const { dataUser, socketchat, showFalse } = useAuth();
-
-  useEffect(() => {
-    socketchat?.on("isTyping", (newMessage: any) => {
-      setisTyping(true);
-    });
-    return () => {
-      socketchat?.off("isTyping");
-    };
-  }, [socketchat]);
-  useEffect(() => {
-    socketchat?.on("leaveTyping", (newMessage: any) => {
-      setisTyping(false);
-    });
-    return () => {
-      socketchat?.off("leaveTyping");
-    };
-  }, [socketchat]);
+  const { data:dataGroups, isError, isLoading } = usegetGroups();
+  if (isError) return <div>error</div>;
+  if (isLoading) return <div className="h-full flex justify-center items-center">{spinner}</div>;
+  // useEffect(() => {
+  //   socketchat?.on("isTyping", (newMessage: any) => {
+  //     setisTyping(true);
+  //   });
+  //   return () => {
+  //     socketchat?.off("isTyping");
+  //   };
+  // }, [socketchat]);
+  // useEffect(() => {
+  //   socketchat?.on("leaveTyping", (newMessage: any) => {
+  //     setisTyping(false);
+  //   });
+  //   return () => {
+  //     socketchat?.off("leaveTyping");
+  //   };
+  // }, [socketchat]);
 
   return (
     <div className="w-full h-1/10 border-b border-gray-300 flex items-center p-1">
@@ -55,11 +61,12 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
         />
       </div>
       <div id="info" className="ml-3">
-        <Link
-          href="/path"
-          className="hover:cursor-pointer text-xm font-mono text-white">
-          {id}
-        </Link>
+
+          {dataGroups.map((user:Chat, key: number)=>{
+            if (String(user.id) === id)
+              return <span key={key}className="text-white text-lg">{user.name}</span>
+          })}
+       
         {!isTyping ? (
           <p className="text-xs font-mono ">online last 08:30</p>
         ) : (

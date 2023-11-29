@@ -48,6 +48,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: createDuo,
+    onSuccess: () => queryClient.invalidateQueries(['Friends'])
   })
   if (mutation.isSuccess)
   {
