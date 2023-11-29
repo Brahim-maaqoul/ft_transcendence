@@ -11,6 +11,7 @@ interface friendsToGroupProps {
   groupPrivacy?: string;
   idGroup?: string;
   idUser?: string;
+  FriendToGroup: any
 }
 
 
@@ -79,6 +80,7 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
   friendToGroup,
   setFriendToGroup,
   idGroup,
+  FriendToGroup,
 }) => {
   const [friendAdded, setFriendAdded] = useState(null);
 
@@ -102,7 +104,7 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
               >
                 <div className=" flex  col-span-1 ">
                   <img
-                    src={user.picture!}
+                    src={user.user.picture!}
                     alt="Profile picture"
                     width={52}
                     height={52}
@@ -118,7 +120,7 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
                   </span>
                   <span style={{ color: "black" }}>({user.username})</span>
                 </div>
-                <IconChange idUser={user.id} idGroup={idGroup} />
+                <IconChange idUser={user.user.id} idGroup={idGroup} />
               </div>
             );
           })}
@@ -127,65 +129,3 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
   );
 };
 
-const FriendToGroup = [
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-  {
-    name: "reda",
-    id: "1",
-    picture: "/reda.png",
-    username: "lagala",
-  },
-];

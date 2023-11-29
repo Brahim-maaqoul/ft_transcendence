@@ -30,7 +30,7 @@ export class GroupsController {
     @UseGuards(AuthGuard('jwt'))
     async addMember(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
     {
-        this.GroupsService.addMember(req.user.auth_id, member)
+        await this.GroupsService.addMember(req.user.auth_id, member)
         return res.status(201).send();
     }
 
@@ -38,7 +38,7 @@ export class GroupsController {
     @UseGuards(AuthGuard('jwt'))
     async changeRole(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
     {
-        this.GroupsService.changeRole(req.user.auth_id, member)
+        await this.GroupsService.changeRole(req.user.auth_id, member)
         return res.status(201).send();
     }
 

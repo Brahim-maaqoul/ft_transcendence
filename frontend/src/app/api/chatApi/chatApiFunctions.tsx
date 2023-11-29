@@ -86,10 +86,16 @@ export async function addFriendToGroup(data: idGroup) {
   return response.data;
 }
 
-export async function getMemberGroup(data: idGroup) {
-  const response: AxiosResponse = await API.post("/chat/getMemberGroup", data);
+export async function getMemberGroup(data: string) {
+  const response: AxiosResponse = await API.get("/groups/getMembers?groupId=" + data);
   return response.data;
 }
+
+export function useGetMembers(data: string)
+{
+  return useQuery({ queryKey: ["getMembers"], queryFn: () => getMemberGroup(data) });
+}
+
 
 export async function banUserFromGroup(data: banUser) {
   const response: AxiosResponse = await API.post("/chat/banUserToGroup", data);
