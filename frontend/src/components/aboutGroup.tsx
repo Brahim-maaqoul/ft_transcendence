@@ -179,8 +179,8 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id, more, setMore }) =
                   {user.user?.nickname}
                 </div>
                 {
-                 (( getMembership.type !== 'member'&&
-                  user.type === 'member') ||( getMembership.type === 'creator'&&
+                 (( getMembership?.type !== 'member'&&
+                  user.type === 'member') ||( getMembership?.type === 'creator'&&
                   user.type !== 'creator')) &&
                    <GroupUserManagement userId={String(user.user_id)} idG = {id}/>
                 }
