@@ -30,11 +30,22 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   return (
     <div className="w-full h-1/10 border-b border-gray-300 flex items-center p-1">
       <div className="flex">
+          {
+            group.type === "duo" ? <Link href={'/'+group.members[0].user.nickname+'/profile'}>
+               <div className="w-12 h-12">
+            <div
+              className="h-12 w-12 rounded-full bg-cover"
+              style={{ backgroundImage: `url(${ group.members[0].user.picture})` }}></div>
+            </div>
+            </Link>
+            :
         <div className="w-12 h-12">
           <div
             className="h-12 w-12 rounded-full bg-cover"
-            style={{ backgroundImage: `url(${group.type === "group" ? group.picture: group.members[0].user.picture})` }}></div>
+            style={{ backgroundImage: `url(${ group.picture})` }}>
+            </div>
         </div>
+            }
       </div>
       <div id="info" className="ml-3">
 
