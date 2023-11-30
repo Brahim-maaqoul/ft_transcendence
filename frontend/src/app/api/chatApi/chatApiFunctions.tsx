@@ -96,6 +96,18 @@ export function useGetMembers(data: string)
   return useQuery({ queryKey: ["getMembers"], queryFn: () => getMemberGroup(data) });
 }
 
+ async function getMemberShip(data: string) {
+  console.log(234)
+  const response: AxiosResponse = await API.get("/groups/getMembership?groupId=" + data);
+  return response.data;
+}
+
+export function useGetMemberShip(data: string)
+{
+  return useQuery({ queryKey: ["getMembership"], queryFn: () => getMemberShip(data) });
+}
+
+
 
 export async function banUserFromGroup(data: banUser) {
   const response: AxiosResponse = await API.post("/chat/banUserToGroup", data);
