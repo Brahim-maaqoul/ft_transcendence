@@ -57,7 +57,7 @@ export const Pepoule = () => {
             <div  id="info" className=" col-span-5  flex justify-between text-gray-300 ">
               <div className='flex flex-col justify-start'>
                 <span className='text-xl font-bold'>{group.members[0].user.nickname}</span>
-              <div className='text-xs text-gray-400'> {group.messages.length ? group.messages[0].message_text.slice(0,20) : ""} </div>
+              <div className='text-xs text-gray-400'> {group.messages.length ? group.messages[0].message_text.length > 30 ? group.messages[0].message_text.slice(0,20) : group.messages[0].message_text : ""} </div>
 
               </div>
               {/* <p className='text-xs text-gray-300'>{user.username}</p> */}
