@@ -4,6 +4,7 @@ import {
   usegetGroups,
   banUserFromGroup,
   useGetMembers,
+  useGetMemberShip,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { useMutation } from "@tanstack/react-query";
 import { use, useEffect, useRef, useState } from "react";
@@ -23,11 +24,14 @@ interface groupUsersProps {
   // u can add more props here
 }
 
-interface members {
-  auth_id: number;
-  displayname: string;
-  nickname: string;
-  picture: string;
+interface member {
+  user_id: number;
+  type: string;
+  banned: boolean;
+  user: {
+    nickname: string;
+    picture: string;
+  };
 }
 interface ConversationProps {
   id: string;
@@ -143,14 +147,17 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id, more, setMore }) =
   const [ids, setId] = useState(0);
 
   const {data:getMembers, isSuccess, isError} = useGetMembers(id)
-  console.log("members", getMembers)
+  const {data:getMembership} = useGetMemberShip(id)
+  console.log('badr.................', getMembership, id);
+  // console.log("members", getMembers)
   if(!isSuccess)
     return <>wait bitch</>
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">
         {getMembers &&
-          getMembers.map((user: UserProfile, key: number) => {
+          getMembers.map((user: member, key: number) => {
+            console.log(user)
             return (
               <div
                 key={key}
@@ -171,7 +178,12 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id, more, setMore }) =
                 >
                   {user.user?.nickname}
                 </div>
-                <GroupUserManagement userId={user.user?.auth_id} idG = {id}/>
+                {
+                 (( getMembership.type !== 'member'&&
+                  user.type === 'member') ||( getMembership.type === 'creator'&&
+                  user.type !== 'creator')) &&
+                   <GroupUserManagement userId={String(user.user_id)} idG = {id}/>
+                }
               </div>
             );
           })}

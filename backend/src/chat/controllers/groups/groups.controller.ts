@@ -174,9 +174,10 @@ export class GroupsController {
     }
     @Get('/getMembership')
     @UseGuards(AuthGuard('jwt'))
-    async getMembership(@Res() res, @Req() req,@Body('groupID', ParseIntPipe) group_id:number)
+    async getMembership(@Res() res, @Req() req,@Query('groupId', ParseIntPipe) group_id:number)
     {
-        const member = this.GroupsService.getMembership(req.user.auth_id, group_id)
+        console.log(1234)
+        const member = await this.GroupsService.getMembership(req.user.auth_id, group_id)
         return res.status(200).json(member)
     }
     @Post("/changePrivacy")
