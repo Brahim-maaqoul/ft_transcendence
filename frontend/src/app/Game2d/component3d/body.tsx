@@ -17,9 +17,9 @@ import { set } from "react-hook-form";
 import { PSize, key } from "../types/component";
 
 const socket = io('http://localhost:8000/Game2d');
+const keys: key = { left: false, right: false, rotate_pos: false, rotate_neg: false, start: false };
 
 export function Body3D() {
-	const keys: key = { left: false, right: false, rotate_pos: false, rotate_neg: false, start: false };
 	// const [gameData, setConfig] = useState(physic.get_data());
 	// const { progress } = useProgress()
 	// useEffect(() => {
@@ -50,7 +50,7 @@ export function Body3D() {
 	useEffect(() => {
 		const handelKeyDown = (event: KeyboardEvent) => {
 			if (event.key === 'Enter' || event.key === ' ') {
-				keys.start = !keys.start;
+				keys.start = true;
 			}
 
 			if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
@@ -83,7 +83,7 @@ export function Body3D() {
 		};
 		const interval = setInterval(() => {
 			socket.emit('keyGameUpdate', { keys: keys });
-		}, 1);
+		}, 5);
 
 
 		// socket.on('gaming', (data) => {

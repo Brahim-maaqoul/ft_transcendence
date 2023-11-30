@@ -38,7 +38,7 @@ export class Game
 		this.keysPressed = new Set()
 		this.sec = -1
 		this.time = new Date()
-		this.start = false
+		this.start = true
 	}
 	get_data():GameConfig
 	{
@@ -72,7 +72,6 @@ export class Game
 	}
 	check_keys(keys: key)
 	{
-
 		this.paddle[0].rotate(0)
 
 		this.start = keys.start
@@ -84,13 +83,6 @@ export class Game
 			this.paddle[0].rotate(Math.PI/6)
 		else if (keys.rotate_neg)
 			this.paddle[0].rotate(-Math.PI/6)
-		// if (this.keysPressed.has('w') || this.keysPressed.has('W'))
-		// 	this.paddle[1].move_left(1, 0)
-		// if (this.keysPressed.has('s') || this.keysPressed.has('S'))
-		// 	this.paddle[1].move_right(1, 600)
-
-		// if (this.keysPressed.has(' '))
-		// 	this.start = true
 		
 	}
 	check_intersection()
