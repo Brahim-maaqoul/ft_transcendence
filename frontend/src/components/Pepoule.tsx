@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useGetChat, usegetFriends } from '@/app/api/getFriends';
 import { spinner } from '@/app/[user]/profile/page';
 import { useAuth } from './providers/AuthContext';
+import { getTime } from './messages';
 
 interface duo
 {
   id: number;
   members: Array<any>
   messages: Array<any>
-
+  lastChange: any
 }
 
 // import { usegetUserChat } from '@/app/api/checkAuthentication';
@@ -57,11 +58,11 @@ export const Pepoule = () => {
             <div  id="info" className=" col-span-5  flex justify-between text-gray-300 ">
               <div className='flex flex-col justify-start'>
                 <span className='text-xl font-bold'>{group.members[0].user.nickname}</span>
-              <div className='text-xs text-gray-400'> {group.messages.length ? group.messages[0].message_text.length > 30 ? group.messages[0].message_text.slice(0,20) : group.messages[0].message_text : ""} </div>
+              <div className='text-xs text-gray-400'> {group.messages.length ? group.messages[0].message_text.length > 30 ? group.messages[0].message_text.slice(0,30) + '...' : group.messages[0].message_text : ""} </div>
 
               </div>
               {/* <p className='text-xs text-gray-300'>{user.username}</p> */}
-              <p className='m-2 text-gray-400 text-var-selver font-roboto text-xs font-light tracking-tighter'>Today 9.12am</p>
+              <p className='m-2 text-gray-400 text-var-selver font-roboto text-xs font-light tracking-tighter'>{getTime(new Date(group.lastChange))}</p>
             </div>
             <div className=' col-span-2 flex flex-row-reverse   items-center w-[100%] pr-2'>
               {/* <p className= "bg-orange-700 px-1 text-sm  rounded-3xl  mr-2">12</p> */}

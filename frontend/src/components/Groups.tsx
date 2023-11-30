@@ -17,6 +17,7 @@ import { CreatGroup } from "./creatGroup";
 import { useAuth } from "@/components/providers/AuthContext";
 import { JoinGroup } from "./joinGroup";
 import { spinner } from "@/app/[user]/profile/page";
+import { getTime } from "./messages";
 interface Message {
   timestamp: string;
 }
@@ -132,14 +133,13 @@ export const Groups = () => {
                 id="info"
                 className="pt-1 col-span-3 text-xm font-mono tracking-normal text-white">
                 {user.name}
-                <p className="text-sm text-gray-400">{user.messages.length ? user.messages[0].message_text : ""}</p>
+                <p className="text-sm text-gray-400">{user.messages.length ? user.messages[0].message_text.length > 30 ? user.messages[0].message_text.slice(0,30)+'...' : user.messages[0].message_text : ""}</p>
                 <p className="text-xs text-gray-300">{}</p>
               </div>
               <div className="col-span-2 flex flex-row-reverse items-center w-[100%] pr-2">
                 <p className="text-gray-400 text-var-silver font-roboto text-xs font-light tracking-tighter">
-                  Today 9.12am
+                {getTime(new Date(user.lastChange))}
                 </p>
-                <p className="bg-red-600 px-1 text-xs rounded-3xl mr-2">5</p>
               </div>
             </div>
           );

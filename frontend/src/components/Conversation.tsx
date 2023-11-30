@@ -22,6 +22,11 @@ export interface MessageInfo {
   group_id: string;
   message_text: string;
   lastmodif: Date;
+  sender: {
+    nickname: string;
+    picture: string;
+  };
+
 }
 interface ConversationProps {
   id: string;
