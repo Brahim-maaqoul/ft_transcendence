@@ -102,6 +102,7 @@ export class GroupsService {
                 messages:{
                     orderBy: {lastmodif: 'asc'},
                     select:{
+                        sender_id: true,
                         group_id: true,
                         lastmodif: true,
                         message_text: true,
