@@ -52,17 +52,17 @@ const selectMessage = (
   </div>
 );
 export const Conversation: React.FC<ConversationProps> = ({ id }) => {
-  if(isNaN(Number(id)))
-    return <>{selectMessage}</>
   const [message, setMessage] = useState("");
   const [more, setMore] = useState(false);
-  const { dataUser } = useAuth();
+  const { dataUser, show } = useAuth();
   // const [data, setData] = useState<MessageInfo[]>([]);
   const [friendToGroup, setFriendToGroup] = useState(false);
 
   // }, [mutation.isSuccess, mutation.isError, id]);
   const {data: getMessages, isSuccess, isError} = useGetMessages(id);
   console.log("more", more)
+  if(isNaN(Number(id)))//another bug here
+    return <>{selectMessage}</>
   return (
     <div className="relative h-full">
       {(isError) && <>Error</>}
@@ -71,12 +71,13 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
         <div>
           <ProfileMessages group={getMessages} more={more} setMore={setMore} />
           {more && !friendToGroup && (
-            <AboutGroup id={id} more={more} setMore={setMore}></AboutGroup>
+            <AboutGroup id={id} group={getMessages} more={more} setMore={setMore}></AboutGroup>
           )}
           {more && (
             <>
               <GroupManagement
                 idG={id}
+                group={getMessages}
                 userId={dataUser?.auth_id}
                 more={more}
                 setMore={setMore}

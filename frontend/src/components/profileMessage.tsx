@@ -25,7 +25,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   setMore,
 }) => {
   const [isTyping, setisTyping] = useState<boolean>(false);
-  const { dataUser, showFalse } = useAuth();
+  const { dataUser, showFalse, showTrue } = useAuth();
 
   return (
     <div className="w-full h-1/10 border-b border-gray-300 flex items-center p-1">
@@ -56,8 +56,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
           <p className="text-xs font-mono ">isTyping...</p>
         )}
       </div>
-      {
-        group.type === "group" ?
+     
         <button className="ml-auto mr-0" onClick={() => setMore(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -75,19 +74,13 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
             <path d="M12 9h.01"></path>
             <path d="M11 12h1v4h1"></path>
           </svg>
-        </button>:
-        <>
-         <button className="ml-auto mr-0">
-          <div className="w-12 h-12">
-            <div
-              className="h-12 w-12 rounded-full bg-cover"
-              style={{ backgroundImage: `url(/challenge.png)` }}></div>
-          </div>
         </button>
-        </>
-      }
+     
+      
       <button className="ml-4 flex lg:hidden" onClick={showFalse}>
-        {close}
+        {close
+          
+        }
       </button>
     </div>
   );
