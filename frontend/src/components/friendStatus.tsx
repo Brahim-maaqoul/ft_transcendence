@@ -121,7 +121,7 @@ function AccpetFriend({ authId }: { authId: string }) {
   );
 }
 
-function Unblock({ authId }: { authId: string }) {
+export function Unblock({ authId }: { authId: string }) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: unblockFriend,

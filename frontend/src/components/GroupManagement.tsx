@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 
 interface groupManagementProps {
   userId: string;
+  group: any;
   idG: string;
   more: boolean;
   setMore: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,6 +13,7 @@ interface groupManagementProps {
 
 export const GroupManagement: React.FC<groupManagementProps> = ({
   userId,
+  group,
   idG,
   more,
   setMore,
@@ -31,42 +33,47 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
 
   return (
     <div className="flex bottom-0 justify-between items-center absolute w-[100%]">
-      <div className="flex">
-        <button
-          onClick={() => setFriendToGroup(true)}
-          className="mr-auto ml-2 flex bottom-0  text-gray-300 hover:text-white"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="icon icon-tabler icon-tabler-users-plus"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+      {
+        group.type === 'group' &&
+        <>
+        <div className="flex">
+          <button
+            onClick={() => setFriendToGroup(true)}
+            className="mr-auto ml-2 flex bottom-0  text-gray-300 hover:text-white"
           >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
-            <path d="M3 21v-2a4 4 0 0 1 4 -4h4c.96 0 1.84 .338 2.53 .901"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            <path d="M16 19h6"></path>
-            <path d="M19 16v6"></path>
-          </svg>
-        </button>
-      </div>
-      <div className="flex w-[50%]">
-        <button
-          id="send"
-          className="pl-2.5 bg-[#e13636f2] flex justify-center font-mono w-[100%] text-white rounded-3xl shadow-black mb-1 pr-2 py-1"
-          onClick={handleDeleteGroup}
-        >
-          Delete
-        </button>
-      </div>
-      <div className="flex bg-yello-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="icon icon-tabler icon-tabler-users-plus"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+              <path d="M3 21v-2a4 4 0 0 1 4 -4h4c.96 0 1.84 .338 2.53 .901"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              <path d="M16 19h6"></path>
+              <path d="M19 16v6"></path>
+            </svg>
+          </button>
+        </div>
+        <div className="flex w-[50%]">
+          <button
+            id="send"
+            className="pl-2.5 bg-[#e13636f2] flex justify-center font-mono w-[100%] text-white rounded-3xl shadow-black mb-1 pr-2 py-1"
+            onClick={handleDeleteGroup}
+            >
+            Delete
+          </button>
+        </div>
+        </>
+      }
+      <div className={`flex ${group.type === 'duo' ? 'w-full flex-row-reverse': ''}`}>
         <button
           onClick={handleExit}
           className="ml-auto mr-2 flex bottom-0 text-gray-300 hover:text-white"

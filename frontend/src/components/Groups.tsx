@@ -54,11 +54,11 @@ export const Groups = () => {
     route.push(`/chat/${id}`);
   };
   const handleJoninGroup = (group: Chat) => {
-    showTrue();
     if (!group.members.length || group.members[0].type === "notMember" || group.members[0].type === "banned") {
       setJoinId(group);
     } else {
       pushId(String(group.id));
+      showTrue();
     }
 
   };
