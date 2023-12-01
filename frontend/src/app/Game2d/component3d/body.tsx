@@ -82,8 +82,10 @@ export function Body3D() {
 			}
 		};
 		const interval = setInterval(() => {
+			// console.log('sockets: ', socket);
+			// console.log('sockets id: ', socket.id);
 			socket.emit('keyGameUpdate', { keys: keys });
-		}, 5);
+		}, 5); //5
 
 
 		// socket.on('gaming', (data) => {
@@ -112,8 +114,8 @@ export function Body3D() {
 			<Canvas shadows camera={{ fov: 60, far: 7000, position: [-1200, 500, 0] }} flat linear>
 				<Suspense fallback={<Loader />}>
 
-					<ambientLight intensity={0.9} />
-					<Environment files="/game/hdr/galaxy.hdr" background={true} />
+					<ambientLight intensity={0} />
+					<Environment files="/game/hdr/night.hdr" background={true} />
 					<OrbitControls target={[0, -200, 0]} />
 					{/* <Sky sunPosition={[1000, 1000, 1000]} /> */}
 					<pointLight castShadow intensity={1} position={[1000, 1000, 1000]} />
@@ -228,7 +230,7 @@ function Paddle({ paddle }: { paddle: PSize }) {
 			<mesh ref={ref}>
 				<RoundedBox args={[paddle.width, paddle.width, paddle.height]} radius={paddle.width / 2} rotation-y={-paddle.rotation}>
 					{/* <meshPhysicalMaterial map={texture} bumpMap={bump} /> */}
-					<meshBasicMaterial color={[3, 0, 10]} toneMapped={false} />
+					<meshBasicMaterial color={[1, 10, 8]} toneMapped={false} />
 				</RoundedBox>
 			</mesh>
 		</RigidBody>

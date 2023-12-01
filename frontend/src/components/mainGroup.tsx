@@ -157,6 +157,7 @@ export default function MainGroup() {
         <Link
         //   href={isAuthenticated ? "/play" : "/login"}
           href={isAuthenticated ? "/Game2d" : "/login"}
+        //   href={isAuthenticated ? "/Game4d" : "/login"}
           className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}>
           <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute ">
             {isAuthenticated ? "Play Now " : "Sign In"}

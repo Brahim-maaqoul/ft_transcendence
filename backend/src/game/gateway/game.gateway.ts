@@ -47,7 +47,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		// 	// this.updateGames();
 		// 	this.handelHelloEvent();
 		// }, 1000);
-		console.log('WebSocket initialized!---------------------------------------------------------');
+		// console.log('WebSocket initialized!---------------------------------------------------------');
 	}
 
 	// @SubscribeMessage('startHelloMessages')
@@ -82,9 +82,36 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	}
 
 	@SubscribeMessage('keyGameUpdate')
-	handelKeyGameUpdate(client: any, keys: {keys: key}) {
-		this.game.check_keys(keys.keys);
-		client.emit('gameUpdate', this.game.get_data());
+	async handelKeyGameUpdate(client: any, keys: {keys: key}) {
+			// for the bot game
+		// if (client.id in this.gameSessionService.botGames){
+		// 	this.gameSessionService.botGames[client.id].check_keys(keys.keys);
+		// 	client.emit('gameUpdate', this.gameSessionService.botGames[client.id].get_data());
+		// }
+		// else {
+		// 	await this.gameSessionService.createBotGame({playerId1: client.id, boot: true}, client.id);
+		// }
+
+		if (client.id in this.gameSessionService.matchPlayers){
+			// error allready in game
+			// so play with it 
+			// await this.gameSessionService.joinQueue({playerId1: client.id, boot: false}, client.id);
+			const p1 = client.id;
+			const p2 = this.gameSessionService.matchPlayers[client.id].socket1 !== p1 ? this.gameSessionService.matchPlayers[client.id].playerId1 : this.gameSessionService.matchPlayers[client.id].playerId2;
+			this.gameSessionService.matchPlayers[p1].check_keys(keys.keys);
+			this.gameSessionService.matchPlayers[p2].check_keys(keys.keys);
+			client.emit('gameUpdate', this.gameSessionService.matchPlayers[p1].get_data());
+			client.to(p2).emit('gameUpdate', this.gameSessionService.matchPlayers[p2].get_data());
+		}
+		else {
+			await this.gameSessionService.joinQueue({playerId1: client.id, boot: false}, client.id);
+		}
+
+		// if (keys.keys.start === true){
+		// 	;
+		// }
+		// this.gameSessionService.socketIo[client.id].check_keys(keys.keys);
+		// client.emit('gameUpdate', this.game.get_data());
 	}
 
 	@SubscribeMessage('stopGame')
@@ -113,7 +140,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	}
 
 	async handleDisconnect(client: any) {
-		// this.logger.log(`Clinet id: ${client.id} disconnected!`);
+		console.log(`Clinet id: ${client.id} disconnected!`);
+		await this.gameSessionService.deleteBotGame(client.id);
 	}
 
 	@SubscribeMessage('createBotGame')

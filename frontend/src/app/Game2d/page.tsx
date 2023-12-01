@@ -11,10 +11,10 @@ import { useEffect, useState, useRef } from 'react';
 const game: Game = new Game()
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import Games from "./games/body";
 // import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier"
 // import * as THREE from "three"
 // import { Fisheye, CameraControls, PerspectiveCamera, Environment } from '@react-three/drei'
-
 
 export default function  Game2d(){
   
@@ -39,9 +39,9 @@ export default function  Game2d(){
             {/* <Body game={game}/> */}
 			{/* <HJ/> */}
             <div className="bg-[#000] relative max-w-[90%] max-h-[90%] w-[80vw] h-[65vh] mx-auto mb-4 mt-6">
-              
               <Body3D/> 
             </div>
+			{/* <Games/> */}
             <div className="flex xl:hidden   mb-auto gap-6">
                 <button className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br 
                 shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 w-[16vw] h-[16vw] rounded-full content-center items-center "></button>

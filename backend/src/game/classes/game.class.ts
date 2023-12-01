@@ -8,7 +8,8 @@ export class Game
 	gameId: number;
 	playerId1: number;
 	playerId2?: number;
-	socket: {player1Socket: string, player2Socket?: string};
+	socket1: string;
+	socket2?: string;
 	playerAI: boolean;
 	world: {h:number, w:number};
 	ball: Array<Ball>;

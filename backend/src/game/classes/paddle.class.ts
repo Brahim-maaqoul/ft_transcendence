@@ -164,7 +164,7 @@ export class Paddle extends Rectangle
         //                     }
         const data: PSize = {height: this.height ,
                                 width:this.width,
-                                color: "color",
+                                color: "#ff0000",
                                 position: {x: (this.position.x ),
                                             y: (this.position.y)},
                                 scale: this.scale,

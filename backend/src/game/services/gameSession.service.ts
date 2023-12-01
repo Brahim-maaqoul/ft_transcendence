@@ -1,23 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Game } from '../classes/game.class';
-import { generate } from 'rxjs';
+import { generate, queue } from 'rxjs';
 import { Paddle } from '../classes/paddle.class';
+import { Socket } from 'socket.io';
+
+class Queue<T> {
+	private items: T[];
+
+	constructor() {
+		this.items = [];
+	}
+
+	enqueue(item: T) {
+		this.items.push(item);
+	}
+
+	dequeue(): T | undefined {
+		return this.items.shift();
+	}
+
+	isEmpty(): boolean {
+		return this.items.length === 0;
+	}
+
+	size(): number {
+		return this.items.length;
+	}
+}
 
 @Injectable()
 export class GameSession {
 	constructor(private prisma: PrismaService) { }
 
-	//   private runningGames = new Map<number, any>();
-	//   private gameSessions = new Map<number, any>();
-	//   private runningBotGames = new Map<number, any>();
-	//   private gameBotSessions = new Map<number, any>();
-	//   private runningBotGames = new Array<Game>();
-	//   private gameBotSessions = new Array<Game>();
-	private pendingBotGames = new Array<any>();
-	private runningBotGames = new Array<any>();
-	private gameBotSessions = new Array<Game>();
-	private game = new Game();
+	// botGames = new Array<Game>();
+	// game = new Game();
+	queuePlayers = new Queue<string>();
+	// queuePlayers: Queue<string>;
+	matchPlayers: Record<string, Game> = {};
+
+	botGames: Record<string, Game> = {};
 
 	public async createBotGame(data: { playerId1: number,boot: boolean}, clientId: string) {// playerid2?: number, }, clientId: string) {
 		// const game = this.prisma.gameSession.create({
@@ -32,23 +54,60 @@ export class GameSession {
 		//   }
 		// });
 		// return game;
-		this.game.gameId = Math.floor(Math.random() * 1000);
-		this.game.playerId1 = data.playerId1;
-		this.game.playerAI = data.boot;
-		this.game.socket.player1Socket = clientId;
-		this.game.status = 'waiting';
-		// this.runningBotGames.push(game);
-		// this.pendingBotGames.push(game);
+
+
+		// this.botGames = [];
+
+
+		const newgame = new Game();
+		
+		newgame.gameId = Math.floor(Math.random() * 1000);
+		newgame.playerId1 = Math.floor(Math.random() * 1000);
+		newgame.playerAI = data.boot;
+		newgame.socket1 = clientId;
+		newgame.start = false;
+		// this.botGames.push(newgame);
+		this.botGames[clientId] = newgame;
+		// this.game = newgame;
+		// console.log('------------------------------------- create bot game size of ', this.botGames.length);
+		// for (let i=0;i<this.botGames.length;i++) {
+		// 	console.log('game ', this.botGames[i]);
+		// }
+		// this.game.gameId = this.botGames.length * Math.floor(Math.random() * 1000) + 1;
+		// this.game.gameId = this.botGames[this.botGames.length - 1] ? this.botGames[this.botGames.length - 1].gameId + 1 : 1;
+		// this.game.status = 'waiting';
 	}
 
-	public async getBotGame(gameId: number) {
-		// return this.runningBotGames.get(gameId);
-		return this.runningBotGames.find(game => game.gameId === gameId);
+	public async joinQueue(data: { playerId1: number, boot: boolean }, clientId: string) {
+		// const newgame = new Game();
+		// newgame.gameId = Math.floor(Math.random() * 1000);
+		// newgame.playerId1 = Math.floor(Math.random() * 1000);
+
+		this.queuePlayers.enqueue(clientId);
+		if (this.queuePlayers.size() >= 2) {
+			const player1 = this.queuePlayers.dequeue();
+			const player2 = this.queuePlayers.dequeue();
+			const newgame = new Game();
+			newgame.gameId = Math.floor(Math.random() * 1000);
+			newgame.playerId1 = Math.floor(Math.random() * 1000);
+			newgame.socket1 = player1;
+			newgame.socket2 = player2;
+			newgame.start = false;
+			this.matchPlayers[player1] = newgame;
+			this.matchPlayers[player2] = newgame;
+		}
 	}
 
-	public async getBotSession(gameId: number) {
-		// return this.gameBotSessions.get(gameId);
-		return this.gameBotSessions.find(game => game.gameId === gameId);
+	public async getBotGames() {
+		return this.botGames;
+	}
+
+	public async deleteBotGame(clientId: string) {
+		// const game = this.botGames.find(game => game.socket1 === clientId);
+		// if (game) {
+		// 	this.botGames.splice(this.botGames.indexOf(game), 1);
+		// }
+		delete this.botGames[clientId];
 	}
 
 	public async startBotGame(data: { gameId: number }, clientId: string) {
@@ -63,23 +122,15 @@ export class GameSession {
 		// 	this.gameBotSessions.push(gameSession);
 		// 	return game;
 		// }
-		this.game.status = 'running';
+		// this.game.status = 'running';
 		// this.game.startAt = new Date();
-		this.game.start = true;
-	}
-
-	public async getPendingBotGames() {
-		return this.pendingBotGames;
-	}
-
-	public async getRunningGames() {
-		return this.runningBotGames;
+		// this.game.start = true;
 	}
 
 	// TODO: choose the paddle depending on the player id
 	// public async move_left(data: { gameId: number, playerId: number, speed: number, limit: number}, clientId: string) {
 	public async move_left(data: { gameId: number, speed: number, limit: number, whoPlay: number }) {
-		const game = this.gameBotSessions.find(game => game.gameId === data.gameId);
+		const game = null;
 		// const game = this.runningBotGames.find(game => game.gameId === data.gameId);
 		if (game) {
 			if (game.paddle[0].position.y - game.paddle[0].height / 2 >= data.limit) {
@@ -99,7 +150,7 @@ export class GameSession {
 
 	// TODO: choose the paddle depending on the player id
 	public async move_right(data: { gameId: number, speed: number, limit: number, whoPlay: number }) {
-		const game = this.gameBotSessions.find(game => game.gameId === data.gameId);
+		const game = null;
 		// const game = this.runningBotGames.find(game => game.gameId === data.gameId);
 		if (game) {
 			if (game.paddle[0].position.y + game.paddle[0].height / 2 <= data.limit) {
@@ -118,7 +169,7 @@ export class GameSession {
 	}
 
 	public async rotate(data: { gameId: number, ang: number, whoPlay: number }) {
-		const game = this.gameBotSessions.find(game => game.gameId === data.gameId);
+		const game = null;
 		// const game = this.runningBotGames.find(game => game.gameId === data.gameId);
 		if (game) {
 			let c = (game.paddle[0].height - game.paddle[0].width) / 2 * Math.cos(-data.ang);
@@ -132,7 +183,7 @@ export class GameSession {
 	}
 
 	public async changeScale(data: { gameId: number, scale: number, whoPlay: number }) {
-		const game = this.gameBotSessions.find(game => game.gameId === data.gameId);
+		const game = null;
 		if (game) {
 			game.time = new Date();
 			game.paddle[0].restScale();
@@ -149,7 +200,7 @@ export class GameSession {
 	}
 
 	public async restScale(data: { gameId: number, whoPlay: number }) {
-		const game = this.gameBotSessions.find(game => game.gameId === data.gameId);
+		const game = null;
 		if (game) {
 			game.paddle[0].restScale();
 			game.paddle[0].side1.rest_scale();
@@ -165,15 +216,15 @@ export class GameSession {
 
 	public async start_game(data: { gameId: number, whoPlay: number }) {
 		// if the game is in the penndign games then start it
-		const isPending = this.pendingBotGames.find(game => game.gameId === data.gameId);
-		if (isPending) {
-			this.gameBotSessions.push(isPending);
-		}
-		const game = this.gameBotSessions.find(game => game.gameId === data.gameId);
-		if (game) {
-			game.start = true;
-			return game;
-		}
+		// const isPending = this.botGames.find(game => game.gameId === data.gameId);
+		// if (isPending) {
+		// 	this.botGames.push(isPending);
+		// }
+		// const game = this.botGames.find(game => game.gameId === data.gameId);
+		// if (game) {
+		// 	game.start = true;
+		// 	return game;
+		// }
 		return null;
 	}
 
