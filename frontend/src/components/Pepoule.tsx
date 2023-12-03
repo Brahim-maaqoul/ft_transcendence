@@ -27,7 +27,6 @@ export const Pepoule = () => {
   const { data, isError, isLoading } = useGetChat();
   if(isError) return <div>error</div>
   if (isLoading) return <div className="h-full flex justify-center items-center">{spinner}</div>;
-  console.log(data)
   // return <></>
   return (
     <div  className="h-[100%] ">

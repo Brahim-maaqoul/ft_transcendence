@@ -16,16 +16,15 @@ export class DuoService {
                         members: {
                             some:
                             {
-                                user_id: user1_id
+                                user_id: user1_id,
                             }
                         },
                     },
                     {
-
                         members: {
                             some:
                             {
-                                user_id: user2_id
+                                user_id: user2_id,
                             }
                         }
                     }
@@ -108,24 +107,28 @@ export class DuoService {
     async block(blocker_id:string, blocked_id:string)
     {
         const duo = await this.getDuoByUsers(blocker_id, blocked_id)
+        console.log("duo", duo)
         if (!duo)
             return ;
-        const membership = await this.prisma.members.findFirst({
+        let membership = await this.prisma.members.findFirst({
             where:{
                 user_id: blocked_id,
                 group_id: duo.id,
             }
         })
+        console.log("member", membership)
+
         if (!membership)
             return ;
-        this.prisma.members.update({
+        membership = await this.prisma.members.update({
             where:{
-                id: membership.id 
+                id: membership.id
             },
             data:{
                 banned:true
             }
         })
+        console.log("members", membership)
     }
 
     async unblock(blocker_id:string, blocked_id:string)
@@ -141,7 +144,7 @@ export class DuoService {
         })
         if (!membership)
             return ;
-        this.prisma.members.update({
+        await this.prisma.members.update({
             where:{
                 id: membership.id
             },

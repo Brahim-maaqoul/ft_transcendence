@@ -14,6 +14,8 @@ import { Messages } from "./messages";
 import { SendMessages } from "./sendMessages";
 import Profile from "@/app/[user]/profile/page";
 import { ProfileMessages } from "./profileMessage";
+import { AboutDuo } from "./abouDuo";
+import { useRouter } from "next/navigation";
 
 
 
@@ -57,12 +59,16 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
   const { dataUser, show } = useAuth();
   // const [data, setData] = useState<MessageInfo[]>([]);
   const [friendToGroup, setFriendToGroup] = useState(false);
-
+  const route = useRouter();
   // }, [mutation.isSuccess, mutation.isError, id]);
-  const {data: getMessages, isSuccess, isError} = useGetMessages(id);
-  console.log("more", more)
   if(isNaN(Number(id)))//another bug here
     return <>{selectMessage}</>
+  const {data: getMessages, isSuccess, isError} = useGetMessages(id);
+  if(isError)
+  {
+    route.push('/chat/id')
+    return <></>
+  }
   return (
     <div className="relative h-full">
       {(isError) && <>Error</>}
@@ -71,7 +77,9 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
         <div>
           <ProfileMessages group={getMessages} more={more} setMore={setMore} />
           {more && !friendToGroup && (
-            <AboutGroup id={id} group={getMessages} more={more} setMore={setMore}></AboutGroup>
+            getMessages.type === "group"?
+            <AboutGroup id={id} />:
+            <AboutDuo id={id} group={getMessages}/>
           )}
           {more && (
             <>

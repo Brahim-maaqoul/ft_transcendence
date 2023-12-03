@@ -17,8 +17,8 @@ export default function Chat({ params }: { params: any }) {
   let hidden: string;
   let hidden1: string;
 
-  !show ? (hidden = "hidden") : (hidden = "");
-  !show ? (hidden1 = "") : (hidden1 = "hidden");
+  !show || params.id === "id" ? (hidden = "hidden") : (hidden = "");
+  !show || params.id === "id" ? (hidden1 = "") : (hidden1 = "hidden");
   const queryClient = useQueryClient()
 
   socket.emit("getId", {auth_id: dataUser?.auth_id})
@@ -28,7 +28,6 @@ export default function Chat({ params }: { params: any }) {
     queryClient.invalidateQueries(["dataFriend"]);
     queryClient.invalidateQueries(["dataGroups"]);
     queryClient.invalidateQueries(["getChat"]);
-    
   })
   return (
     <div className="h-[767px]  z-0 w-full md:w-[83%]  relative md:p-2 md:rounded-3xl md:bg-slate-500 md:bg-opacity-40  md:shadow-black md:shadow-2xl overflow-y-scroll  no-scrollbar">

@@ -31,7 +31,7 @@ export class BlockService {
           block_id: existingBlock.block_id,
         },
       });
-      this.DuoService.unblock(blockerUserId, blockedUserId)
+      await this.DuoService.unblock(blockerUserId, blockedUserId)
       return 'User deblocked successfully.';
     } catch (error) {
       return 'An error occurred while deblocking the user.';
@@ -55,9 +55,9 @@ export class BlockService {
           ],
         },
       });
-      this.DuoService.block(blockerUserId, blockedUserId)
+      await this.DuoService.block(blockerUserId, blockedUserId)
       if (existingBlock) {
-        throw new HttpException({ type: 'User is already blocked!' }, 201);
+        return 'User is already blocked!';
       }
       try {
         await this.FriendService.deleteFriend(blockedUserId, blockerUserId);
@@ -70,6 +70,4 @@ export class BlockService {
       });
       return 'User blocked successfully.';
     }
-    
   }
-  
