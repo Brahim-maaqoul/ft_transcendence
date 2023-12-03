@@ -38,7 +38,7 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
         <>
         <div className="flex">
           <button
-            onClick={() => setFriendToGroup(true)}
+            onClick={() => setFriendToGroup(!friendToGroup)}
             className="mr-auto ml-2 flex bottom-0  text-gray-300 hover:text-white"
           >
             <svg

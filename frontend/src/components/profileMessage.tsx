@@ -25,7 +25,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   setMore,
 }) => {
   const [isTyping, setisTyping] = useState<boolean>(false);
-  const { dataUser, showFalse, showTrue } = useAuth();
+  const { dataUser, showFalse } = useAuth();
 
   return (
     <div className="w-full h-1/10 border-b border-gray-300 flex items-center p-1">
@@ -78,9 +78,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
      
       
       <button className="ml-4 flex lg:hidden" onClick={showFalse}>
-        {close
-          
-        }
+        {close}
       </button>
     </div>
   );

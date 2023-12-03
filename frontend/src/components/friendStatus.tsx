@@ -13,6 +13,7 @@ function AddFriend({ authId }: { authId: string }) {
     mutationFn: addFriend,
     onSuccess: () => {
       queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries(['Friends']);
     },
   });
 
@@ -42,6 +43,7 @@ function UnFriend({ authId }: { authId: string }) {
     mutationFn: unFriend,
     onSuccess: () => {
       queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries(['Friends']);
     },
   });
   const handler = () => {
@@ -70,6 +72,7 @@ function Pending({ authId }: { authId: string }) {
     mutationFn: unFriend,
     onSuccess: () => {
       queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries(['Friends']);
     },
   });
   const handler = () => {
@@ -98,6 +101,7 @@ function AccpetFriend({ authId }: { authId: string }) {
     mutationFn: acceptFriend,
     onSuccess: () => {
       queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries(['Friends']);
     },
   });
   const handler = () => {
@@ -127,6 +131,7 @@ export function Unblock({ authId }: { authId: string }) {
     mutationFn: unblockFriend,
     onSuccess: () => {
       queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries(['Friends']);
     },
   });
   const handler = () => {
@@ -156,6 +161,7 @@ export function Block({ authId }: { authId: string }) {
     mutationFn: blockFriend,
     onSuccess: () => {
       queryClient.invalidateQueries(["FriendshipType"]);
+       queryClient.invalidateQueries(['Friends']);
     },
   });
   const handler = () => {
