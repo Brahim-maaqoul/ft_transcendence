@@ -30,7 +30,6 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   const handleSubmitNewMessage = () => {
     mutation.mutate({groupId: Number(id) , message: message});
   };
-  
   return (
     <div className="w-full flex bottom-0 absolute ">
       <input

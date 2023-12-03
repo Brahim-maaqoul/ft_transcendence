@@ -196,7 +196,7 @@ export class GroupsController {
     {
         const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, groupId);
         if (checkAdmin === "notMember" || checkAdmin === "banned")
-            return res.status(401, "not a member");
+            return res.status(401, "not a member").send();
         const group = await this.GroupsService.getGroup(groupId, req.user.auth_id)
         return res.status(200).json(group)
     }

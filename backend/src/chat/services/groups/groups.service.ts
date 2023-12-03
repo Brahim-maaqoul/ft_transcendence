@@ -87,6 +87,7 @@ export class GroupsService {
                         }
                     },
                     select:{
+                        user_id: true,
                         type: true,
                         banned: true,
                         user:{

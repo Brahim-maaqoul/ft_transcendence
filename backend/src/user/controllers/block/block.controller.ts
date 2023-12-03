@@ -16,18 +16,20 @@ export class BlockController {
   @Post('/blockUser')
   @UseGuards(AuthGuard('jwt'))
   async blockUser(@Body() data, @Res() res, @Req() request) {
-    const blockedUserId = request.user.auth_id;
+    console.log("block")
+    const blockerUserId = request.user.auth_id;
     const { auth } = data;
-    const result = await this.BlockService.blockUser(blockedUserId, auth);
+    const result = await this.BlockService.blockUser(auth, blockerUserId);
+    console.log("result", result)
     return res.status(200).json({ message: result });
   }
 
   @Post('/unblock')
   @UseGuards(AuthGuard('jwt'))
   async unblock(@Body() data, @Res() res, @Req() request) {
-    const blockedUserId = request.user.auth_id;
+    const blockerUserId = request.user.auth_id;
     const { auth } = data;
-    const result = await this.BlockService.unblockUser(blockedUserId, auth);
+    const result = await this.BlockService.unblockUser(auth, blockerUserId);
     return res.status(200).json({ message: result });
   }
 }
