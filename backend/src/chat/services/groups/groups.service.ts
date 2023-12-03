@@ -216,6 +216,7 @@ export class GroupsService {
                 user_id: true,
                 type: true,
                 banned: true,
+                muted: true,
                 user:{
                     select:{
                         nickname: true,
@@ -224,7 +225,7 @@ export class GroupsService {
                     }
                 }
             }
-        })
+        });
         return members
     }
 
@@ -294,7 +295,7 @@ export class GroupsService {
                 id: relation.id
             },
             data:{
-                muted: new Date()
+                muted: new Date(0)
             }
         })
     }

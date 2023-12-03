@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { API } from "../checkAuthentication";
-import { error } from "console";
+import { error, group } from "console";
 
 interface GroupCreate {
   groupName: string;
@@ -24,14 +24,15 @@ interface messagesData {
 }
 
 interface idGroup {
-  groupId: number;
-  userId?: string;
+  group: number;
+  userId: string;
+}
+interface idGroupMute {
+  group: number;
+  userId: string;
+  date: Date;
 }
 
-interface banUser {
-  groupId: number;
-  userId2: string;
-}
 
 async function getInvited(data: string) {
   const response: AxiosResponse = await API.get("/groups/getInvited?groupId=" + data);
@@ -91,7 +92,6 @@ export async function sendMessages(data: Message) {
 
 
 export async function addFriendToGroup(data: {group:number, userId: string}) {
-  console.log('dataaa', data)
   const response: AxiosResponse = await API.post("/groups/addMember",data
   );
   return response.data;
@@ -108,7 +108,6 @@ export function useGetMembers(data: string)
 }
 
  async function getMemberShip(data: string) {
-  console.log(234)
   const response: AxiosResponse = await API.get("/groups/getMembership?groupId=" + data);
   return response.data;
 }
@@ -120,8 +119,25 @@ export function useGetMemberShip(data: string)
 
 
 
-export async function banUserFromGroup(data: banUser) {
-  const response: AxiosResponse = await API.post("/chat/banUserToGroup", data);
+export async function banUserFromGroup(data: idGroup) {
+  const response: AxiosResponse = await API.post("/groups/banUser", data);
+  return response.data;
+}
+export async function unBanUserFromGroup(data: idGroup) {
+  const response: AxiosResponse = await API.post("/groups/unBanUser", data);
+  return response.data;
+}
+export async function deleteFromGroup(data: idGroup) {
+  const response: AxiosResponse = await API.post("/groups/deleteUser", data);
+  return response.data;
+}
+export async function muteFromGroup(data: idGroupMute) {
+  const response: AxiosResponse = await API.post("/groups/mute", data);
+  return response.data;
+}
+
+export async function unmuteFromGroup(data: idGroup) {
+  const response: AxiosResponse = await API.post("/groups/unmute", data);
   return response.data;
 }
 
@@ -132,7 +148,7 @@ export async function joinToGroup(data: {group:number, password: string}) {
 
 async function checkIsGroupMember(data: idGroup) {
   try{
-    const response: AxiosResponse = await API.get("/groups/memberType/"+"?groupId="+data.groupId);
+    const response: AxiosResponse = await API.get("/groups/memberType/"+"?groupId="+data.group);
     return response.data;
   }
   catch(err)
@@ -142,7 +158,7 @@ async function checkIsGroupMember(data: idGroup) {
 
 export function useCheckIsGroupMember(data: idGroup){
   return useQuery({
-    queryKey:['groupId', data.groupId],
+    queryKey:['groupId', data.group],
     queryFn: () => checkIsGroupMember(data)
   })
 }

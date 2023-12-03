@@ -25,7 +25,6 @@ interface ConversationProps {
 
 export const AboutDuo: React.FC<ConversationProps> = ({ id, group}) => {
     const { data: FriendshipType } = useFriendType(group.members[0].user_id);
-    console.log(FriendshipType)
     const queryClient = useQueryClient();
     const mutation = useMutation({
       mutationFn: blockFriend,
