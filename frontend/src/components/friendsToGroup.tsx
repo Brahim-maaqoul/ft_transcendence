@@ -79,23 +79,12 @@ const IconChange: React.FC <friendsToGroupProps> = ({idUser,idGroup}) => {
     </div>
   );
 };
-export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
-  friendToGroup,
-  setFriendToGroup,
+export function FriendsToGroup({
   idGroup,
-  FriendToGroup,
-}) => {
+}: {idGroup: string}) {
   const [friendAdded, setFriendAdded] = useState(null);
-
   const getAddFriendToGroupMutution = useMutation(addFriendToGroup);
-  // const handleAddFriendToGroup = (id: number) => {
-  //   getAddFriendToGroupMutution.mutate({
-  //     groupId: Number(idGroup),
-  //     userId2: id,
-  //   });
-  // };
   const {data, isLoading} = useGetInvited(idGroup);
-  console.log(data)
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">

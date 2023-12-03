@@ -107,7 +107,6 @@ export class DuoService {
     async block(blocker_id:string, blocked_id:string)
     {
         const duo = await this.getDuoByUsers(blocker_id, blocked_id)
-        console.log("duo", duo)
         if (!duo)
             return ;
         let membership = await this.prisma.members.findFirst({
@@ -116,7 +115,6 @@ export class DuoService {
                 group_id: duo.id,
             }
         })
-        console.log("member", membership)
 
         if (!membership)
             return ;
@@ -128,7 +126,6 @@ export class DuoService {
                 banned:true
             }
         })
-        console.log("members", membership)
     }
 
     async unblock(blocker_id:string, blocked_id:string)

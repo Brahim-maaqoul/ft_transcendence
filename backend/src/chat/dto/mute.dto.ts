@@ -6,6 +6,6 @@ export class muteDto
     group: number
     @IsString()
     userId: string
-    @IsDate()
-    date:Date
+    // @IsDate()
+    date: Date
 }

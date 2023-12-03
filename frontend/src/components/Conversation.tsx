@@ -94,11 +94,8 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
               />
               {friendToGroup && (
                 <FriendsToGroup
-                  friendToGroup={friendToGroup}
-                  setFriendToGroup={setFriendToGroup}
                   idGroup={id}
-                  FriendToGroup={getMessages.members}
-                  ></FriendsToGroup>
+                  />
               )}
             </>
           )}

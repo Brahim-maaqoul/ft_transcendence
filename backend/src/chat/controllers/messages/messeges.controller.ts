@@ -26,7 +26,6 @@ export class MessagesController {
         const user = await this.GroupsService.checkAdmin(req.user.auth_id, messageDto.groupId)
         if (user === "notMember" ||  user === "banned")
         {
-            console.log("blocked")
             return res.status(401).send()
         }
         const messages = await this.MessagesService.createMessage(req.user.auth_id, messageDto)

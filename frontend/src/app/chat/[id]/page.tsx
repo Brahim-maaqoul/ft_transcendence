@@ -23,7 +23,6 @@ export default function Chat({ params }: { params: any }) {
 
   socket.emit("getId", {auth_id: dataUser?.auth_id})
   socket.on("reload", () =>{
-    console.log("reload")
     queryClient.invalidateQueries(["getMessages"]);
     queryClient.invalidateQueries(["dataFriend"]);
     queryClient.invalidateQueries(["dataGroups"]);

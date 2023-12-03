@@ -5,8 +5,12 @@ import {
   banUserFromGroup,
   useGetMembers,
   useGetMemberShip,
+  deleteFromGroup,
+  unBanUserFromGroup,
+  unmuteFromGroup,
+  muteFromGroup,
 } from "@/app/api/chatApi/chatApiFunctions";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { use, useEffect, useRef, useState } from "react";
 import { set } from "react-hook-form";
 import { UserProfile, useAuth } from "./providers/AuthContext";
@@ -26,15 +30,15 @@ interface moreProps {
 
 
 interface groupUsersProps {
-  userId: string;
+  user: member;
   idG: string;
-  // u can add more props here
 }
 
 interface member {
-  user_id: number;
+  user_id: string;
   type: string;
   banned: boolean;
+  muted: Date;
   user: {
     nickname: string;
     picture: string;
@@ -62,6 +66,27 @@ const iconAdd = (
     <path d="M19 16l-2 3h4l-2 3"></path>
     <title>make admin</title>
   </svg>
+
+
+);
+
+const iconMute = (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+  <line x1="23" y1="9" x2="17" y2="15"/>
+  <line x1="17" y1="9" x2="23" y2="15"/>
+  <title>mute</title>
+  </svg>
+
+);
+const iconUnmute = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  viewBox="0 0 16 16"> 
+  <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z" fill="#000000"></path> 
+  <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z" fill="#000000"></path> 
+  <path d="M10.025 8a4.486 4.486 0 0 1-1.318 3.182L8 10.475A3.489 3.489 0 0 0 9.025 8c0-.966-.392-1.841-1.025-2.475l.707-.707A4.486 4.486 0 0 1 10.025 8zM7 4a.5.5 0 0 0-.812-.39L3.825 5.5H1.5A.5.5 0 0 0 1 6v4a.5.5 0 0 0 .5.5h2.325l2.363 1.89A.5.5 0 0 0 7 12V4zM4.312 6.39 6 5.04v5.92L4.312 9.61A.5.5 0 0 0 4 9.5H2v-3h2a.5.5 0 0 0 .312-.11z" fill="#000000"></path> 
+  <title>unmute</title>
+  </svg>
+
 );
 
 const iconRemove = (
@@ -85,7 +110,14 @@ const iconRemove = (
   </svg>
 );
 
-const iconMute = (
+const unBanIcon = (
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
+  <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z"></path>
+  <title>unBan</title>
+  </svg>
+)
+
+const iconBan = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
@@ -106,39 +138,75 @@ const iconMute = (
 
 
 
-const GroupUserManagement: React.FC <groupUsersProps> = ({ userId, idG }) => {
+const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
   // handleBanYser **************
-
-  const banUser = useMutation(banUserFromGroup);
-  const handleBanUserFromGroup = (userId: string) => {
-    banUser.mutate({userId2: userId, groupId: Number(idG)});
+  const queryClient = useQueryClient()
+  const deleteUser = useMutation({mutationFn:deleteFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const handleDeleteFromGroup = () => {
+    deleteUser.mutate({userId: user.user_id , group: Number(idG)});
   };
 
   // handleAddUser **************
-
-  const handleAddUserToGroup = (userId: string) => {
-    banUser.mutate({userId2: userId, groupId: Number(idG)});
+  const banUser = useMutation({mutationFn: banUserFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const handleBanToGroup = () => {
+    banUser.mutate({userId: user.user_id, group: Number(idG)});
   };
-
-  // handleMuteUser **************
   
-  const handlekickUserFromGroup = (userId: string) => {
-    banUser.mutate({userId2: userId, groupId: Number(idG)});
+  const unBanUser = useMutation({mutationFn: unBanUserFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const handleUnBanToGroup = () => {
+    unBanUser.mutate({userId: user.user_id, group: Number(idG)});
   };
+
+  const mute = useMutation({mutationFn: muteFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const handleMuteToGroup = () => {
+
+    const currentDate = new Date();
+    currentDate.setMinutes(currentDate.getMinutes() + 8)
+    mute.mutate({userId: user.user_id, group: Number(idG), date: currentDate });
+  };
+  
+  const unmute = useMutation({mutationFn: unmuteFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const handleUnMuteToGroup = () => {
+    const currentDate = new Date();
+    currentDate.setMinutes(currentDate.getMinutes() - 8)
+    mute.mutate({userId: user.user_id, group: Number(idG), date: currentDate });
+  };
+
+  // // handleMuteUser **************
+  
+  // const handlekickUserFromGroup = (userId: string) => {
+  //   banUser.mutate({userId: userId, group: Number(idG)});
+  // };
 
   // *********** FIN ******************
-
+  console.log(new Date(user.muted), new Date())
   return (
     <div className=" col-span-2 flex flex-row-reverse   items-center w-[100%] pr-2 ">
       <button  className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt">
         {iconAdd}
       </button>
-      <button className="hover:cursor-pointer icon icon-tabler icon-tabler-user-x m-2" onClick={() => handleBanUserFromGroup(userId)}>
+      <button className="hover:cursor-pointer icon icon-tabler icon-tabler-user-x m-2" onClick={() => handleDeleteFromGroup()}>
         {iconRemove}
       </button>
-      <button className="hover:cursor-pointer icon icon-tabler icon-tabler-ban ">
-        {iconMute}
-      </button>
+      {!user.banned && (
+        (user.muted && new Date(user.muted) >= new Date()) ?
+        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-ban " onClick={() => handleUnMuteToGroup()}>
+          {iconUnmute}
+        </button>:
+        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-ban " onClick={() => handleMuteToGroup()}>
+          {iconMute}
+        </button>)
+      }
+      {
+        user.banned?
+        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-ban " onClick={() => handleUnBanToGroup()}>
+          {unBanIcon}
+        </button>:
+        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-ban " onClick={() => handleBanToGroup()}>
+          {iconBan}
+        </button>
+      }
+      
     </div>
   );
 };
@@ -155,7 +223,6 @@ export const AboutGroup: React.FC<ConversationProps> = ({id}) => {
        {
           getMembers &&
           getMembers.map((user: member, key: number) => {
-            console.log(user)
             return (
               <div
                 key={key}
@@ -180,7 +247,7 @@ export const AboutGroup: React.FC<ConversationProps> = ({id}) => {
                  (( getMembership?.type !== 'member'&&
                   user.type === 'member') ||( getMembership?.type === 'creator'&&
                   user.type !== 'creator')) &&
-                   <GroupUserManagement userId={String(user.user_id)} idG = {id}/>
+                   <GroupUserManagement user={user} idG = {id}/>
                 }
               </div>
             );
