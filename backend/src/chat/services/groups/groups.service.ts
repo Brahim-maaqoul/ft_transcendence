@@ -399,4 +399,19 @@ export class GroupsService {
             }
         })
     }
+    async getInvite(group: number)
+    {
+        return await this.prisma.users.findMany({
+            where:{
+                NOT:
+                {
+                    Member:{
+                        some:{
+                            group_id: group
+                        }
+                    }
+                }
+            }
+        })
+    }
 }
