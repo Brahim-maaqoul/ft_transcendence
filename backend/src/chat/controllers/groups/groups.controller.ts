@@ -30,7 +30,9 @@ export class GroupsController {
     @UseGuards(AuthGuard('jwt'))
     async addMember(@Res() res, @Req() req, @Body(new ValidationPipe()) member:memberDto)
     {
-        await this.GroupsService.addMember(req.user.auth_id, member)
+        console.log('test')
+        const members  = await this.GroupsService.addMember(req.user.auth_id, member)
+        console.log(members)
         return res.status(201).send();
     }
 
@@ -206,8 +208,8 @@ export class GroupsController {
     {
         const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, groupId);
         if (checkAdmin !== "admin" && checkAdmin !== "creator")
-            return res.status(401, "not a member").send();
-        const users = this.GroupsService.getInvite(groupId)
+            return res.status(401, "not an admin").send();
+        const users = await this.GroupsService.getInvite(groupId)
         return res.status(200).json(users)
     }
 }

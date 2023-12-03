@@ -167,7 +167,7 @@ export class GroupsService {
         if (!admin || admin === "member" || admin === "notMember")
             throw new HttpException("you're not an admin!", 401);
         const member = await this.checkAdmin(add_member.userId, add_member.group)
-        if (member)
+        if (member !== 'notMember')
            throw new HttpException("already exist", 200);
         const new_member = await this.prisma.members.create({
             data:{

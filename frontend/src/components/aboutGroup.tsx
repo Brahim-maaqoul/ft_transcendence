@@ -17,6 +17,7 @@ import { useFriendType } from "@/app/api/getFriendtype";
 import { blockFriend } from "@/app/api/blockFriend";
 import Image from "next/image";
 import { unblockFriend } from "@/app/api/unBlock";
+import { spinner } from "@/app/[user]/profile/page";
 
 interface moreProps {
   more: boolean;
@@ -144,10 +145,10 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ userId, idG }) => {
 
 
 export const AboutGroup: React.FC<ConversationProps> = ({id}) => {
-  const {data:getMembers, isSuccess, isError} = useGetMembers(id)
+  const {data:getMembers, isLoading, isError} = useGetMembers(id)
   const {data:getMembership} = useGetMemberShip(id)
-  if(!isSuccess)
-    return <>wait ....</>
+  if(isLoading)
+    return <div className="flex justify-content items-center">{spinner}</div>
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">

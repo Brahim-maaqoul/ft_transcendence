@@ -1,5 +1,5 @@
-import { addFriendToGroup } from "@/app/api/chatApi/chatApiFunctions";
-import { UseMutationOptions, useMutation } from "@tanstack/react-query";
+import { addFriendToGroup, useGetInvited } from "@/app/api/chatApi/chatApiFunctions";
+import { UseMutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { set } from "react-hook-form";
 
@@ -9,8 +9,8 @@ interface friendsToGroupProps {
   groupName?: string;
   groupPassword?: string;
   groupPrivacy?: string;
-  idGroup?: string;
-  idUser?: string;
+  idGroup: string;
+  idUser: string;
   FriendToGroup: any
 }
 
@@ -58,13 +58,16 @@ const iconWhenAdd = (
 
 const IconChange: React.FC <friendsToGroupProps> = ({idUser,idGroup}) => {
   const [friendJoin, setFriendJoin] = useState(true);
-  const addFriendToGroupMutution = useMutation(addFriendToGroup);
+  const queryCLient = useQueryClient()
+  const addFriendToGroupMutution = useMutation({
+    mutationFn: addFriendToGroup, 
+    onSuccess: () => queryCLient.invalidateQueries(['getInvited'])
+  });
   const handleAddFriendToGroup = (id: number) => {
     addFriendToGroupMutution.mutate({
-      groupId: Number(idGroup),
+      group: Number(idGroup),
       userId: idUser,
     });
-    setFriendJoin(false);
   };
 
   return (
@@ -91,12 +94,13 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
   //     userId2: id,
   //   });
   // };
-
+  const {data, isLoading} = useGetInvited(idGroup);
+  console.log(data)
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">
-        {FriendToGroup &&
-          FriendToGroup.map((user: any, key: number) => {
+        {data &&
+          data.map((user: any, key: number) => {
             return (
               <div
                 key={key}
@@ -104,7 +108,7 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
               >
                 <div className=" flex  col-span-1 ">
                   <img
-                    src={user.user.picture!}
+                    src={user.picture}
                     alt="Profile picture"
                     width={52}
                     height={52}
@@ -116,11 +120,10 @@ export const FriendsToGroup: React.FC<friendsToGroupProps> = ({
                   className="col-span-3 flex items-center text-lg font-mono tracking-normal"
                 >
                   <span style={{ color: "white", marginRight: "10px" }}>
-                    {user.name}
+                    {user.displayname}
                   </span>
-                  <span style={{ color: "black" }}>({user.username})</span>
                 </div>
-                <IconChange idUser={user.user.id} idGroup={idGroup} />
+                <IconChange idUser={user.auth_id} idGroup={idGroup} FriendToGroup={undefined} />
               </div>
             );
           })}

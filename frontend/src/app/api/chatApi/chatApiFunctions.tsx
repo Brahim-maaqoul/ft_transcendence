@@ -33,6 +33,16 @@ interface banUser {
   userId2: string;
 }
 
+async function getInvited(data: string) {
+  const response: AxiosResponse = await API.get("/groups/getInvited?groupId=" + data);
+  return response.data;
+}
+
+export function useGetInvited(data: string)
+{
+  return useQuery({ queryKey: ["getInvited"], queryFn: () => getInvited(data) });
+}
+
 async function getGroups() {
   const response: AxiosResponse = await API.get("/groups/getGroups");
   return response.data;
@@ -80,8 +90,9 @@ export async function sendMessages(data: Message) {
 }
 
 
-export async function addFriendToGroup(data: idGroup) {
-  const response: AxiosResponse = await API.post("/chat/addFriendToGroup",data
+export async function addFriendToGroup(data: {group:number, userId: string}) {
+  console.log('dataaa', data)
+  const response: AxiosResponse = await API.post("/groups/addMember",data
   );
   return response.data;
 }
@@ -140,3 +151,4 @@ export async function createDuo(friendId:string){
   const response: AxiosResponse = await API.post("/duo/create", {user_id: friendId});
   return response.data;
 }
+

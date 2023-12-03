@@ -34,7 +34,7 @@ export const Messages: React.FC<messageProps> = ({
                 : "mr-auto ml-0 "
             }`}
           >
-            <div className={`flex ${message?.sender_id === dataUser?.auth_id ? '' : 'flex-row-reverse '}`}>
+            <div className={`flex items-center ${message?.sender_id === dataUser?.auth_id ? '' : 'flex-row-reverse '}`}>
               <div
                 className={` break-words  max-w-[70%] text-white  rounded-3xl mr-3 py-2 px-4 shadow-black ${
                   message?.sender_id === dataUser?.auth_id
