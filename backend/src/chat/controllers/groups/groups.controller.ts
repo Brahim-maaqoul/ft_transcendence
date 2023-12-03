@@ -200,4 +200,14 @@ export class GroupsController {
         const group = await this.GroupsService.getGroup(groupId, req.user.auth_id)
         return res.status(200).json(group)
     }
+    @Get("/getInvited")
+    @UseGuards(AuthGuard('jwt'))
+    async getInvite(@Res() res, @Req() req,  @Query('groupId', ParseIntPipe) groupId: number)
+    {
+        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, groupId);
+        if (checkAdmin !== "admin" && checkAdmin !== "creator")
+            return res.status(401, "not a member").send();
+        const users = this.GroupsService.getInvite(groupId)
+        return res.status(200).json(users)
+    }
 }
