@@ -9,7 +9,7 @@ import { UserProfile, useAuth } from "./providers/AuthContext";
 import { useFriendType } from "@/app/api/getFriendtype";
 import { useGetStats } from "@/app/api/getStats";
 import { getUser } from "@/app/api/getUserByNickname";
-import TfaToggle from "./tfaToggle";
+import Modal from "./modal";
 import FriendCases, { Block } from "./friendStatus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createDuo } from "@/app/api/chatApi/chatApiFunctions";
@@ -149,7 +149,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                   />
                 )}
               </div>
-            ) : <TfaToggle />
+            ) : <Modal />
           }
           </div>
           <div className="w-full  absolute  left-0 right-0 bottom-0 z-0">
