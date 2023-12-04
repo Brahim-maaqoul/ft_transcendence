@@ -181,7 +181,7 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
   // *********** FIN ******************
   console.log(new Date(user.muted), new Date())
   return (
-    <div className=" col-span-2 flex flex-row-reverse   items-center w-[100%] pr-2 ">
+    <div className=" col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 ">
       <button  className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt">
         {iconAdd}
       </button>
@@ -218,8 +218,9 @@ export const AboutGroup: React.FC<ConversationProps> = ({id}) => {
   if(isLoading)
     return <div className="flex justify-content items-center">{spinner}</div>
   return (
-    <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
-      <div className=" overflow-y-auto h-[100%] no-scrollbar">
+    <div className=" w-full absolute overflow-auto no-scrollbar bottom-11 top-20 ">
+      <span className="text-white text-lg m-3">Members</span>
+      <div className="my-2 overflow-y-auto h-[100%] no-scrollbar">
        {
           getMembers &&
           getMembers.map((user: member, key: number) => {
