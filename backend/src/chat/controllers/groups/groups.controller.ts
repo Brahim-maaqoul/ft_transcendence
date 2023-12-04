@@ -154,14 +154,14 @@ export class GroupsController {
     }
 
 
-    @Delete('/delete')
+    @Post('/delete')
     @UseGuards(AuthGuard('jwt'))
-    async deleteGroup(@Res() res, @Req() req,@Body('groupID', ParseIntPipe) group_id:number)
+    async deleteGroup(@Res() res, @Req() req,@Body('group', ParseIntPipe) group:number)
     {
-        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, group_id);
+        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, group);
         if (checkAdmin !== "creator")
             return res.status(401, "you're not the creator").send();
-        await this.GroupsService.deleteGroup(group_id);
+        await this.GroupsService.deleteGroup(group);
         return res.status(204).send();
     }
     @Post('/quit')
