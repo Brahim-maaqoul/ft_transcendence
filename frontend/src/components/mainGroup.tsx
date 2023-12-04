@@ -8,6 +8,7 @@ import Image from "next/image";
 import { UserProfile, useAuth } from "@/components/providers/AuthContext";
 import { useEffect, useRef, useState } from "react";
 import { useSearchByName } from "@/app/api/getSearchbyName";
+import PlayButton from "./playButton";
 
 export default function MainGroup() {
   const { isAuthenticated } = useAuth();
@@ -152,14 +153,8 @@ export default function MainGroup() {
           </div>
         </div>
 
-        <Link
-          href={isAuthenticated ? "/play" : "/login"}
-          className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}
-        >
-          <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute ">
-            {isAuthenticated ? "Play Now " : "Sign In"}
-          </div>
-        </Link>
+        <PlayButton isAuthenticated={isAuthenticated}/>
+
       </div>
     </div>
   );
