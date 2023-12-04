@@ -52,25 +52,29 @@ export default function NavBar() {
               <div>
                 <Link
                   href={"/" + dataUser?.nickname + "/profile"}
-                  className="my-2">
+                  className="my-2"
+                >
                   <div className="w-12 h-12">
                     <div
                       className="h-12 w-12 rounded-full bg-cover"
-                      style={{ backgroundImage: `url(${imageUrl})` }}></div>
+                      style={{ backgroundImage: `url(${imageUrl})` }}
+                    ></div>
                   </div>
                 </Link>
               </div>
               <div className="my-2">
                 <Link
                   href={"/"}
-                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
+                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center"
+                >
                   <Image src="/home.svg" alt="home" width={32} height={32} />
                 </Link>
               </div>
               <div className="my-2">
                 <Link
                   href={"/chat/id"}
-                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
+                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center"
+                >
                   <Image
                     src="/add.svg"
                     alt="add friends"
@@ -83,7 +87,8 @@ export default function NavBar() {
               <div className="my-2">
                 <Link
                   href={"/" + dataUser?.displayname + "/rank"}
-                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
+                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center"
+                >
                   <Image
                     src="/friends.svg"
                     alt="online friends"
@@ -97,13 +102,15 @@ export default function NavBar() {
                   onClick={() => {
                     setNot(true);
                   }}
-                  className="hover:bg-slate-400 w-12 h-12 text-[#fff] rounded-full flex justify-center items-center">
+                  className="hover:bg-slate-400 w-12 h-12 text-[#fff] rounded-full flex justify-center items-center"
+                >
                   <IoNotificationsOutline size={32}></IoNotificationsOutline>
                 </button>
               </div>
               <Link
                 href={"http://localhost:8000/v1/api/auth/logout"}
-                className="hover:bg-slate-400  w-12 my-2 mt-auto flex items-center justify-center  h-12 text-[#ffffff] rounded-full ">
+                className="hover:bg-slate-400  w-12 my-2 mt-auto flex items-center justify-center  h-12 text-[#ffffff] rounded-full "
+              >
                 <FiLogOut size={32}></FiLogOut>
               </Link>
             </div>
@@ -114,15 +121,94 @@ export default function NavBar() {
               <div className="absolute hidden lg:block top-0  left-0 bg-slate-950   lg:bg-opacity-50 backdrop-blur-sm   bottom-0  right-0  z-50"></div>
               <div
                 ref={menuRef}
-                className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50">
-                <div className="flex items-center justify-between">
-                  <h1>Notification</h1>
+                className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50"
+              >
+                <div className="flex flex-col w-full overflow-y-auto no-scrollbar">
+                  <span className="text-lg font-bold">Notifications</span>
+                  <div className="flex flex-col w-full">
+                    <div className="flex justify-evenly w-full p-4 hover:bg-slate-100 hover:rounded-2xl">
+                      <Link
+                        href={"/gyro/profile"}
+                        onClick={() => {
+                          setNot(false);
+                        }}
+                        className="flex items-center  gap-x-4 w-full "
+                      >
+                        <div className="w-14 h-14">
+                          <div
+                            className="h-14 w-14 rounded-full bg-cover"
+                            style={{
+                              backgroundImage: `url(/bmaaqoul.png)`,
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-black-500 text-lg">
+                            Brahim maaqoul
+                          </span>
+                          <span className="text-slate-500 text-sm">
+                            Sent you a friend request
+                          </span>
+                        </div>
+                      </Link>
+                      <div className="flex items-center gap-x-3">
+                        <button>
+                          <div className="w-8 h-8">
+                            <div
+                              className="h-8 w-8 rounded-full bg-cover"
+                              style={{
+                                backgroundImage: `url(/reject.png)`,
+                              }}
+                            ></div>
+                          </div>
+                        </button>
+                        <button>
+                          <div className="w-7 h-7">
+                            <div
+                              className="h-7 w-7 rounded-full bg-cover"
+                              style={{
+                                backgroundImage: `url(/accept1.png)`,
+                              }}
+                            ></div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                    <div></div>
+                    <div className="flex justify-evenly w-full p-4 hover:bg-slate-100 hover:rounded-2xl">
+                      <Link
+                        href={"/gyro/profile"}
+                        onClick={() => {
+                          setNot(false);
+                        }}
+                        className="flex items-center  gap-x-4 w-full "
+                      >
+                        <div className="w-14 h-14">
+                          <div
+                            className="h-14 w-14 rounded-full bg-cover"
+                            style={{
+                              backgroundImage: `url(/bmaaqoul.png)`,
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-black-500 text-lg">
+                            Brahim maaqoul
+                          </span>
+                          <span className="text-slate-500 text-sm">
+                            You have a new message
+                          </span>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
                   <IoIosClose
                     onClick={() => {
                       setNot(false);
                     }}
                     className="lg:hidden"
-                    size={32}></IoIosClose>
+                    size={32}
+                  ></IoIosClose>
                 </div>
               </div>
             </>
