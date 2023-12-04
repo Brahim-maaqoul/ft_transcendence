@@ -28,6 +28,18 @@ model Users {
   stats               Stats?
 }
 
+model Game {
+	gameId		Int			@id @default(autoincrement())
+	score1		Int			@default(0)
+	score2		Int			@default(0)
+	status		String		@default("notStated")
+	user1		Users		@relation("User1ToGame", fields: [user1_id], references: [id])
+	user2		Users		@relation("User2ToGame", fields: [user2_id], references: [id])
+	user1_id	Int
+	user2_id	Int
+	DateTime	DateTime	@default(now())
+}
+
 model Stats {
   stats_id      Int    @id @default(autoincrement())
   user_id       String @unique

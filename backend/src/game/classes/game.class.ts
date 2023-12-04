@@ -20,7 +20,7 @@ export class Game
 	keysPressed: Set<string>;
 	sec: number;
 	time : Date;
-	start: boolean;
+	start: [boolean, boolean];
 	status: string;
 	turn: number;
 	round: number;
@@ -39,12 +39,12 @@ export class Game
 		this.keysPressed = new Set()
 		this.sec = -1
 		this.time = new Date()
-		this.start = true
+		this.start = [false, false]
 	}
-	get_data():GameConfig
+	get_data(player : number):GameConfig
 	{
-		this.update();
 		const data: GameConfig = {
+			player: player,
 			ball: this.ball.map(value => value.get_data(this.world.h, this.world.w, 0xffffff)),
 			paddle1: this.paddle[0].get_data(this.world.h, this.world.w, 0xffffff),
 			paddle2: this.paddle[1].get_data(this.world.h, this.world.w, 0xffffff),
@@ -71,19 +71,20 @@ export class Game
 				this.paddle[1].move_right(1, 600)
 		}
 	}
-	check_keys(keys: key)
+	check_keys(keys: key, player: number)
 	{
-		this.paddle[0].rotate(0)
+		// console.log(player, keys)
+		this.paddle[player].rotate(0)
 
-		this.start = keys.start
+		this.start[player] = keys.start
 		if (keys.left)
-			this.paddle[0].move_left(1, 0)
+			this.paddle[player].move_left(1, 0)
 		if (keys.right)
-			this.paddle[0].move_right(1, 600)
+			this.paddle[player].move_right(1, 600)
 		if (keys.rotate_pos)
-			this.paddle[0].rotate(Math.PI/6)
+			this.paddle[player].rotate(Math.PI/6)
 		else if (keys.rotate_neg)
-			this.paddle[0].rotate(-Math.PI/6)
+			this.paddle[player].rotate(-Math.PI/6)
 		
 	}
 	check_intersection()
@@ -131,7 +132,7 @@ export class Game
 	}
 	update()
 	{
-		if(!this.start)
+		if(!this.start[0] && !this.start[1])
 		{
 			this.time = new Date()
 			return ;
@@ -148,7 +149,7 @@ export class Game
 			}
 		}
 		this.check_intersection()
-		this.bot()
+		// this.bot()
 		if (this.bricks.length < 1 && Math.floor(Math.random() * 1000) == 0)
 			this.bricks.push(new Brick())
 		if (this.ball.length)

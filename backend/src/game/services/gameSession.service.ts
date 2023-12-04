@@ -27,6 +27,10 @@ class Queue<T> {
 	size(): number {
 		return this.items.length;
 	}
+
+	contains(item: T): boolean {
+		return this.items.includes(item);
+	}
 }
 
 @Injectable()
@@ -36,8 +40,7 @@ export class GameSession {
 	// botGames = new Array<Game>();
 	// game = new Game();
 	queuePlayers = new Queue<string>();
-	// queuePlayers: Queue<string>;
-	matchPlayers: Record<string, Game> = {};
+	matchPlayers: Record<string, {Game: Game, player:number}> = {};
 
 	botGames: Record<string, Game> = {};
 
@@ -60,12 +63,14 @@ export class GameSession {
 
 
 		const newgame = new Game();
+
+
 		
 		newgame.gameId = Math.floor(Math.random() * 1000);
 		newgame.playerId1 = Math.floor(Math.random() * 1000);
 		newgame.playerAI = data.boot;
 		newgame.socket1 = clientId;
-		newgame.start = false;
+		// newgame.start = false;
 		// this.botGames.push(newgame);
 		this.botGames[clientId] = newgame;
 		// this.game = newgame;
@@ -83,18 +88,31 @@ export class GameSession {
 		// newgame.gameId = Math.floor(Math.random() * 1000);
 		// newgame.playerId1 = Math.floor(Math.random() * 1000);
 
-		this.queuePlayers.enqueue(clientId);
-		if (this.queuePlayers.size() >= 2) {
-			const player1 = this.queuePlayers.dequeue();
-			const player2 = this.queuePlayers.dequeue();
-			const newgame = new Game();
-			newgame.gameId = Math.floor(Math.random() * 1000);
-			newgame.playerId1 = Math.floor(Math.random() * 1000);
-			newgame.socket1 = player1;
-			newgame.socket2 = player2;
-			newgame.start = false;
-			this.matchPlayers[player1] = newgame;
-			this.matchPlayers[player2] = newgame;
+		if (this.queuePlayers.contains(clientId)){
+			if (this.queuePlayers.size() > 1) {
+				// console.log('more than one player in queue');
+				// console.log(this.queuePlayers);
+				const player1 = this.queuePlayers.dequeue();
+				const player2 = this.queuePlayers.dequeue();
+				const newgame = new Game();
+				newgame.gameId = Math.floor(Math.random() * 1000);
+				newgame.playerId1 = Math.floor(Math.random() * 1000);
+				newgame.socket1 = player1;
+				newgame.socket2 = player2;
+				this.matchPlayers[player1] = {Game:newgame, player: 0};
+				this.matchPlayers[player2] = {Game:newgame, player: 1};
+				// console.log('------------------------------------- create matchMaking game size of ', this.matchPlayers);
+				// console.log('palyer 1 ', player1);
+				// console.log('palyer 2 ', player2);
+				// console.log('game ', newgame);
+			}
+			else {
+				// console.log('one player in queue', this.queuePlayers);
+			}
+		}
+		else {
+			// console.log('insert player in queue', clientId, this.queuePlayers.size());
+			this.queuePlayers.enqueue(clientId);
 		}
 	}
 
@@ -107,7 +125,20 @@ export class GameSession {
 		// if (game) {
 		// 	this.botGames.splice(this.botGames.indexOf(game), 1);
 		// }
-		delete this.botGames[clientId];
+		// if (clientId in this.botGames){
+		// 	delete this.botGames[clientId];
+		// }
+		if (this.queuePlayers.contains(clientId)){
+			this.queuePlayers.dequeue();
+		}
+		// TODO: delete from the matchPlayers toooo 
+		// if (this.matchPlayers[clientId]){
+		if (clientId in this.matchPlayers){
+			const p1 = this.matchPlayers[clientId].Game.socket1 == clientId ? this.matchPlayers[clientId].Game.socket2 : this.matchPlayers[clientId].Game.socket1;
+			delete this.matchPlayers[clientId];
+			delete this.matchPlayers[p1];
+			// delete the two players from the matchPlayers
+		}
 	}
 
 	public async startBotGame(data: { gameId: number }, clientId: string) {

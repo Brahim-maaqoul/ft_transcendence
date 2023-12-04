@@ -91,6 +91,8 @@ export function Body3D() {
 		// socket.on('gaming', (data) => {
 		socket.on('gameUpdate', (data) => {
 			setGameData(data);
+			gameData.player = data.player;
+			console.log('data: ', gameData);
 		});
 
 		document.addEventListener('keydown', handelKeyDown);
@@ -111,7 +113,7 @@ export function Body3D() {
 	// const hdrTexture = textureLoader.load('/game/view.hdr');
 	return (
 		<>
-			<Canvas shadows camera={{ fov: 60, far: 7000, position: [-1200, 500, 0] }} flat linear>
+			<Canvas shadows camera={{ fov: 60, far: 7000, position: [gameData.player === 0 ? -1200 : 1200, 500, 0] }} flat linear>
 				<Suspense fallback={<Loader />}>
 
 					<ambientLight intensity={0} />
@@ -218,16 +220,15 @@ function Electron({ radius = 2.75, speed = 6, ball }) {
 
 
 function Paddle({ paddle }: { paddle: PSize }) {
+	// console.log('paddle: ', paddle)
 	const ref = useRef(null)
 	const { x, y } = (paddle.position)
 	useFrame((state) => {
-		if (ref.current) {
-			ref.current.position.set(x - 500, -150, y - 300)
-		}
+		ref.current?.position.set(x - 500, -150, y - 300)
 	})
 	return (
 		<RigidBody>
-			<mesh ref={ref}>
+			<mesh ref={ref} position={[x - 500, -150, y - 300]}>
 				<RoundedBox args={[paddle.width, paddle.width, paddle.height]} radius={paddle.width / 2} rotation-y={-paddle.rotation}>
 					{/* <meshPhysicalMaterial map={texture} bumpMap={bump} /> */}
 					<meshBasicMaterial color={[1, 10, 8]} toneMapped={false} />

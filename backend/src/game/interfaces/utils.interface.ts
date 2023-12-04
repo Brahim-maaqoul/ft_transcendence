@@ -17,6 +17,7 @@ export interface PSize {
 }
 
 export interface GameConfig {
+	player: number
 	bricks: Array<PSize>
 	ball: Array<PSize>
 	paddle1: PSize
