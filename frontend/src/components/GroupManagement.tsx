@@ -30,10 +30,12 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
     setFriendToGroup(false);
   };
   const route = useRouter()
-  const usedeleteGroup = useMutation(deleteGroup);
+  const usedeleteGroup = useMutation({
+    mutationFn: deleteGroup,
+    onSuccess: () => route.push('/chat/id'),
+  });
   const handleDeleteGroup = () => {
     usedeleteGroup.mutate(Number(idG));
-    // setisDelete(true);
   };
 
   const quitMutation = useMutation({
