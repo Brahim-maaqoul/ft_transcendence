@@ -151,7 +151,7 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
   const handleBanToGroup = () => {
     banUser.mutate({userId: user.user_id, group: Number(idG)});
   };
-  
+
   const unBanUser = useMutation({mutationFn: unBanUserFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
   const handleUnBanToGroup = () => {
     unBanUser.mutate({userId: user.user_id, group: Number(idG)});
@@ -161,10 +161,10 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
   const handleMuteToGroup = () => {
 
     const currentDate = new Date();
-    currentDate.setMinutes(currentDate.getMinutes() + 8)
+    currentDate.setMinutes(currentDate.getMinutes() + 18)
     mute.mutate({userId: user.user_id, group: Number(idG), date: currentDate });
   };
-  
+
   const unmute = useMutation({mutationFn: unmuteFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
   const handleUnMuteToGroup = () => {
     const currentDate = new Date();
@@ -173,7 +173,6 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
   };
 
   // // handleMuteUser **************
-  
   // const handlekickUserFromGroup = (userId: string) => {
   //   banUser.mutate({userId: userId, group: Number(idG)});
   // };

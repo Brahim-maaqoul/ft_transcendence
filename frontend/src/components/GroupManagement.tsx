@@ -27,7 +27,7 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
 
   const usedeleteGroup = useMutation(deleteGroup);
   const handleDeleteGroup = () => {
-    usedeleteGroup.mutate({ groupId: Number(idG) });
+    usedeleteGroup.mutate( Number(idG));
     // setisDelete(true);
   };
   const {data:getMembership} = useGetMemberShip(idG)
