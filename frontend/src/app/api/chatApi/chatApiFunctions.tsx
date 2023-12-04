@@ -145,6 +145,12 @@ export async function joinToGroup(data: {group:number, password: string}) {
   const response: AxiosResponse = await API.post("/groups/joinGroup", data);
   return response.data;
 }
+export async function quitGroup(data: {group:number}) {
+  console.log("datta", data)
+  const response: AxiosResponse = await API.post("/groups/quit", data);
+  console.log("datta", response)
+  return response.data;
+}
 
 async function checkIsGroupMember(data: idGroup) {
   try{

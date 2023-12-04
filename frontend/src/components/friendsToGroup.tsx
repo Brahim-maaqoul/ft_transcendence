@@ -3,8 +3,7 @@ import { UseMutationOptions, useMutation, useQueryClient } from "@tanstack/react
 import { useState } from "react";
 import { set } from "react-hook-form";
 
-inter
-}face friendsToGroupProps {
+interface friendsToGroupProps {
   setFriendToGroup?: React.Dispatch<React.SetStateAction<boolean>>;
   friendToGroup?: boolean;
   groupName?: string;
@@ -13,6 +12,7 @@ inter
   idGroup: string;
   idUser: string;
   FriendToGroup: any
+}
 
 
 const iconToAdd = (

@@ -7,13 +7,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class MessagesService {
     constructor(private prisma: PrismaService){}
-    async getMessages (group_id: number) {
+    async getMessages (group_id: number, auth_id: string) {
         return await this.prisma.message.findMany({
             where:{
-                group_id: group_id
+                group_id: group_id,
+                NOT:{
+                    sender:
+                    {
+                        auth_id: auth_id
+                    }
+                }
             },
             orderBy: {
-                lastmodif: 'asc',
+                lastmodif: 'desc',
             }
         })
     }

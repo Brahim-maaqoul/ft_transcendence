@@ -164,15 +164,12 @@ export class GroupsController {
         await this.GroupsService.deleteGroup(group_id);
         return res.status(204).send();
     }
-    @Delete('/quit')
+    @Post('/quit')
     @UseGuards(AuthGuard('jwt'))
-    async quitGroup(@Res() res, @Req() req,@Body('groupID', ParseIntPipe) group_id:number)
+    async quitGroup(@Res() res, @Req() req,@Body('group', ParseIntPipe) group:number)
     {
-        const checkAdmin = await this.GroupsService.checkAdmin(req.user.auth_id, group_id);
-        if (checkAdmin === "creator")
-            return res.status(401, "you're the creator").send();
-        await this.GroupsService.quitGroup(req.user.auth_id, group_id);
-        return res.status(204).send();
+        await this.GroupsService.quitGroup(req.user.auth_id, group);
+        return res.status(201).send();
     }
     @Get('/getMembership')
     @UseGuards(AuthGuard('jwt'))
