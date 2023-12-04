@@ -22,6 +22,7 @@ import { blockFriend } from "@/app/api/blockFriend";
 import Image from "next/image";
 import { unblockFriend } from "@/app/api/unBlock";
 import { spinner } from "@/app/[user]/profile/page";
+import Link from "next/link";
 
 interface moreProps {
   more: boolean;
@@ -132,7 +133,7 @@ const iconBan = (
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
     <path d="M5.7 5.7l12.6 12.6"></path>
-    <title>Mute</title>
+    <title>Ban</title>
   </svg>
 );
 
@@ -229,13 +230,15 @@ export const AboutGroup: React.FC<ConversationProps> = ({id}) => {
                 className={`grid grid-cols-6 p-2 w-full  border-gray-300 hover:bg-black hover:bg-opacity-5   items-center `}
               >
                 <div className=" flex  col-span-1 ">
-                  <img
-                    src={user.user?.picture!}
-                    alt="Profile picture"
-                    width={52}
-                    height={52}
-                    className="rounded-full"
-                  />
+                  <Link href={`/${user.user?.nickname}/profile`}>
+                    <img
+                      src={user.user?.picture!}
+                      alt="Profile picture"
+                      width={52}
+                      height={52}
+                      className="rounded-full"
+                      />
+                    </Link>
                 </div>
                 <div
                   id="info"

@@ -1,5 +1,13 @@
-import { addFriendToGroup, useGetInvited } from "@/app/api/chatApi/chatApiFunctions";
-import { UseMutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  addFriendToGroup,
+  useGetInvited,
+} from "@/app/api/chatApi/chatApiFunctions";
+import {
+  UseMutationOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import { set } from "react-hook-form";
 
@@ -11,9 +19,8 @@ interface friendsToGroupProps {
   groupPrivacy?: string;
   idGroup: string;
   idUser: string;
-  FriendToGroup: any
+  FriendToGroup: any;
 }
-
 
 const iconToAdd = (
   <svg
@@ -56,12 +63,12 @@ const iconWhenAdd = (
   </svg>
 );
 
-const IconChange: React.FC <friendsToGroupProps> = ({idUser,idGroup}) => {
+const IconChange: React.FC<friendsToGroupProps> = ({ idUser, idGroup }) => {
   const [friendJoin, setFriendJoin] = useState(true);
-  const queryCLient = useQueryClient()
+  const queryCLient = useQueryClient();
   const addFriendToGroupMutution = useMutation({
-    mutationFn: addFriendToGroup, 
-    onSuccess: () => queryCLient.invalidateQueries(['getInvited'])
+    mutationFn: addFriendToGroup,
+    onSuccess: () => queryCLient.invalidateQueries(["getInvited"]),
   });
   const handleAddFriendToGroup = (id: number) => {
     addFriendToGroupMutution.mutate({
@@ -79,12 +86,10 @@ const IconChange: React.FC <friendsToGroupProps> = ({idUser,idGroup}) => {
     </div>
   );
 };
-export function FriendsToGroup({
-  idGroup,
-}: {idGroup: string}) {
+export function FriendsToGroup({ idGroup }: { idGroup: string }) {
   const [friendAdded, setFriendAdded] = useState(null);
   const getAddFriendToGroupMutution = useMutation(addFriendToGroup);
-  const {data, isLoading} = useGetInvited(idGroup);
+  const { data, isLoading } = useGetInvited(idGroup);
   return (
     <div className=" w-full absolute overflow-auto no-scrollbar bottom-11 top-20 ">
       <span className="text-white text-lg m-3">Invite Members</span>
@@ -97,28 +102,33 @@ export function FriendsToGroup({
                 className={`grid grid-cols-6 p-2 w-fullborder-gray-300 hover:bg-black hover:bg-opacity-5 items-center `}
               >
                 <div className=" flex  col-span-1 ">
-                  <img
-                    src={user.picture}
-                    alt="Profile picture"
-                    width={52}
-                    height={52}
-                    className="rounded-full"
-                  />
+                  <Link href={`/${user?.nickname}/profile`}>
+                    <img
+                      src={user.picture}
+                      alt="Profile picture"
+                      width={52}
+                      height={52}
+                      className="rounded-full"
+                    />
+                  </Link>
                 </div>
                 <div
                   id="info"
                   className="col-span-3 flex items-center text-lg font-mono tracking-normal"
                 >
                   <span style={{ color: "white", marginRight: "10px" }}>
-                    {user.displayname}
+                    {user.nickname}
                   </span>
                 </div>
-                <IconChange idUser={user.auth_id} idGroup={idGroup} FriendToGroup={undefined} />
+                <IconChange
+                  idUser={user.auth_id}
+                  idGroup={idGroup}
+                  FriendToGroup={undefined}
+                />
               </div>
             );
           })}
       </div>
     </div>
   );
-};
-
+}
