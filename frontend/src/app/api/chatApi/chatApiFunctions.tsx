@@ -80,8 +80,8 @@ export function useGetMessages(data: string)
 }
 
 
-export async function deleteGroup(data: idGroup) {
-  const response: AxiosResponse = await API.post("/chat/removeRoom", data);
+export async function deleteGroup(data: number) {
+  const response: AxiosResponse = await API.post("/chat/removeRoom", {group: data});
   return response.data;
 }
 

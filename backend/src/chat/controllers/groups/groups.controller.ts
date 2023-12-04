@@ -102,7 +102,7 @@ export class GroupsController {
             return res.status(401, "can't ban this user").send()
             if (checkAdmin === "member" || checkAdmin === "notMember" || checkAdmin === "banned")
             return res.status(401, "you,re not an admin").send()
-        await this.GroupsService.unBanUser(member)
+        await this.GroupsService.deleteUser(member)
         return res.status(201, "user unbanned").send();
     }
 

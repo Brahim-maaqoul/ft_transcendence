@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./providers/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInfo } from "./Conversation";
-import { sendMessages } from "@/app/api/chatApi/chatApiFunctions";
+import { sendMessages, useGetMemberShip } from "@/app/api/chatApi/chatApiFunctions";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:8000/chat")
@@ -20,6 +20,7 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   dataUser,
 }) => {
   const queryClient = useQueryClient();
+  const [time, setTime] = useState(0)
   const mutation = useMutation({
     mutationFn: sendMessages,
     onSuccess:() => {
@@ -30,6 +31,17 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   const handleSubmitNewMessage = () => {
     mutation.mutate({groupId: Number(id) , message: message});
   };
+  const {data, isSuccess} = useGetMemberShip(id)
+  useEffect(() => {
+    const timeLoop = setInterval(() => {
+      if(isSuccess)
+        setTime((new Date(data?.muted).getTime() - new Date().getTime())/1000)
+      },1);
+      return () => {
+        clearInterval(timeLoop)
+    };
+  }, [isSuccess]);
+  console.log(time)
   return (
     <div className="w-full flex bottom-0 absolute ">
       <input
@@ -55,7 +67,7 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
       <button
         id="send"
         className={`pl-2.5 bg-[#45B9D1] text-white rounded-3xl shadow-black pr-2 py-1.5 ml-3 ${
-          !message && "cursor-not-allowed"
+          (!message || time > 0) &&  "cursor-not-allowed"
         }`}
         onClick={(e) => {
           if (message.trim() !== "") {
@@ -63,7 +75,12 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
           }
         }}
       >
-        Send
+        {
+          (time > 0) ?
+          Math.floor(time/60) + ":" + Math.floor(time)%60
+          :
+          "Send"
+        }
       </button>
     </div>
   );

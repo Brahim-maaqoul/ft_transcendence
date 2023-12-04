@@ -23,8 +23,8 @@ export class MessagesController {
     @UseGuards(AuthGuard('jwt'))
     async sendMessage(@Res() res, @Req() req, @Body() messageDto:messageDto)
     {
-        const user = await this.GroupsService.checkAdmin(req.user.auth_id, messageDto.groupId)
-        if (user === "notMember" ||  user === "banned")
+        const user = await this.GroupsService.getMembership(req.user.auth_id, messageDto.groupId)
+        if (user.banned || new Date(user.muted) > new Date())
         {
             return res.status(401).send()
         }
