@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { groupDto } from 'src/chat/dto/group.dto';
 import * as bcrypt from 'bcrypt';
@@ -9,410 +9,410 @@ import { changePrivacyDto } from 'src/chat/dto/changePrivacy.dto';
 
 @Injectable()
 export class GroupsService {
-    constructor(private prisma: PrismaService){}
-    async getGroups(user_id: string)
-    {
-        const groups = await this.prisma.groups.findMany({
-            where: {
-                    type: "group",
-                        OR: [
-                        {
-                            privacy: 'public',
-                        },
-                        {
-                            privacy: 'protected'
-                        },
-                        {
-                            members: {
-                                some: {
-                                    user_id: user_id,
-                                },
-                            },
-                        },
-                    ],
-                    NOT:{
-                        members:{
-                            some:{
-                                user_id: user_id,
-                                banned: true,
-                            }
-                        }
-                    }
+  constructor(private prisma: PrismaService) {}
+  async getGroups(user_id: string) {
+    const groups = await this.prisma.groups.findMany({
+      where: {
+        type: 'group',
+        OR: [
+          {
+            privacy: 'public',
+          },
+          {
+            privacy: 'protected',
+          },
+          {
+            members: {
+              some: {
+                user_id: user_id,
               },
-            orderBy: {
-                lastChange: 'desc',
-              },
-            select:{
-                id: true,
-                name: true,
-                privacy: true,
+            },
+          },
+        ],
+        NOT: {
+          members: {
+            some: {
+              user_id: user_id,
+              banned: true,
+            },
+          },
+        },
+      },
+      orderBy: {
+        lastChange: 'desc',
+      },
+      select: {
+        id: true,
+        name: true,
+        privacy: true,
+        picture: true,
+        lastChange: true,
+        members: {
+          where: {
+            user_id: user_id,
+          },
+          select: {
+            type: true,
+          },
+        },
+        messages: {
+          orderBy: { lastmodif: 'desc' },
+          take: 1,
+          select: {
+            message_text: true,
+          },
+        },
+      },
+    });
+    return groups;
+  }
+  async getGroup(group_id: number, user_id: string) {
+    const group = await this.prisma.groups.findUnique({
+      where: {
+        id: group_id,
+      },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        picture: true,
+        members: {
+          where: {
+            NOT: {
+              user_id: user_id,
+            },
+          },
+          select: {
+            user_id: true,
+            type: true,
+            banned: true,
+            user: {
+              select: {
+                auth_id: true,
+                nickname: true,
                 picture: true,
-                lastChange:true,
-                members:
-                {
-                    where: {
-                        user_id: user_id
+              },
+            },
+          },
+        },
+        messages: {
+          where: {
+            group_id: group_id,
+            NOT: {
+              sender: {
+                OR: [
+                  {
+                    blocker: {
+                      some: {
+                        blocked_id: user_id,
+                      },
                     },
-                    select:{
-                        type: true
-                        }
-                },
-                messages:{
-                    orderBy: {lastmodif: 'desc'},
-                    take: 1,
-                    select:{
-                        message_text: true
-                    }
-                }
+                  },
+                  {
+                    blocked: {
+                      some: {
+                        blocker_id: user_id,
+                      },
+                    },
+                  },
+                ],
               },
-        })
-        return groups;
-    }
-    async getGroup(group_id: number, user_id: string)
-    {
-        const group = await this.prisma.groups.findUnique({
-            where: {
-                    id: group_id
-              },
-            select:{
-                id: true,
-                name: true,
-                type: true,
+            },
+          },
+          orderBy: { lastmodif: 'asc' },
+          select: {
+            sender_id: true,
+            group_id: true,
+            lastmodif: true,
+            message_text: true,
+            sender: {
+              select: {
+                nickname: true,
                 picture: true,
-                members:
-                {
-                    where: {
-                        NOT:{
-                            user_id: user_id
-                        }
-                    },
-                    select:{
-                        user_id: true,
-                        type: true,
-                        banned: true,
-                        user:{
-                            select:{
-                                auth_id: true,
-                                nickname: true,
-                                picture: true,
-                            }
-                        }
-
-                    }
-                },
-                messages:{
-                    orderBy: {lastmodif: 'asc'},
-                    select:{
-                        sender_id: true,
-                        group_id: true,
-                        lastmodif: true,
-                        message_text: true,
-                        sender:{
-                            select:{
-                                nickname: true,
-                                picture: true,
-                            }
-                        }
-                    }
-                }
               },
-        })
-        return group;
-    }
+            },
+          },
+        },
+      },
+    });
+    return group;
+  }
 
-    async createGroup(creator_id: string, group:groupDto)
+  async createGroup(creator_id: string, group: groupDto) {
+    let hash: null | string = null;
+    if (group.type === 'protected') {
+      const salt = await bcrypt.genSalt();
+      hash = await bcrypt.hash(group.password, salt);
+    }
+    const createdGroup = await this.prisma.groups.create({
+      data: {
+        name: group.groupName,
+        type: 'group',
+        privacy: group.type,
+        password: hash,
+        members: {
+          create: {
+            user_id: creator_id,
+            type: 'creator',
+            banned: false,
+          },
+        },
+      },
+    });
+    return createdGroup;
+  }
+
+  async checkAdmin(user_id: string, group_id: number): Promise<string> {
+    const member = await this.prisma.members.findFirst({
+      where: {
+        user_id: user_id,
+        group_id: group_id,
+      },
+    });
+    if (!member) return 'notMember';
+    if (member.banned) return 'banned';
+    return member.type;
+  }
+  async addMember(creator_id: string, add_member: memberDto) {
+    const admin = await this.checkAdmin(creator_id, add_member.group);
+    if (!admin || admin === 'member' || admin === 'notMember')
+      throw new HttpException("you're not an admin!", 401);
+    const member = await this.checkAdmin(add_member.userId, add_member.group);
+    if (member !== 'notMember') throw new HttpException('already exist', 200);
+    const new_member = await this.prisma.members.create({
+      data: {
+        user_id: add_member.userId,
+        group_id: add_member.group,
+        type: 'member',
+        banned: false,
+      },
+    });
+    return new_member;
+  }
+  async changeRole(creator_id: string, add_member: memberDto) {
+    const admin = await this.checkAdmin(creator_id, add_member.group);
+    if (!admin || admin !== 'creator')
+      throw new HttpException("you're not an admin!", 401);
+    const member = await this.checkAdmin(add_member.userId, add_member.group);
+    if (member) throw new HttpException('already exist', 200);
+    const relation = await this.prisma.members.findFirst({
+      where: {
+        group_id: add_member.group,
+        user_id: add_member.userId,
+      },
+    });
+    const new_member = await this.prisma.members.update({
+      where: {
+        id: relation.id,
+      },
+      data: {
+        type: 'admin',
+      },
+    });
+    return new_member;
+  }
+
+  async getMembers(group_id: number) {
+    const members = this.prisma.members.findMany({
+      where: {
+        group_id: group_id,
+      },
+      select: {
+        user_id: true,
+        type: true,
+        banned: true,
+        muted: true,
+        user: {
+          select: {
+            nickname: true,
+            picture: true,
+            auth_id: true,
+          },
+        },
+      },
+    });
+    return members;
+  }
+
+  async banUser(member: memberDto) {
+    const relation = await this.prisma.members.findFirst({
+      where: {
+        group_id: member.group,
+        user_id: member.userId,
+      },
+    });
+
+    return await this.prisma.members.update({
+      where: {
+        id: relation.id,
+      },
+      data: {
+        banned: true,
+      },
+    });
+  }
+  async unBanUser(member: memberDto) {
+    const relation = await this.prisma.members.findFirst({
+      where: {
+        group_id: member.group,
+        user_id: member.userId,
+      },
+    });
+    return await this.prisma.members.update({
+      where: {
+        id: relation.id,
+      },
+      data: {
+        banned: false,
+      },
+    });
+  }
+  async mute(member: muteDto) {
+    const relation = await this.prisma.members.findFirst({
+      where: {
+        group_id: member.group,
+        user_id: member.userId,
+      },
+    });
+
+    return await this.prisma.members.update({
+      where: {
+        id: relation.id,
+      },
+      data: {
+        muted: member.date,
+      },
+    });
+  }
+  async unmute(member: memberDto) {
+    const relation = await this.prisma.members.findFirst({
+      where: {
+        group_id: member.group,
+        user_id: member.userId,
+      },
+    });
+    return await this.prisma.members.update({
+      where: {
+        id: relation.id,
+      },
+      data: {
+        muted: new Date(0),
+      },
+    });
+  }
+
+  async deleteUser(member: memberDto) {
+    const relation = await this.prisma.members.findFirst({
+      where: {
+        group_id: member.group,
+        user_id: member.userId,
+      },
+    });
+    return await this.prisma.members.delete({
+      where: {
+        id: relation.id,
+      },
+    });
+  }
+
+  async joinGroup(user_id: string, joinRequest: joinRequest) {
+    const group = await this.prisma.groups.findUnique({
+      where: {
+        id: joinRequest.group,
+      },
+    });
+    if (!group || group.type !== 'group')
+      throw new HttpException("group doesn't exist", HttpStatus.NOT_FOUND);
+    if (group.privacy === 'private')
+      throw new HttpException('this group is private', HttpStatus.FORBIDDEN);
+    if (group.privacy === 'protected') {
+      if (!(await bcrypt.compare(joinRequest.password, group.password)))
+        throw new HttpException('wrong password', HttpStatus.FORBIDDEN);
+    }
+    await this.prisma.members.create({
+      data: {
+        user_id: user_id,
+        group_id: joinRequest.group,
+        type: 'member',
+        banned: false,
+      },
+    });
+  }
+
+  async deleteGroup(group_id: number) {
+    await this.prisma.members.deleteMany({
+      where: {
+        group_id: group_id,
+      },
+    });
+    await this.prisma.groups.delete({
+      where: { id: group_id },
+    });
+  }
+  async quitGroup(user_id: string, group_id: number) {
+    const checkAdmin = await this.checkAdmin(user_id, group_id);
+    await this.prisma.members.deleteMany({
+      where: {
+        group_id: group_id,
+        user_id: user_id,
+      },
+    });
+    if(checkAdmin === "creator")
     {
-        let hash:null|string = null;
-        if (group.type === "protected")
-        {
-            const salt = await bcrypt.genSalt();
-            hash = await bcrypt.hash(group.password, salt)
+      const newCreator = await this.prisma.members.findFirst({
+        where:{
+          group_id : group_id,
+          banned: false
         }
-        const createdGroup = await this.prisma.groups.create({
-            data:
-            {
-                name: group.groupName,
-                type: "group",
-                privacy: group.type,
-                password: hash,
-                members:{
-                    create:{
-                        user_id: creator_id,
-                        type: "creator",
-                        banned: false,
-                    }
-                }
-            }
-        })
-        return createdGroup
-    }
-
-    async checkAdmin(user_id: string, group_id : number): Promise<string>
-    {
-        const member = await this.prisma.members.findFirst({
-            where:{
-                user_id: user_id,
-                group_id: group_id
-            }
-        })
-        if (!member)
-            return "notMember";
-        if (member.banned)
-            return "banned"
-        return member.type
-    }
-    async addMember(creator_id: string, add_member:memberDto)
-    {
-        const admin = await this.checkAdmin(creator_id, add_member.group)
-        if (!admin || admin === "member" || admin === "notMember")
-            throw new HttpException("you're not an admin!", 401);
-        const member = await this.checkAdmin(add_member.userId, add_member.group)
-        if (member !== 'notMember')
-           throw new HttpException("already exist", 200);
-        const new_member = await this.prisma.members.create({
-            data:{
-                user_id: add_member.userId,
-                group_id: add_member.group,
-                type: "member",
-                banned: false,
-            }
-        })
-        return new_member
-    }
-    async changeRole(creator_id: string, add_member:memberDto)
-    {
-        const admin = await this.checkAdmin(creator_id, add_member.group)
-        if (!admin || admin !== "creator" )
-            throw new HttpException("you're not an admin!", 401);
-        const member = await this.checkAdmin(add_member.userId, add_member.group)
-        if (member)
-           throw new HttpException("already exist", 200);
-        const relation = await this.prisma.members.findFirst({
-            where:{
-                group_id: add_member.group,
-                user_id: add_member.userId
-            },
-        })
-        const new_member = await this.prisma.members.update({
-            where:{
-                id: relation.id
-            },
-            data:{
-                type: "admin",
-            }
-        })
-        return new_member
-    }
-
-    async getMembers(group_id: number)
-    {
-        const members = this.prisma.members.findMany(
-        {
-            where:{
-                group_id: group_id
-            },
-            select:
-            {
-                user_id: true,
-                type: true,
-                banned: true,
-                muted: true,
-                user:{
-                    select:{
-                        nickname: true,
-                        picture: true,
-                        auth_id: true,
-                    }
-                }
-            }
-        });
-        return members
-    }
-
-    async banUser(member:memberDto)
-    {
-        const relation = await this.prisma.members.findFirst({
-            where:{
-                group_id: member.group,
-                user_id: member.userId
-            },
-        })
-
-        return await this.prisma.members.update({
-            where:{
-                id: relation.id
-            },
-            data:{
-                banned: true
-            }
-        })
-    }
-    async unBanUser(member:memberDto)
-    {
-        const relation = await this.prisma.members.findFirst({
-            where:{
-                group_id: member.group,
-                user_id: member.userId
-            },
-        })
-        return await this.prisma.members.update({
-            where:{
-                id: relation.id
-            },
-            data:{
-                banned: false
-            }
-        })
-    }
-    async mute(member:muteDto)
-    {
-        const relation = await this.prisma.members.findFirst({
-            where:{
-                group_id: member.group,
-                user_id: member.userId
-            },
-        })
-
-        return await this.prisma.members.update({
-            where:{
-                id: relation.id
-            },
-            data:{
-                muted: member.date
-            }
-        })
-    }
-    async unmute(member:memberDto)
-    {
-        const relation = await this.prisma.members.findFirst({
-            where:{
-                group_id: member.group,
-                user_id: member.userId
-            },
-        })
-        return await this.prisma.members.update({
-            where:{
-                id: relation.id
-            },
-            data:{
-                muted: new Date(0)
-            }
-        })
-    }
-
-
-
-    async deleteUser(member:memberDto)
-    {
-        const relation = await this.prisma.members.findFirst({
-            where:{
-                group_id: member.group,
-                user_id: member.userId
-            },
-        })
-        return await this.prisma.members.delete({
-            where:{
-                id: relation.id
-            },
-        })
-    }
-
-    async joinGroup(user_id: string, joinRequest: joinRequest)
-    {
-        const group = await this.prisma.groups.findUnique(
-            {
-                where:{
-                    id: joinRequest.group
-                }
-            }
-        )
-        if (!group || group.type !== "group")
-            throw new HttpException("group doesn't exist", HttpStatus.NOT_FOUND)
-        if (group.privacy === "private")
-            throw new HttpException("this group is private", HttpStatus.FORBIDDEN)
-        if (group.privacy === "protected")
-        {
-            if (!(await bcrypt.compare(joinRequest.password, group.password)))
-            throw new HttpException("wrong password", HttpStatus.FORBIDDEN)
+      })
+      if (!newCreator)
+        return this.deleteGroup(group_id)
+      await this.prisma.members.update({
+        where:{
+          id: newCreator.id
+        },
+        data:{
+          type: "creator",
+          muted: new Date(0)
         }
-        await this.prisma.members.create({
-            data:{
-                user_id: user_id,
-                group_id: joinRequest.group,
-                type: "member",
-                banned: false,
-            }
-        })
-    }
 
-    async deleteGroup(group_id: number)
-    {
-        await this.prisma.members.deleteMany(
-            {
-                where:
-                {
-                    group_id: group_id
-                }
-            }
-        )
-        await this.prisma.groups.delete(
-            {
-                where:{id: group_id}
-            }
-        )
+      })
     }
-    async quitGroup(user_id:string, group_id: number)
-    {
-        await this.prisma.members.deleteMany(
-            {
-                where:
-                {
-                    group_id: group_id,
-                    user_id: user_id,
-                }
-            }
-        )
-    }
-    async getMembership(user_id:string, group_id: number)
-    {
-        const member = await this.prisma.members.findFirst({
-            where:{
-                user_id: user_id,
-                group_id: group_id
-            }
-        })
-        if (!member)
-            throw new HttpException("not a member", HttpStatus.NOT_FOUND);
-        return member
-    }
-    async  changePrivacy(group:changePrivacyDto)
-    {
-        const salt = await bcrypt.genSalt();
-        const hash = await bcrypt.hash(group.password, salt)
-        await this.prisma.groups.update({
-            where:{
-                id: group.group_id
+  }
+  async getMembership(user_id: string, group_id: number) {
+    const member = await this.prisma.members.findFirst({
+      where: {
+        user_id: user_id,
+        group_id: group_id,
+      },
+    });
+    if (!member) throw new HttpException('not a member', HttpStatus.NOT_FOUND);
+    return member;
+  }
+  async changePrivacy(group: changePrivacyDto) {
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(group.password, salt);
+    await this.prisma.groups.update({
+      where: {
+        id: group.group_id,
+      },
+      data: {
+        privacy: 'protected',
+        password: hash,
+      },
+    });
+  }
+  async getInvite(group: number) {
+    return await this.prisma.users.findMany({
+      where: {
+        NOT: {
+          Member: {
+            some: {
+              group_id: group,
             },
-            data:
-            {
-                privacy: "protected",
-                password: hash,
-            }
-        })
-    }
-    async getInvite(group: number)
-    {
-        return await this.prisma.users.findMany({
-            where:{
-                NOT:
-                {
-                    Member:{
-                        some:{
-                            group_id: group
-                        }
-                    }
-                }
-            }
-        })
-    }
+          },
+        },
+      },
+    });
+  }
 }
