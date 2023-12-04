@@ -1,4 +1,4 @@
-import { deleteGroup } from "@/app/api/chatApi/chatApiFunctions";
+import { deleteGroup, useGetMemberShip } from "@/app/api/chatApi/chatApiFunctions";
 import { useMutation } from "@tanstack/react-query";
 
 interface groupManagementProps {
@@ -30,7 +30,7 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
     usedeleteGroup.mutate({ groupId: Number(idG) });
     // setisDelete(true);
   };
-
+  const {data:getMembership} = useGetMemberShip(idG)
   return (
     <div className="flex bottom-0 justify-between items-center absolute w-[100%]">
       {
@@ -62,13 +62,23 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
             </svg>
           </button>
         </div>
-        <div className="flex w-[50%]">
+        <div className="flex gap-x-2 w-[50%]">
+          {
+            getMembership?.type === 'creator' &&
+            <button
+              id="send"
+              className="pl-2.5 bg-[#e13636f2] flex justify-center font-mono w-[100%] text-white rounded-3xl shadow-black mb-1 pr-2 py-1"
+              onClick={handleDeleteGroup}
+              >
+              Delete
+            </button>
+          }
           <button
             id="send"
             className="pl-2.5 bg-[#e13636f2] flex justify-center font-mono w-[100%] text-white rounded-3xl shadow-black mb-1 pr-2 py-1"
-            onClick={handleDeleteGroup}
+            // onClick={handleDeleteGroup}
             >
-            Delete
+            Quit
           </button>
         </div>
         </>

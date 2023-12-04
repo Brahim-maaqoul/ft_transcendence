@@ -86,8 +86,9 @@ export function FriendsToGroup({
   const getAddFriendToGroupMutution = useMutation(addFriendToGroup);
   const {data, isLoading} = useGetInvited(idGroup);
   return (
-    <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
-      <div className=" overflow-y-auto h-[100%] no-scrollbar">
+    <div className=" w-full absolute overflow-auto no-scrollbar bottom-11 top-20 ">
+      <span className="text-white text-lg m-3">Invite Members</span>
+      <div className="my-2 overflow-y-auto h-[100%] no-scrollbar">
         {data &&
           data.map((user: any, key: number) => {
             return (

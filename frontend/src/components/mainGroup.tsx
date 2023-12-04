@@ -63,16 +63,8 @@ export default function MainGroup() {
     <div className="flex flex-col p-4 md:px-8 h-full">
       <div className="  p-2 md:p-3 md:mt-6   md:mx-auto pt-6  w-full flex justify-between items-center ">
         <Toggle />
-        <div className=" w-2/3 md:w-1/5 flex">
-          {/* <button>
-            <Image
-              className="active:w-7 active:h-7"
-              src="search_icon.svg"
-              alt="search icon"
-              width={32}
-              height={32}
-            />
-          </button> */}
+        <div className=" w-[210px] flex">
+
           <div className="relative w-full">
             <input
               type="text"
@@ -102,7 +94,7 @@ export default function MainGroup() {
                                 }}></div>
                             </div>
                             <div className="flex flex-col">
-                              <span className="flex items-center">
+                              <span className="flex items-center break-words">
                                 {user?.displayname}
                               </span>
                               <span className="flex text-sm text-slate-500">
@@ -125,7 +117,7 @@ export default function MainGroup() {
           {description}
         </div>
         <div className="relative p-2 mt-12 lg:mt-8">
-          <span className="absolute z-40 text-white text-sm sm:text-lg md:text-xl font-mono mx-1 sm:mx-4 lg:mx-8">
+          <span className="absolute z-20 text-white text-sm sm:text-lg md:text-xl font-mono mx-1 sm:mx-4 lg:mx-8">
             Ping Pong
           </span>
           <div
