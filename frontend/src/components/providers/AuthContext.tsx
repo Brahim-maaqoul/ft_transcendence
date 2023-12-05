@@ -25,6 +25,7 @@ export interface UserProfile {
   nickname: string;
   displayname: string;
   picture: string;
+  picturePath: string;
   // bio: string;
 }
 

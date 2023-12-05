@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { authenticator, totp } from 'otplib';
+import axios from 'axios';
+import * as fs from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -48,12 +50,51 @@ export class AuthService {
     return name;
   }
 
+  getFormattedCurrentDate(): string {
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getFullYear()}${(
+      currentDate.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, '0')}${currentDate
+      .getDate()
+      .toString()
+      .padStart(2, '0')}_${currentDate
+      .getHours()
+      .toString()
+      .padStart(2, '0')}${currentDate
+      .getMinutes()
+      .toString()
+      .padStart(2, '0')}${currentDate
+      .getSeconds()
+      .toString()
+      .padStart(2, '0')}`;
+    return formattedDate;
+  }
+
+  async uploadImage(username: string, imageUrl: string): Promise<string> {
+    try {
+      const response = await axios.get(imageUrl, {
+        responseType: 'arraybuffer',
+      });
+
+      const fileName = `${username}_${this.getFormattedCurrentDate()}.jpg`;
+      const filePath = `upload/${fileName}`;
+
+      fs.writeFileSync(filePath, response.data);
+
+      return filePath;
+    } catch (error) {
+      return '';
+    }
+  }
+
   async createUser(
     auth_id: string,
     email: string,
     displayname: string,
     picture: string,
-    emailVerified?: boolean,
+    picturePath?: string,
   ) {
     const nickname = await this.createRandomName();
 
@@ -64,7 +105,7 @@ export class AuthService {
         nickname,
         displayname,
         picture,
-        emailVerified,
+        picturePath,
         stats: {
           create: {
             wins: 0,
