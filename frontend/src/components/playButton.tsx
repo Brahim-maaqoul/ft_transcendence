@@ -2,9 +2,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import styles from "../app/styles.module.css";
 
-type PlayButtonProps = {
+interface PlayButtonProps {
   isAuthenticated: boolean;
-};
+}
 
 interface DropDownArrowProps {
   isOpen: boolean;
@@ -31,6 +31,7 @@ interface DropDownValueProps {
   id: string;
   click: (value: string) => void;
 }
+
 function DropDownValue({
   isOpen,
   isVertical,
@@ -43,7 +44,11 @@ function DropDownValue({
       id={id}
       className={`z-10 bg-white w-full ${isOpen ? "block" : "hidden"} relative`}
     >
-      <ul className="absolute w-full bg-slate-950/70">
+      <ul
+        className={`absolute w-full bg-slate-950/70 flex ${
+          isVertical ? "flex-col" : "flex-row"
+        } justify-center`}
+      >
         {array.map((value, index) => (
           <li
             className="text-white px-5 py-2.5"
@@ -147,7 +152,7 @@ const HorizontalLine = () => {
   );
 };
 
-const PlayButton: React.FC<PlayButtonProps> = ({ isAuthenticated }) => {
+function PlayButton({ isAuthenticated }: PlayButtonProps) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
@@ -279,14 +284,23 @@ const PlayButton: React.FC<PlayButtonProps> = ({ isAuthenticated }) => {
     return `${minute}:${second}`;
   };
 
-  const timeRef = useRef<HTMLDivElement>(null);
+  const timeRef = useRef<number | null>(null);
+
   useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
     if (isSearching) {
-      timeRef.current = setInterval(() => {
+      intervalId = setInterval(() => {
         setTime((prev) => prev + 1);
       }, 1000);
     }
-    return setTime(0);
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      setTime(0);
+    };
   }, [isSearching]);
 
   return (
@@ -384,7 +398,7 @@ const PlayButton: React.FC<PlayButtonProps> = ({ isAuthenticated }) => {
                 isVertical={false}
                 isOpen={isBottomOpen}
                 array={types}
-                id={"bottomDropDown"}
+                id={"bottomDropdown"}
                 click={handleTypeClick}
               />
               <HorizontalLine />
@@ -423,7 +437,7 @@ const PlayButton: React.FC<PlayButtonProps> = ({ isAuthenticated }) => {
                 <>
                   <div
                     className="w-full h-1/3 text-white text-center text-4xl"
-                    ref={timeRef}
+                    ref={timeRef as React.RefObject<HTMLDivElement>}
                   >
                     {format(time)}
                   </div>
@@ -441,6 +455,6 @@ const PlayButton: React.FC<PlayButtonProps> = ({ isAuthenticated }) => {
       )}
     </>
   );
-};
+}
 
 export default PlayButton;
