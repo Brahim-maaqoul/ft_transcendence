@@ -25,7 +25,7 @@ export interface UserProfile {
   nickname: string;
   displayname: string;
   picture: string;
-  bio: string;
+  // bio: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,7 +38,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataUser, setDataUser] = useState<UserProfile | null>(null);
   const [show, setShow] = useState(false);
-
 
   const showTrue = () => {
     setShow(true);
