@@ -42,7 +42,7 @@ export class AuthController {
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
-        ? `http://localhost:3000/${userId}/Edit`
+        ? `http://localhost:3000/Edit`
         : 'http://localhost:3000/',
     );
   }
@@ -69,7 +69,7 @@ export class AuthController {
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
-        ? `http://localhost:3000/${userId}/Edit`
+        ? `http://localhost:3000/Edit`
         : 'http://localhost:3000/',
     );
   }
@@ -109,17 +109,16 @@ export class AuthController {
   ) {
     try {
       if (await this.authService.isNicknameUnique(updatedUser.nickname)) {
-        await this.authService.updateUser(
+        const user = await this.authService.updateUser(
           request.user.auth_id,
           updatedUser.nickname,
           updatedUser.displayname,
           updatedUser.picture,
-          updatedUser.bio,
           false,
         );
         return res
           .status(200)
-          .json({ message: 'User data updated successfully' });
+          .json(user);
       } else
         return res.status(404).json({ message: 'Nickname is already in use' });
     } catch (error) {
@@ -141,7 +140,6 @@ export class AuthController {
           updatedUser.nickname,
           updatedUser.displayname,
           updatedUser.picture,
-          updatedUser.bio,
           false,
         );
         return res

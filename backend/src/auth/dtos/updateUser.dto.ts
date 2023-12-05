@@ -11,7 +11,6 @@ export class updatedUser {
     @IsNotEmpty()
     picture :string;
 
-    @IsNotEmpty()
-    bio :string;
+ 
  
 }
