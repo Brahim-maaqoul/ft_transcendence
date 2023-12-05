@@ -91,12 +91,11 @@ export class AuthService {
     nickname: string,
     displayname: string,
     picture: string,
-    bio: string,
     firstSignIn: boolean,
   ) {
     const updatedUser = await this.prisma.users.update({
       where: { auth_id },
-      data: { nickname, displayname, picture, bio, firstSignIn },
+      data: { nickname, displayname, picture, firstSignIn },
     });
     if (!updatedUser) {
       throw new NotFoundException(`User with ID ${auth_id} not found`);
