@@ -60,29 +60,22 @@ export class UserController {
     return res.status(200).json(users);
   }
 
-  @Get('/Achievement')
+  @Get('/rank')
   @UseGuards(AuthGuard('jwt'))
-  async Achievement(@Body() Body, @Res() res, @Req() request) {
-    const userId = request.user.auth_id;
-    const userStats = await this.UserService.getUserStats(userId);
-    const achievements = await this.UserService.getAllAchievements();
-    const earnedAchievements = this.UserService.compareAchievements(
-      userStats,
-      achievements,
-    );
-    return earnedAchievements;
+  async Rank(@Res() res)
+  {
+    const users = await this.UserService.getUsersByRank()
+    return res.status(200).json(users);
   }
 
-  @Get('/recentGames')
-  RecentGames() {}
-
-  @Get('/globalRank')
-  GlobalRank() {}
-  @Get('/rank')
-  Rank() {}
-
-  @Post('/stateMe')
-  StateMe() {}
+  @Get('/myRank')
+  @UseGuards(AuthGuard('jwt'))
+  async MyRank(@Res() res, @Req() req)
+  {
+    const users = await this.UserService.getUsersByRank()
+    const index = users.findIndex((user) => {return user.user.auth_id === req.user.auth_id})
+    return res.status(200).json({rank: index});
+  }
 
   @Post('/enableTfa')
   @UseGuards(AuthGuard('jwt'))

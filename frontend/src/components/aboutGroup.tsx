@@ -1,7 +1,4 @@
 import {
-  usegetFriends,
-  getMemberGroup,
-  usegetGroups,
   banUserFromGroup,
   useGetMembers,
   useGetMemberShip,
@@ -9,21 +6,12 @@ import {
   unBanUserFromGroup,
   unmuteFromGroup,
   muteFromGroup,
+  makeUserAdmin,
 } from "@/app/api/chatApi/chatApiFunctions";
-import { useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
-import { use, useEffect, useRef, useState } from "react";
-import { set } from "react-hook-form";
-import { UserProfile, useAuth } from "./providers/AuthContext";
-import { AnyARecord } from "dns";
-import FriendCases, { Block, Unblock } from "./friendStatus";
-import { getUser } from "@/app/api/getUserByNickname";
-import { useFriendType } from "@/app/api/getFriendtype";
-import { blockFriend } from "@/app/api/blockFriend";
-import Image from "next/image";
-import { unblockFriend } from "@/app/api/unBlock";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { spinner } from "@/app/[user]/profile/page";
 import Link from "next/link";
-
+import { io } from "socket.io-client";
 interface moreProps {
   more: boolean;
   setMore: React.Dispatch<React.SetStateAction<boolean>>;
@@ -138,6 +126,7 @@ const iconBan = (
 );
 
 
+const socket = io("http://localhost:8000/chat")
 
 const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
   // handleBanYser **************
@@ -158,7 +147,7 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
     unBanUser.mutate({userId: user.user_id, group: Number(idG)});
   };
 
-  const mute = useMutation({mutationFn: muteFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const mute = useMutation({mutationFn: muteFromGroup, onSuccess: () => {queryClient.invalidateQueries(['getMembers']); socket.emit("sendMessage", {group_id: idG})}});
   const handleMuteToGroup = () => {
 
     const currentDate = new Date();
@@ -166,25 +155,25 @@ const GroupUserManagement: React.FC <groupUsersProps> = ({ user, idG }) => {
     mute.mutate({userId: user.user_id, group: Number(idG), date: currentDate });
   };
 
-  const unmute = useMutation({mutationFn: unmuteFromGroup, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const unmute = useMutation({mutationFn: unmuteFromGroup, onSuccess: () => {queryClient.invalidateQueries(['getMembers']); socket.emit("sendMessage", {group_id: idG})}});
   const handleUnMuteToGroup = () => {
     const currentDate = new Date();
     currentDate.setMinutes(currentDate.getMinutes() - 8)
     mute.mutate({userId: user.user_id, group: Number(idG), date: currentDate });
   };
 
-  // // handleMuteUser **************
-  // const handlekickUserFromGroup = (userId: string) => {
-  //   banUser.mutate({userId: userId, group: Number(idG)});
-  // };
+  const makeAdmin = useMutation({mutationFn: makeUserAdmin, onSuccess: () => queryClient.invalidateQueries(['getMembers'])});
+  const handleMakeAdmin = () => {
+    makeAdmin.mutate({userId: user.user_id, group: Number(idG)});
+  };
 
   // *********** FIN ******************
   console.log(new Date(user.muted), new Date())
   return (
-    <div className=" col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 ">
-      <button  className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt">
+    <div className=" col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 " onClick={() => handleMakeAdmin()}>
+      {user.type === 'member' && <button  className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt">
         {iconAdd}
-      </button>
+      </button>}
       <button className="hover:cursor-pointer icon icon-tabler icon-tabler-user-x m-2" onClick={() => handleDeleteFromGroup()}>
         {iconRemove}
       </button>

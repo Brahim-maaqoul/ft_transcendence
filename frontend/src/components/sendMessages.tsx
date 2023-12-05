@@ -36,12 +36,11 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
     const timeLoop = setInterval(() => {
       if(isSuccess)
         setTime((new Date(data?.muted).getTime() - new Date().getTime())/1000)
-      },1);
+      },1000);
       return () => {
         clearInterval(timeLoop)
     };
-  }, [isSuccess]);
-  console.log(time)
+  }, [isSuccess, data]);
   return (
     <div className="w-full flex bottom-0 absolute ">
       <input

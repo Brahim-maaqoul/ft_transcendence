@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { API } from "./checkAuthentication";
 
 async function getUserbyNickName(nickname: string) {

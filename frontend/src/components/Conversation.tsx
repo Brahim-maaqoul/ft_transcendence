@@ -71,8 +71,6 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
   }
   return (
     <div className="relative h-full">
-      {(isError) && <>Error</>}
-
       {isSuccess && (
         <div>
           <ProfileMessages group={getMessages} more={more} setMore={setMore} />

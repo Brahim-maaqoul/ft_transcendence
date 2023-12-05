@@ -191,10 +191,11 @@ export class GroupsService {
   }
   async changeRole(creator_id: string, add_member: memberDto) {
     const admin = await this.checkAdmin(creator_id, add_member.group);
+    console.log('test', admin)
     if (!admin || admin !== 'creator')
       throw new HttpException("you're not an admin!", 401);
     const member = await this.checkAdmin(add_member.userId, add_member.group);
-    if (member) throw new HttpException('already exist', 200);
+    if (!member) throw new HttpException("doesn't exist", 404);
     const relation = await this.prisma.members.findFirst({
       where: {
         group_id: add_member.group,

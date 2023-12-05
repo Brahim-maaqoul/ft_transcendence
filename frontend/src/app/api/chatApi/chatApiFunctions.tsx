@@ -135,6 +135,10 @@ export async function muteFromGroup(data: idGroupMute) {
   const response: AxiosResponse = await API.post("/groups/mute", data);
   return response.data;
 }
+export async function makeUserAdmin(data: idGroup) {
+  const response: AxiosResponse = await API.post("/groups/changeRole", data);
+  return response.data;
+}
 
 export async function unmuteFromGroup(data: idGroup) {
   const response: AxiosResponse = await API.post("/groups/unmute", data);
@@ -146,20 +150,13 @@ export async function joinToGroup(data: {group:number, password: string}) {
   return response.data;
 }
 export async function quitGroup(data: {group:number}) {
-  console.log("datta", data)
   const response: AxiosResponse = await API.post("/groups/quit", data);
-  console.log("datta", response)
   return response.data;
 }
 
 async function checkIsGroupMember(data: idGroup) {
-  try{
     const response: AxiosResponse = await API.get("/groups/memberType/"+"?groupId="+data.group);
     return response.data;
-  }
-  catch(err)
-  {
-  }
 }
 
 export function useCheckIsGroupMember(data: idGroup){
