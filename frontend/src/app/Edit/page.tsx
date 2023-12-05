@@ -1,14 +1,15 @@
 "use client";
 
-
 import { useEffect, useState } from "react";
 import { TbPhotoEdit } from "react-icons/tb";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import styles from "../../styles.module.css";
+import styles from "../styles.module.css";
 import { useAuth } from "@/components/providers/AuthContext";
-import { updateUserProfile } from "../../api/checkAuthentication";
+import { updateUserProfile } from "../api/checkAuthentication";
 import { useRouter } from "next/navigation";
+import TfaToggle from "@/components/tfaToggle";
+import { redirect } from "next/navigation";
 
 export default function Edit() {
   const { dataUser } = useAuth();
@@ -16,7 +17,6 @@ export default function Edit() {
   const [nickname, setNickname] = useState("");
   const [displayname, setDisplayname] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [bio, setBio] = useState("");
   const [selectedFile, setSelectedFile] = useState<null>(null);
   const queryClient = useQueryClient();
 
@@ -25,7 +25,6 @@ export default function Edit() {
       setDisplayname(dataUser.displayname || "");
       setNickname(dataUser.nickname || "");
       setAvatar(dataUser.picture || "");
-      setBio(dataUser.bio || "");
     }
   }, [dataUser]);
 
@@ -38,7 +37,7 @@ export default function Edit() {
   const { isSuccess, isLoading, isError } = mutation;
   useEffect(() => {
     if (isSuccess) {
-      router.push("/");
+      redirect("/" + mutation.data.nickname + "/profile");
     }
   }, [mutation.isSuccess, router]);
 
@@ -50,9 +49,6 @@ export default function Edit() {
     setAvatar(e.target.value);
   };
 
-  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= 50) setBio(e.target.value);
-  };
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 20) setNickname(e.target.value);
   };
@@ -60,12 +56,10 @@ export default function Edit() {
   const handleSubmit = () => {
     setDisplayname(displayname);
     setAvatar(avatar);
-    setBio(bio);
     setNickname(nickname);
     mutation.mutate({
       displayname: displayname,
       picture: avatar,
-      bio: bio,
       nickname: nickname,
     });
   };
@@ -82,7 +76,8 @@ export default function Edit() {
           className="w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-[#18181B]"
           viewBox="0 0 100 101"
           fill="none"
-          xmlns="http://www.w3.org/2000/svg">
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
             fill="currentColor"
@@ -96,13 +91,14 @@ export default function Edit() {
     );
 
   return (
-    <div className="z-0 w-full md:w-[500px] h-[100vh] md:h-[700px] relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
-      <div className=" w-full  overflow-auto h-full  md:bg-opacity-70 md:bg-slate-950   text-white  m-auto rounded-2xl p-10">
+    <div className="z-0 w-full md:w-[500px] h-[100vh] md:h-[600px] relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
+      <div className="flex flex-col justify-evenly w-full   h-full  bg-opacity-70 bg-slate-950   text-white  m-auto rounded-2xl p-10">
         <div className="relative">
           <div className="w-32 h-32 z-10 mx-auto">
             <div
               className="h-32 w-32 rounded-full bg-cover    "
-              style={{ backgroundImage: `url(${dataUser?.picture!})` }}></div>
+              style={{ backgroundImage: `url(${dataUser?.picture!})` }}
+            ></div>
           </div>
           {/* <img width={120}   className='rounded-full   z-10 mx-auto   '  src={dataUser?.picture} alt="An image" crossOrigin="anonymous" />  */}
           <div className="absolute left-[56%] top-[85px]  bg-[#ffff]   text-[#000000] rounded-full p-1">
@@ -120,9 +116,6 @@ export default function Edit() {
         </div>
 
         <div className=" py-5">
-          {/* {isError && mutation.error?.response?.data?.message && (
-              <p>{mutation.error.response.data.message}</p>
-            )} */}
           <div className=" p-2 flex flex-col my-2  rounded-lg   ">
             <div className="flex items-center justify-between">
               <label className="py-1">Displayname</label>
@@ -147,17 +140,8 @@ export default function Edit() {
               className="focus:outline-none p-2 bg-[#fff0] border "
             />
           </div>
-          <div className=" p-2 my-2 flex flex-col  rounded-lg   ">
-            <div className="flex items-center justify-between">
-              <label className="py-1">bio</label>
-              <span className="text-[12px]">{bio.length}/50</span>
-            </div>
-            <textarea
-              rows={2}
-              className="focus:outline-none p-2 bg-[#fff0] text-[14px] border "
-              value={bio}
-              onChange={handleBioChange}
-            />
+          <div className="py-3 flex flex-col my-3">
+            <TfaToggle />
           </div>
         </div>
         {isLoading ? (
@@ -167,7 +151,8 @@ export default function Edit() {
               className="w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-[#18181B]"
               viewBox="0 0 100 101"
               fill="none"
-              xmlns="http://www.w3.org/2000/svg">
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
                 fill="currentColor"
@@ -181,7 +166,8 @@ export default function Edit() {
         ) : (
           <button
             onClick={handleSubmit}
-            className={`${styles.notch_button} my-12 h-2 md:col-span-2 mx-auto md:h-4 w-[80%] md:w-[400px] mt-10  relative flex justify-center items-center`}>
+            className={`${styles.notch_button} my-12 h-2 md:col-span-2 mx-auto md:h-4 w-[80%] md:w-[400px] mt-10  relative flex justify-center items-center`}
+          >
             <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute ">
               Save
             </div>

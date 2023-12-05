@@ -6,7 +6,6 @@ export interface UserProfileUpdate {
   nickname: string;
   displayname: string;
   picture: string;
-  bio: string;
 }
 interface GroupCreate {
   groupName: string;
