@@ -5,6 +5,8 @@ import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
+import { NotificationService } from './notification/service/notification.service';
+import { NotificationModule } from './notification/notification.module';
 
 
 
@@ -16,9 +18,10 @@ import { ChatModule } from './chat/chat.module';
     AuthModule,
     UserModule,
     GameModule,
-    ChatModule
+    ChatModule,
+    NotificationModule,
   ],
-providers:[PrismaService],
+  providers:[PrismaService],
 
 })
 export class AppModule {}

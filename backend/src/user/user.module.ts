@@ -8,6 +8,7 @@ import { FriendService } from './services/friend.service';
 import { BlockController } from './controllers/block/block.controller';
 import { DuoService } from 'src/chat/services/chats/chats.service';
 import { AuthService } from 'src/auth/auth.service';
+import { NotificationService } from 'src/notification/service/notification.service';
 
 @Module({
   controllers: [UserController, FriendController, BlockController],
@@ -18,6 +19,7 @@ import { AuthService } from 'src/auth/auth.service';
     BlockService,
     DuoService,
     AuthService,
+    NotificationService,
   ],
 })
 export class UserModule {}

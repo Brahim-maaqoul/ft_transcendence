@@ -27,6 +27,8 @@ export default function Chat({ params }: { params: any }) {
     queryClient.invalidateQueries(["dataFriend"]);
     queryClient.invalidateQueries(["dataGroups"]);
     queryClient.invalidateQueries(["getChat"]);
+    queryClient.invalidateQueries(["getMembership"]);
+    console.log("reloaddddd")
   })
   return (
     <div className="h-[767px]  z-0 w-full md:w-[83%]  relative md:p-2 md:rounded-3xl md:bg-slate-500 md:bg-opacity-40  md:shadow-black md:shadow-2xl overflow-y-scroll  no-scrollbar">

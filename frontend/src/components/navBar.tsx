@@ -11,6 +11,20 @@ import { MouseEvent, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthContext";
 import { useCheckAuthentication } from "@/app/api/checkAuthentication";
+import { useGetNotification } from "@/app/api/notification";
+
+interface notification
+{
+  type: string,
+  seen: boolean,
+  last_change: Date,
+  Source:{
+    auth_id: string,
+    nickname: string,
+    picture: string,
+  }
+}
+
 
 export default function NavBar() {
   const [not, setNot] = useState(false);
@@ -21,7 +35,8 @@ export default function NavBar() {
       setNot(false);
     }
   };
-
+  const {data: notifications, isSuccess} = useGetNotification()
+  console.log("notification", notifications)
   useEffect(() => {
     if (not) {
       document.addEventListener(
@@ -116,7 +131,7 @@ export default function NavBar() {
             </div>
           </div>
 
-          {not && (
+          {not  && ( notifications.map( (notification: notification, id:number) =>
             <>
               <div className="absolute hidden lg:block top-0  left-0 bg-slate-950   lg:bg-opacity-50 backdrop-blur-sm   bottom-0  right-0  z-50"></div>
               <div
@@ -128,7 +143,7 @@ export default function NavBar() {
                   <div className="flex flex-col w-full">
                     <div className="flex justify-evenly w-full p-4 hover:bg-slate-100 hover:rounded-2xl">
                       <Link
-                        href={"/gyro/profile"}
+                        href={notification.Source.picture}
                         onClick={() => {
                           setNot(false);
                         }}
@@ -138,16 +153,16 @@ export default function NavBar() {
                           <div
                             className="h-14 w-14 rounded-full bg-cover"
                             style={{
-                              backgroundImage: `url(/bmaaqoul.png)`,
+                              backgroundImage: `url(${notification.Source.picture})`,
                             }}
                           ></div>
                         </div>
                         <div className="flex flex-col">
                           <span className="text-black-500 text-lg">
-                            Brahim maaqoul
+                            {notification.Source.nickname}
                           </span>
                           <span className="text-slate-500 text-sm">
-                            Sent you a friend request
+                            {notification.type}
                           </span>
                         </div>
                       </Link>
@@ -212,7 +227,7 @@ export default function NavBar() {
                 </div>
               </div>
             </>
-          )}
+          ))}
         </>
       )}
     </>

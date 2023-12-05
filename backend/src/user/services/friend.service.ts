@@ -1,9 +1,13 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { NotificationService } from 'src/notification/service/notification.service';
 
 @Injectable()
 export class FriendService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notification: NotificationService,
+  ) {}
 
   async firendshipState(user1Id: string, user2Id: string) {
     if (user1Id === user2Id) throw new HttpException('invalid userId', 200);
@@ -66,6 +70,7 @@ export class FriendService {
         status: 'pending', // Set an initial status if needed
       },
     });
+    this.notification.addNotification(user1Id, user2Id, "friend Request")
     return 'Friendship request sent successfully.';
   }
 
@@ -88,6 +93,7 @@ export class FriendService {
         status: 'accepted',
       },
     });
+    this.notification.addNotification(user1Id, user2Id, "friend accept")
     return 'Friendship request accepted successfully.';
   }
 
