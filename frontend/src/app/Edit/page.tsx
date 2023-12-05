@@ -17,7 +17,7 @@ export default function Edit() {
   const [nickname, setNickname] = useState("");
   const [displayname, setDisplayname] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [selectedFile, setSelectedFile] = useState<null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | undefined>();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -66,8 +66,8 @@ export default function Edit() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    setSelectedFile(file);
   };
-
   if (!dataUser)
     return (
       <div className="flex justify-center items-center mt-10 ">
@@ -89,15 +89,16 @@ export default function Edit() {
         </svg>
       </div>
     );
-
-  return (
+    const picturePath = `http://localhost:8000/${dataUser ? dataUser.picturePath : 'upload/huh.jpeg'}`;
+    return (
     <div className="z-0 w-full md:w-[500px] h-[100vh] md:h-[600px] relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="flex flex-col justify-evenly w-full   h-full  bg-opacity-70 bg-slate-950   text-white  m-auto rounded-2xl p-10">
         <div className="relative">
           <div className="w-32 h-32 z-10 mx-auto">
             <div
               className="h-32 w-32 rounded-full bg-cover    "
-              style={{ backgroundImage: `url(${dataUser?.picture!})` }}
+              // style={{ backgroundImage: `url(${dataUser?.picture!})` }}
+              style={{ backgroundImage: `url(${picturePath})` }}
             ></div>
           </div>
           {/* <img width={120}   className='rounded-full   z-10 mx-auto   '  src={dataUser?.picture} alt="An image" crossOrigin="anonymous" />  */}

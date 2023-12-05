@@ -1,14 +1,15 @@
-
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
-import {AuthService} from '../auth.service'
-
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly configService: ConfigService,private readonly authService: AuthService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly authService: AuthService,
+  ) {
     super({
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
@@ -16,26 +17,41 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       passReqToCallback: true,
       scope: ['email', 'profile'],
       prompt: 'select_account',
-
     });
   }
 
-  async validate(request: any, accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
+  async validate(
+    request: any,
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+    done: VerifyCallback,
+  ): Promise<any> {
     try {
-      let user = await this.authService.findUserById(profile._json.sub)
-      if(!user)
-      {
-          user = await this.authService.createUser(profile._json.sub,
-            profile._json.email, 
-            profile._json.given_name + profile._json.family_name,
-            profile._json.picture,
-            profile._json.email_verified)
+      let user = await this.authService.findUserById(profile._json.sub);
+      if (!user) {
+        const picturePath = await this.authService.uploadImage(
+          profile._json.given_name,
+          profile._json.picture,
+        );
+        picturePath !== ''
+          ? (user = await this.authService.createUser(
+              profile._json.sub,
+              profile._json.email,
+              profile._json.given_name,
+              profile._json.picture,
+              picturePath,
+            ))
+          : (user = await this.authService.createUser(
+              profile._json.sub,
+              profile._json.email,
+              profile._json.given_name,
+              profile._json.picture,
+            ));
       }
       return done(null, user);
     } catch (err) {
       return done(err, false);
     }
-
-}
-
+  }
 }
