@@ -30,7 +30,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     try {
       let user = await this.authService.findUserById(profile._json.sub);
       if (!user) {
-        const picturePath = await this.authService.uploadImage(
+        const picturePath = await this.authService.saveImage(
           profile._json.given_name,
           profile._json.picture,
         );
