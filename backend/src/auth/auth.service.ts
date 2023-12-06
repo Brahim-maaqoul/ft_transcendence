@@ -30,17 +30,13 @@ export class AuthService {
     }
   }
 
-  async isNicknameUnique(nickname: string): Promise<boolean> {
-    try {
-      const user = await this.prisma.users.findUnique({
-        where: {
-          nickname,
-        },
-      });
-      return user != null ? false : true;
-    } catch (error) {
-      return false;
-    }
+  async isNicknameUnique(nickname: string) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        nickname,
+      },
+    });
+    return user;
   }
 
   async createRandomName() {
