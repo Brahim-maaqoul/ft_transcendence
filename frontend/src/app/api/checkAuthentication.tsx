@@ -27,6 +27,8 @@ export const API = axios.create({
 // checkAuthentication
 async function checkAuthentication() {
   const response: AxiosResponse = await API.post("/auth/checkauth");
+  console.log("responseeeeeeeee :", response.data);
+  localStorage.setItem("token", response.data.user);
   return response.data;
 }
 // updateUserProfile

@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
+import { JwtGuard } from './Guard/jwt.guard';
 
 
 @Module({
@@ -26,5 +27,6 @@ import { ConfigService } from '@nestjs/config';
   ],
   providers: [GoogleStrategy, IntraStrategy, AuthService, PrismaService, JwtStrategy],
   controllers: [AuthController],
+  exports: [JwtModule],
 })
 export class AuthModule {}

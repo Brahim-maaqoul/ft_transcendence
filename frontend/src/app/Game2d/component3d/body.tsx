@@ -16,7 +16,8 @@ import io from 'socket.io-client'
 import { set } from "react-hook-form";
 import { PSize, key } from "../types/component";
 
-const socket = io('http://localhost:8000/Game2d');
+const token = localStorage.getItem('token');
+const socket = io('http://localhost:8000/Game2d', { query: { token: token } });
 const keys: key = { left: false, right: false, rotate_pos: false, rotate_neg: false, start: false };
 
 export function Body3D() {
@@ -45,6 +46,7 @@ export function Body3D() {
 	// 		document.addEventListener('keyup', handleKeyUp);
 	// 	};
 	// }, []);
+	console.log('storage', localStorage);
 
 	const [gameData, setGameData] = useState(gameState.get_data());
 	useEffect(() => {
