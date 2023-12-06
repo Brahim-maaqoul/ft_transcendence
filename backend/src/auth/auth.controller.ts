@@ -108,7 +108,10 @@ export class AuthController {
     @Body() updatedUser: updatedUser,
   ) {
     try {
-      if (await this.authService.isNicknameUnique(updatedUser.nickname)) {
+      const user = await this.authService.isNicknameUnique(
+        updatedUser.nickname,
+      );
+      if (!user || user.auth_id === request.user.auth_id) {
         const user = await this.authService.updateUser(
           request.user.auth_id,
           updatedUser.nickname,
@@ -116,35 +119,7 @@ export class AuthController {
           updatedUser.picture,
           false,
         );
-        return res
-          .status(200)
-          .json(user);
-      } else
-        return res.status(404).json({ message: 'Nickname is already in use' });
-    } catch (error) {
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-  }
-
-  @Get('UpdateData')
-  @UseGuards(AuthGuard('jwt'))
-  async UpdateUserData1(
-    @Req() request,
-    @Res() res,
-    @Body() updatedUser: updatedUser,
-  ) {
-    try {
-      if (await this.authService.isNicknameUnique(updatedUser.nickname)) {
-        await this.authService.updateUser(
-          request.user.auth_id,
-          updatedUser.nickname,
-          updatedUser.displayname,
-          updatedUser.picture,
-          false,
-        );
-        return res
-          .status(200)
-          .json({ message: 'User data updated successfully' });
+        return res.status(201).json(user);
       } else
         return res.status(404).json({ message: 'Nickname is already in use' });
     } catch (error) {
