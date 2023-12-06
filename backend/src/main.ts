@@ -5,6 +5,8 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import * as express from 'express';
+import * as path from 'path';
 dotenv.config();
 
 async function bootstrap() {
@@ -12,7 +14,7 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'yourFallbackSecret',
+      secret: process.env.SESSION_SECRET,
       saveUninitialized: false,
       resave: false,
       cookie: {
@@ -25,19 +27,15 @@ async function bootstrap() {
   const corsOptions = {
     origin: 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, 
+    credentials: true,
   };
 
-  // Enable CORS with the specified options
   app.enableCors(corsOptions);
+  app.use('/upload', express.static(path.join(__dirname, '../upload')));
 
   app.use(passport.initialize());
   app.use(passport.session());
-  
 
-
-  
   await app.listen(8000);
-
 }
 bootstrap();
