@@ -34,20 +34,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
           profile._json.given_name,
           profile._json.picture,
         );
-        picturePath !== ''
-          ? (user = await this.authService.createUser(
-              profile._json.sub,
-              profile._json.email,
-              profile._json.given_name,
-              profile._json.picture,
-              picturePath,
-            ))
-          : (user = await this.authService.createUser(
-              profile._json.sub,
-              profile._json.email,
-              profile._json.given_name,
-              profile._json.picture,
-            ));
+        user = await this.authService.createUser(
+          profile._json.sub,
+          profile._json.email,
+          profile._json.given_name,
+          picturePath,
+        );
       }
       return done(null, user);
     } catch (err) {

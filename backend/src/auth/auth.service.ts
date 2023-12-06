@@ -83,7 +83,7 @@ export class AuthService {
 
       fs.writeFileSync(filePath, response.data);
 
-      return filePath;
+      return `http://localhost:8000/${filePath}`;
     } catch (error) {
       return '';
     }
@@ -94,7 +94,6 @@ export class AuthService {
     email: string,
     displayname: string,
     picture: string,
-    picturePath?: string,
   ) {
     const nickname = await this.createRandomName();
 
@@ -105,7 +104,6 @@ export class AuthService {
         nickname,
         displayname,
         picture,
-        picturePath,
         stats: {
           create: {
             wins: 0,

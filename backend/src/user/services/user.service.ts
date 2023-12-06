@@ -162,12 +162,8 @@ export class UserService {
       stream.write(file.buffer);
       stream.end();
 
-      await this.prisma.users.update({
-        where: { nickname: nickname },
-        data: { picturePath: picturePath },
-      });
 
-      return true;
+      return `http://localhost:8000/${picturePath}`;
     } catch (error) {
       console.error(error);
       return false;

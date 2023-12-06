@@ -129,7 +129,11 @@ export class UserController {
     @Req() req,
   ) {
     try {
-      await this.UserService.uploadProfilePicture(req.user.nickname, file);
+      const path = await this.UserService.uploadProfilePicture(
+        req.user.nickname,
+        file,
+      );
+      return res.status(201).json({ path: path });
     } catch (error) {}
   }
 }

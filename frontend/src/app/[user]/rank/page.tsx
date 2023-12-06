@@ -20,7 +20,7 @@ function Rank() {
         userName: "Player",
         score: 12324,
     });
-    const picturePath = `http://localhost:8000/${dataUser ? dataUser.picturePath : 'upload/huh.jpeg'}`;
+    const picturePath = dataUser.picture;
 
     return (
         <div className=" h-[1037px] flex items-center justify-center z-0 w-full md:w-[83%]  relative md:p-2 md:rounded-3xl md:bg-slate-500 md:bg-opacity-40  md:shadow-black md:shadow-2xl overflow-y-auto  no-scrollbar">
