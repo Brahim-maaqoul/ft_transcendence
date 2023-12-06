@@ -75,7 +75,7 @@ export default function Edit() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setFilePreview(URL.createObjectURL(file)); // Create a preview URL for the selected file
+      setFilePreview(URL.createObjectURL(file));
       uploadPicture(file);
     }
   };
@@ -84,6 +84,7 @@ export default function Edit() {
     formData.append("file", picture);
     try {
       const response = await API.post("/user/uploadPicture", formData);
+      setAvatar(response.data.path);
     } catch (error) {
       console.error("Error uploading picture:", error);
     }
@@ -109,9 +110,7 @@ export default function Edit() {
         </svg>
       </div>
     );
-  const picturePath = `http://localhost:8000/${
-    dataUser ? dataUser.picturePath : "upload/huh.jpeg"
-  }`;
+  const picturePath = dataUser.picture;
   return (
     <div className="z-0 w-full md:w-[500px] h-[100vh] md:h-[600px] relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="flex flex-col justify-evenly w-full   h-full  bg-opacity-70 bg-slate-950   text-white  m-auto rounded-2xl p-10">

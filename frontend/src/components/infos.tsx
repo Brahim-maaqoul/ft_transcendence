@@ -44,10 +44,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       );
     };
   }, []);
-  const picturePath = `http://localhost:8000/${
-    profileData ? profileData.picturePath : "upload/huh.jpeg"
-  }`;
-
+  const picturePath = profileData.picture;
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: createDuo,

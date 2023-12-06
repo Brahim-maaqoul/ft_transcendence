@@ -30,20 +30,12 @@ export class IntraStrategy extends PassportStrategy(Strategy) {
           profile.username,
           profile._json.image.link,
         );
-        picturePath !== ''
-          ? (user = await this.authService.createUser(
-              profile._json.id.toString(),
-              profile._json.email,
-              profile._json.displayname,
-              profile._json.image.link,
-              picturePath,
-            ))
-          : (user = await this.authService.createUser(
-              profile._json.id.toString(),
-              profile._json.email,
-              profile._json.displayname,
-              profile._json.image.link,
-            ));
+        user = await this.authService.createUser(
+          profile._json.id.toString(),
+          profile._json.email,
+          profile._json.displayname,
+          picturePath,
+        );
       }
       return user;
     } catch (err) {
