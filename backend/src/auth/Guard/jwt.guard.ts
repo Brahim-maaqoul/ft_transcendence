@@ -8,13 +8,13 @@ export class JwtGuard implements CanActivate {
 
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
 		const client = context.switchToWs().getClient();
-		const token = client.handshake.query;
+		const token = client.handshake.query.token;
 		console.log('token:', client.handshake.query)
 		if (!token) {
 			return false;
 		}
 		try {
-			const user = this.authService.verifyToken(token.t);
+			const user = this.authService.verifyToken(token);
 			console.log('user', user);
 			if (!user) {
 				return false;

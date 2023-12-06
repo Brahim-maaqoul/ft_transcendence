@@ -61,9 +61,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		// else {
 		// 	await this.gameSessionService.createBotGame({playerId1: client.id, boot: true}, client.id);
 		// }
-		
+		console.log("auth_id", client.user.userId) 
 		if (client.id in this.gameSessionService.matchPlayers){
-			console.log('in game loop',this.gameSessionService.matchPlayers[client.id].player);
 			this.gameSessionService.matchPlayers[client.id].Game.update()
 			this.gameSessionService.matchPlayers[client.id].Game.check_keys(keys.keys, this.gameSessionService.matchPlayers[client.id].player);
 			client.emit('gameUpdate', this.gameSessionService.matchPlayers[client.id].Game.get_data(this.gameSessionService.matchPlayers[client.id].player));

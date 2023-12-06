@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { AuthGoogleGuard } from './Guard/auth-google.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import {updatedUser} from './dtos/updateUser.dto'
+import * as cookieParser from 'cookie-parser';
+import * as session from 'express-session';
 
 @Controller('v1/api/auth')
 export class AuthController {
@@ -51,10 +53,8 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   async checkAuthentication( @Req() request, @Res() res,@Body() body) {
     try {
-      console.log("user")
       let user = await this.authService.findUserById(request.user.auth_id)
-      console.log(user)
-      return res.status(200).json({ isAuthenticated: true , user :user});
+      return res.status(200).json({ isAuthenticated: true , user :user, token: request.cookies.token});
     } catch (error) {
       return res.status(200).json({ isAuthenticated: false });
     }

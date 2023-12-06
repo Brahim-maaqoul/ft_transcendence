@@ -73,7 +73,6 @@ export class Game
 	}
 	check_keys(keys: key, player: number)
 	{
-		// console.log(player, keys)
 		this.paddle[player].rotate(0)
 
 		this.start[player] = keys.start

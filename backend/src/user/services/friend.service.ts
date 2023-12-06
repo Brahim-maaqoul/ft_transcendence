@@ -23,7 +23,6 @@ export class FriendService {
     });
 
     if (block) {
-      console.log('here', block, user1Id, block.blocked_id == user1Id);
       if (block.blocked_id == user1Id)
         throw new HttpException({ type: 'blocking' }, 200);
       else throw new HttpException({ type: 'blocked' }, 200);
@@ -134,7 +133,6 @@ export class FriendService {
         },
       },
     });
-    console.log(friendDetails);
     return friendDetails;
   }
 }

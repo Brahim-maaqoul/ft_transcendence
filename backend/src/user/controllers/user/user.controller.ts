@@ -38,8 +38,6 @@ export class UserController {
     async getUsersByName(@Res() res, @Req() req)
     {
       const users = await this.UserService.getUsersbyName(req.query['name']);
-      console.log(req.query['name'],"her");
-      console.log( users);
       return res.status(200).json(users);
     }
 

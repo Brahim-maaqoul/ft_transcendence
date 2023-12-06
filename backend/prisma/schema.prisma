@@ -26,8 +26,8 @@ model Users {
   NoticationRecipient Notification[] @relation("Recipient")
   NoticationSource    Notification[] @relation("Source")
   stats               Stats?
-  GameHost:			  Game[]			@relation("User1ToGame")
-  GamePlyaer:		  Game[]			@relation("User2ToGame")
+  GameHost			  Game[]			@relation("User1ToGame")
+  GamePlyaer		  Game[]			@relation("User2ToGame")
 }
 
 model Game {

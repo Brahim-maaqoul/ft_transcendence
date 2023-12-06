@@ -16,7 +16,6 @@ export class BlockController {
   @Post('/blockUser')
   @UseGuards(AuthGuard('jwt'))
   async blockUser(@Body() data, @Res() res, @Req() request) {
-    console.log('here', data);
     const blockedUserId = request.user.auth_id;
     const { auth } = data;
     const result = await this.BlockService.blockUser(blockedUserId, auth);

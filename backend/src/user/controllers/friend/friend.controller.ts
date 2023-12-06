@@ -59,9 +59,7 @@ export class FriendController {
     try {
       const user1Id = request.user.auth_id;
       const { auth } = friendData;
-      console.log('herebadr');
       const result = await this.FriendService.deleteFriend(user1Id, auth);
-      console.log(result);
       return res.status(200).json({ message: result });
     } catch (err) {}
     // if (result === 'Friendship deleted successfully') {
