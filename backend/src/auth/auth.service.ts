@@ -72,7 +72,7 @@ export class AuthService {
     return formattedDate;
   }
 
-  async uploadImage(username: string, imageUrl: string): Promise<string> {
+  async saveImage(username: string, imageUrl: string): Promise<string> {
     try {
       const response = await axios.get(imageUrl, {
         responseType: 'arraybuffer',

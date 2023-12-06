@@ -26,7 +26,7 @@ export class IntraStrategy extends PassportStrategy(Strategy) {
         profile._json.id.toString(),
       );
       if (!user) {
-        const picturePath = await this.authService.uploadImage(
+        const picturePath = await this.authService.saveImage(
           profile.username,
           profile._json.image.link,
         );

@@ -23,20 +23,20 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   const [show, setShow] = useState(false);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const [logged, setlogged] = useState(true);
-  const router = useRouter()
+  const router = useRouter();
   const handleClickOutside = (event: MouseEvent<HTMLElement>) => {
     if (
       toggleButtonRef.current &&
       !toggleButtonRef.current.contains(event.target as HTMLElement)
-      ) {
-        setShow(false);
-      }
-    };
-    useEffect(() => {
-      document.addEventListener(
+    ) {
+      setShow(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener(
       "click",
       handleClickOutside as unknown as (event: Event) => void
-      );
+    );
     return () => {
       document.removeEventListener(
         "click",
@@ -44,15 +44,17 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       );
     };
   }, []);
-  const imageUrl = profileData?.picture;
+  const picturePath = `http://localhost:8000/${
+    profileData ? profileData.picturePath : "upload/huh.jpeg"
+  }`;
+
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: createDuo,
-    onSuccess: () => queryClient.invalidateQueries(['Friends'])
-  })
-  if (mutation.isSuccess)
-  {
-    router.push("/chat/"+ mutation.data.id)
+    onSuccess: () => queryClient.invalidateQueries(["Friends"]),
+  });
+  if (mutation.isSuccess) {
+    router.push("/chat/" + mutation.data.id);
   }
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
@@ -60,7 +62,8 @@ function Infos({ profileData }: { profileData: UserProfile }) {
         <div className="w-48 h-48">
           <div
             className="h-48 w-48 rounded-full bg-cover relative"
-            style={{ backgroundImage: `url(${imageUrl})` }}>
+            style={{ backgroundImage: `url(${picturePath})` }}
+          >
             {logged ? (
               <span className="absolute h-5 w-5 rounded-full bg-green-500 mt-40 ml-36 border-2 border-black"></span>
             ) : (
@@ -95,7 +98,8 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                           setShow(!show);
                         }}
                         className="relative bg-white flex justify-center items-center w-16 rounded-3xl  "
-                        ref={toggleButtonRef}>
+                        ref={toggleButtonRef}
+                      >
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full  "></span>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
@@ -109,10 +113,12 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                               animate={{
                                 y: 200,
                               }}
-                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl">
+                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl"
+                            >
                               <Link
                                 className="flex     items-center "
-                                href={""}>
+                                href={""}
+                              >
                                 <Image
                                   src={"/challenge.png"}
                                   alt="Challenge"
@@ -122,9 +128,12 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                 />
                                 Challenge
                               </Link>
-                              <button className="flex  items-center " onClick={() => {
-                                mutation.mutate(profileData.auth_id)
-                              }}>
+                              <button
+                                className="flex  items-center "
+                                onClick={() => {
+                                  mutation.mutate(profileData.auth_id);
+                                }}
+                              >
                                 <Image
                                   src={"/Message.png"}
                                   alt="Send Message"
@@ -149,8 +158,9 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                   />
                 )}
               </div>
-            ) : <Modal />
-          }
+            ) : (
+              <Modal />
+            )}
           </div>
           <div className="w-full  absolute  left-0 right-0 bottom-0 z-0">
             <div className="flex flex-col items-center text-white mb-4">

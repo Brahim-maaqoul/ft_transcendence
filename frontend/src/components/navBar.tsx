@@ -57,8 +57,9 @@ export default function NavBar() {
       );
     };
   }, [not]);
-  const imageUrl = dataUser?.picture;
-  return (
+  const picturePath = `http://localhost:8000/${
+    dataUser ? dataUser.picturePath : "upload/huh.jpeg"
+  }`;  return (
     <>
       {isAuthenticated && (
         <>
@@ -72,7 +73,7 @@ export default function NavBar() {
                   <div className="w-12 h-12">
                     <div
                       className="h-12 w-12 rounded-full bg-cover"
-                      style={{ backgroundImage: `url(${imageUrl})` }}
+                      style={{ backgroundImage: `url(${picturePath})` }}
                     ></div>
                   </div>
                 </Link>

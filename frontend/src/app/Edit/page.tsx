@@ -10,6 +10,13 @@ import { updateUserProfile } from "../api/checkAuthentication";
 import { useRouter } from "next/navigation";
 import TfaToggle from "@/components/tfaToggle";
 import { redirect } from "next/navigation";
+import axios from "axios";
+import Image from "next/image";
+
+const API = axios.create({
+  baseURL: "http://localhost:8000/v1/api/",
+  withCredentials: true,
+});
 
 export default function Edit() {
   const { dataUser } = useAuth();
@@ -17,7 +24,6 @@ export default function Edit() {
   const [nickname, setNickname] = useState("");
   const [displayname, setDisplayname] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | undefined>();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -64,9 +70,23 @@ export default function Edit() {
     });
   };
 
+  const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    setSelectedFile(file);
+    if (file) {
+      setFilePreview(URL.createObjectURL(file)); // Create a preview URL for the selected file
+      uploadPicture(file);
+    }
+  };
+  const uploadPicture = async (picture: File) => {
+    const formData = new FormData();
+    formData.append("file", picture);
+    try {
+      const response = await API.post("/user/uploadPicture", formData);
+    } catch (error) {
+      console.error("Error uploading picture:", error);
+    }
   };
   if (!dataUser)
     return (
@@ -89,19 +109,29 @@ export default function Edit() {
         </svg>
       </div>
     );
-    const picturePath = `http://localhost:8000/${dataUser ? dataUser.picturePath : 'upload/huh.jpeg'}`;
-    return (
+  const picturePath = `http://localhost:8000/${
+    dataUser ? dataUser.picturePath : "upload/huh.jpeg"
+  }`;
+  return (
     <div className="z-0 w-full md:w-[500px] h-[100vh] md:h-[600px] relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  md:shadow-black md:shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="flex flex-col justify-evenly w-full   h-full  bg-opacity-70 bg-slate-950   text-white  m-auto rounded-2xl p-10">
         <div className="relative">
           <div className="w-32 h-32 z-10 mx-auto">
-            <div
-              className="h-32 w-32 rounded-full bg-cover    "
-              // style={{ backgroundImage: `url(${dataUser?.picture!})` }}
-              style={{ backgroundImage: `url(${picturePath})` }}
-            ></div>
+            {filePreview ? (
+              <Image
+                className="h-32 w-32 rounded-full bg-cover"
+                src={filePreview}
+                alt="Shh"
+                width={32}
+                height={32}
+              />
+            ) : (
+              <div
+                className="h-32 w-32 rounded-full bg-cover"
+                style={{ backgroundImage: `url(${picturePath})` }}
+              ></div>
+            )}
           </div>
-          {/* <img width={120}   className='rounded-full   z-10 mx-auto   '  src={dataUser?.picture} alt="An image" crossOrigin="anonymous" />  */}
           <div className="absolute left-[56%] top-[85px]  bg-[#ffff]   text-[#000000] rounded-full p-1">
             <label htmlFor="image-upload" className="">
               <TbPhotoEdit className="  cursor-pointer" size={25}></TbPhotoEdit>
@@ -115,7 +145,6 @@ export default function Edit() {
             />
           </div>
         </div>
-
         <div className=" py-5">
           <div className=" p-2 flex flex-col my-2  rounded-lg   ">
             <div className="flex items-center justify-between">
