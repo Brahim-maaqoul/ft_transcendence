@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthService } from 'src/auth/auth.service';
+import { createWriteStream } from 'fs';
+import { Multer } from 'multer';
 
 @Injectable()
 export class UserService {
@@ -130,20 +132,41 @@ export class UserService {
     }
   }
 
-  async getUsersByRank()
-  {
+  async getUsersByRank() {
     return await this.prisma.stats.findMany({
-        orderBy:{leaderboard: 'asc'},
-        select:{
-          user:{
-            select:{
-              nickname: true,
-              picture: true,
-              auth_id: true,
-            }
+      orderBy: { leaderboard: 'asc' },
+      select: {
+        user: {
+          select: {
+            nickname: true,
+            picture: true,
+            auth_id: true,
           },
-          leaderboard: true,
-        }
-    })
+        },
+        leaderboard: true,
+      },
+    });
+  }
+
+  async uploadProfilePicture(nickname: string, file: Multer.File) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: { nickname: nickname },
+      });
+
+      if (!user) {
+        return false;
+      }
+      const picturePath = `upload/${user.nickname}_${file.originalname}`;
+      const stream = createWriteStream(picturePath);
+      stream.write(file.buffer);
+      stream.end();
+
+
+      return `http://localhost:8000/${picturePath}`;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 }

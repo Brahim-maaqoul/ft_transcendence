@@ -7,10 +7,14 @@ import {
   Post,
   UseGuards,
   Param,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../../auth/auth.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Multer } from 'multer';
 
 @Controller('/v1/api/user')
 export class UserController {
@@ -62,19 +66,19 @@ export class UserController {
 
   @Get('/rank')
   @UseGuards(AuthGuard('jwt'))
-  async Rank(@Res() res)
-  {
-    const users = await this.UserService.getUsersByRank()
+  async Rank(@Res() res) {
+    const users = await this.UserService.getUsersByRank();
     return res.status(200).json(users);
   }
 
   @Get('/myRank')
   @UseGuards(AuthGuard('jwt'))
-  async MyRank(@Res() res, @Req() req)
-  {
-    const users = await this.UserService.getUsersByRank()
-    const index = users.findIndex((user) => {return user.user.auth_id === req.user.auth_id})
-    return res.status(200).json({rank: index});
+  async MyRank(@Res() res, @Req() req) {
+    const users = await this.UserService.getUsersByRank();
+    const index = users.findIndex((user) => {
+      return user.user.auth_id === req.user.auth_id;
+    });
+    return res.status(200).json({ rank: index });
   }
 
   @Post('/enableTfa')
@@ -114,5 +118,22 @@ export class UserController {
     const nickname = request.query.nickname;
     const userInfo = await this.UserService.getUserInfo(nickname);
     return res.status(200).json({ userInfo: userInfo });
+  }
+
+  @Post('/uploadPicture')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadProfilePicture(
+    @UploadedFile() file: Multer.File,
+    @Res() res,
+    @Req() req,
+  ) {
+    try {
+      const path = await this.UserService.uploadProfilePicture(
+        req.user.nickname,
+        file,
+      );
+      return res.status(201).json({ path: path });
+    } catch (error) {}
   }
 }
