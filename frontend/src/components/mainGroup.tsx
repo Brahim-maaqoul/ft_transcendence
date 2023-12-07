@@ -153,8 +153,7 @@ export default function MainGroup() {
           </div>
         </div>
 
-        <PlayButton isAuthenticated={isAuthenticated}/>
-
+        <PlayButton isAuthenticated={isAuthenticated} />
       </div>
     </div>
   );

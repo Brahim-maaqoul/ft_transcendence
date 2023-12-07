@@ -10,26 +10,26 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8000/chat")
+const socket = io("http://localhost:8000/chat");
 
 export default function Chat({ params }: { params: any }) {
-  const { dataUser, show, showFalse,showTrue } = useAuth();
+  const { dataUser, show, showFalse, showTrue } = useAuth();
   let hidden: string;
   let hidden1: string;
 
   !show || params.id === "id" ? (hidden = "hidden") : (hidden = "");
   !show || params.id === "id" ? (hidden1 = "") : (hidden1 = "hidden");
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  socket.emit("getId", {auth_id: dataUser?.auth_id})
-  socket.on("reload", () =>{
+  socket.emit("getId", { auth_id: dataUser?.auth_id });
+  socket.on("reload", () => {
     queryClient.invalidateQueries(["getMessages"]);
     queryClient.invalidateQueries(["dataFriend"]);
     queryClient.invalidateQueries(["dataGroups"]);
     queryClient.invalidateQueries(["getChat"]);
     queryClient.invalidateQueries(["getMembership"]);
-    console.log("reloaddddd")
-  })
+    console.log("reloaddddd");
+  });
   return (
     <div className="h-[767px]  z-0 w-full md:w-[83%]  relative md:p-2 md:rounded-3xl md:bg-slate-500 md:bg-opacity-40  md:shadow-black md:shadow-2xl overflow-y-scroll  no-scrollbar">
       <div className="flex h-full w-full ">
@@ -40,7 +40,8 @@ export default function Chat({ params }: { params: any }) {
           </div>
           <div className="   h-[90%] grid grid-cols-1 lg:grid-cols-2">
             <div
-              className={`bg-black bg-opacity-40 rounded-2xl shadow-black shadow-sm ${hidden} lg:flex flex-col  p-2 m-2 `}>
+              className={`bg-black bg-opacity-40 rounded-2xl shadow-black shadow-sm ${hidden} lg:flex flex-col  p-2 m-2 `}
+            >
               <Conversation id={params.id}></Conversation>
             </div>
             <div className={`h-full  w-full ${hidden1} lg:flex flex-col`}>

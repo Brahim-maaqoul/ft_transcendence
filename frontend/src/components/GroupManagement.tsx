@@ -29,10 +29,10 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
     setMore(false);
     setFriendToGroup(false);
   };
-  const route = useRouter()
+  const route = useRouter();
   const usedeleteGroup = useMutation({
     mutationFn: deleteGroup,
-    onSuccess: () => route.push('/chat/id'),
+    onSuccess: () => route.push("/chat/id"),
   });
   const handleDeleteGroup = () => {
     usedeleteGroup.mutate(Number(idG));
@@ -40,7 +40,7 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
 
   const quitMutation = useMutation({
     mutationFn: quitGroup,
-    onSuccess: () => route.push('/chat/id'),
+    onSuccess: () => route.push("/chat/id"),
   });
   const handleQuit = () => {
     quitMutation.mutate({ group: Number(idG) });
@@ -61,11 +61,11 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
                 width="28"
                 height="28"
                 viewBox="0 0 24 24"
-                stroke-width="2"
+                strokeWidth="2"
                 stroke="currentColor"
                 fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
@@ -111,11 +111,11 @@ export const GroupManagement: React.FC<groupManagementProps> = ({
             width="28"
             height="28"
             viewBox="0 0 24 24"
-            stroke-width="2"
+            strokeWidth="2"
             stroke="currentColor"
             fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M4 9h8v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z"></path>

@@ -3,13 +3,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "@/components/navBar";
 import TanstackProvider from "@/components/providers/TanstackProvider";
-import {AuthProvider} from "@/components/providers/AuthContext";
+import { AuthProvider } from "@/components/providers/AuthContext";
 
 import { Auth } from "../components/Auth";
 
 const inter = Inter({ subsets: ["latin"] });
 const backgroundStyle = {
-
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
   height: "100vh",
@@ -36,12 +35,12 @@ export default function RootLayout({
       </head>
       <body style={backgroundStyle} className=" max-w-[1500px] mx-auto ">
         <AuthProvider>
-            <TanstackProvider>
-              <main className=" relative flex flex-col justify-center items-center h-[calc(100vh-80px)] md:h-[100%] ">
-                  <Auth></Auth>
-                  {children}
-              </main>
-            </TanstackProvider>
+          <TanstackProvider>
+            <main className=" relative flex flex-col justify-center items-center h-[calc(100vh-80px)] md:h-[100%] ">
+              <Auth></Auth>
+              {children}
+            </main>
+          </TanstackProvider>
         </AuthProvider>
       </body>
     </html>

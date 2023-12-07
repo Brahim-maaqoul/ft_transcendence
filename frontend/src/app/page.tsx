@@ -7,9 +7,9 @@ export default function GamePage() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div className="z-0 w-full  relative   p-2 md:rounded-3xl bg-opacity-30  shadow-black shadow-2xl overflow-y-scroll no-scrollbar ">
+    <div className="z-0 w-full  relative  p-2 md:rounded-3xl bg-opacity-30  shadow-black shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="flex flex-col">
-        <div className="flex bg-slate-800  bg-opacity-40 rounded-2xl">
+        <div className="flex h-full bg-slate-800  bg-opacity-40 rounded-2xl">
           <NavBar />
           <MainGroup />
         </div>

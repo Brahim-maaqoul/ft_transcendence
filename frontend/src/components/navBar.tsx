@@ -55,7 +55,7 @@ export default function NavBar() {
       );
     };
   }, [not]);
-  const picturePath = dataUser?.picture;
+  const imageUrl = dataUser?.picture;
   return (
     <>
       {isAuthenticated && (
@@ -70,7 +70,7 @@ export default function NavBar() {
                   <div className="w-12 h-12">
                     <div
                       className="h-12 w-12 rounded-full bg-cover"
-                      style={{ backgroundImage: `url(${picturePath})` }}
+                      style={{ backgroundImage: `url(${imageUrl})` }}
                     ></div>
                   </div>
                 </Link>
@@ -129,104 +129,62 @@ export default function NavBar() {
             </div>
           </div>
 
-          {not &&
-            notifications.map((notification: notification, id: number) => (
-              <>
-                <div className="absolute hidden lg:block top-0  left-0 bg-slate-950   lg:bg-opacity-50 backdrop-blur-sm   bottom-0  right-0  z-50"></div>
-                <div
-                  ref={menuRef}
-                  className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50"
-                >
-                  <div className="flex flex-col w-full overflow-y-auto no-scrollbar">
-                    <span className="text-lg font-bold">Notifications</span>
-                    <div className="flex flex-col w-full">
-                      <div className="flex justify-evenly w-full p-4 hover:bg-slate-100 hover:rounded-2xl">
-                        <Link
-                          href={notification.Source.picture}
-                          onClick={() => {
-                            setNot(false);
-                          }}
-                          className="flex items-center  gap-x-4 w-full "
+          {not && (
+            <>
+              <div className="absolute lg:block bottom-0  right-0 top-0 left-0 bg-slate-950   lg:bg-opacity-50 backdrop-blur-sm h-full z-50"></div>
+              <div
+                ref={menuRef}
+                className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50"
+              >
+                <div className="flex h-full flex-col w-full overflow-y-auto no-scrollbar">
+                  <span className="text-lg font-bold">Notifications</span>
+                  {notifications.map(
+                    (notification: notification, id: number) => (
+                      <div key={id} className="flex flex-col w-full">
+                        <div
+                          className={`flex justify-evenly w-full h0- p-4  hover:bg-slate-100 hover:rounded-2xl`}
                         >
-                          <div className="w-14 h-14">
-                            <div
-                              className="h-14 w-14 rounded-full bg-cover"
-                              style={{
-                                backgroundImage: `url(${notification.Source.picture})`,
-                              }}
-                            ></div>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-black-500 text-lg">
-                              {notification.Source.nickname}
-                            </span>
-                            <span className="text-slate-500 text-sm">
-                              {notification.type}
-                            </span>
-                          </div>
-                        </Link>
-                        <div className="flex items-center gap-x-3">
-                          <button>
-                            <div className="w-8 h-8">
+                          <Link
+                            href={notification.Source.picture}
+                            onClick={() => {
+                              setNot(false);
+                            }}
+                            className={`flex items-center  gap-x-4 w-full p-4 rounded-2xl ${
+                              !notification.seen && "bg-slate-600"
+                            }`}
+                          >
+                            <div className="w-14 h-14">
                               <div
-                                className="h-8 w-8 rounded-full bg-cover"
+                                className="h-14 w-14 rounded-full bg-cover"
                                 style={{
-                                  backgroundImage: `url(/reject.png)`,
+                                  backgroundImage: `url(${notification.Source.picture})`,
                                 }}
                               ></div>
                             </div>
-                          </button>
-                          <button>
-                            <div className="w-7 h-7">
-                              <div
-                                className="h-7 w-7 rounded-full bg-cover"
-                                style={{
-                                  backgroundImage: `url(/accept1.png)`,
-                                }}
-                              ></div>
+                            <div className="flex flex-col">
+                              <span className="text-black-500 text-lg">
+                                {notification.Source.nickname}
+                              </span>
+                              <span className="text-slate-500 text-sm">
+                                {notification.type}
+                              </span>
                             </div>
-                          </button>
+                          </Link>
                         </div>
                       </div>
-                      <div></div>
-                      <div className="flex justify-evenly w-full p-4 hover:bg-slate-100 hover:rounded-2xl">
-                        <Link
-                          href={"/gyro/profile"}
-                          onClick={() => {
-                            setNot(false);
-                          }}
-                          className="flex items-center  gap-x-4 w-full "
-                        >
-                          <div className="w-14 h-14">
-                            <div
-                              className="h-14 w-14 rounded-full bg-cover"
-                              style={{
-                                backgroundImage: `url(/bmaaqoul.png)`,
-                              }}
-                            ></div>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-black-500 text-lg">
-                              Brahim maaqoul
-                            </span>
-                            <span className="text-slate-500 text-sm">
-                              You have a new message
-                            </span>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                    <IoIosClose
-                      onClick={() => {
-                        setNot(false);
-                      }}
-                      className="lg:hidden"
-                      size={32}
-                    ></IoIosClose>
-                  </div>
+                    )
+                  )}
+                  <IoIosClose
+                    onClick={() => {
+                      setNot(false);
+                    }}
+                    className="lg:hidden"
+                    size={32}
+                  ></IoIosClose>
                 </div>
-              </>
-            ))}
+              </div>
+            </>
+          )}
         </>
       )}
     </>
