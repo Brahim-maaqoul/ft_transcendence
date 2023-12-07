@@ -10,6 +10,8 @@ import { stringify } from "querystring";
 import { group } from "console";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { m } from "framer-motion";
+import { TbPhotoEdit } from "react-icons/tb";
+import { API } from "@/app/api/checkAuthentication";
 interface CreatGroupProps {
   newGroup: boolean; // Assuming newGroup is a string, you can adjust the type as needed
   setNewGroup: React.Dispatch<React.SetStateAction<boolean>>; // Assuming setNewGroup is a React state setter for a string
@@ -25,11 +27,13 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
   const [message, setmessage] = useState("");
   const [isError, setIsErro] = useState(false);
   const queryClient = useQueryClient();
-  const mutation = useMutation({mutationFn:  creatGroup,
-    onSuccess: () => {setIsCreated(true);
-      queryClient.invalidateQueries(['dataGroups'])
+  const mutation = useMutation({
+    mutationFn: creatGroup,
+    onSuccess: () => {
+      setIsCreated(true);
+      queryClient.invalidateQueries(["dataGroups"]);
     },
-    onError: () => setIsErro(true)
+    onError: () => setIsErro(true),
   });
   const handelCreatGroup = () => {
     mutation.mutate({
@@ -56,9 +60,29 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
     }
     return true;
   }
+  const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFilePreview(URL.createObjectURL(file));
+      uploadPicture(file);
+    }
+  };
+  const uploadPicture = async (picture: File) => {
+    console.log("here");
+    const formData = new FormData();
+    formData.append("file", picture);
+    try {
+      const response = await API.post("/image/uploadPicture", formData);
+      console.log(response.data);
+      // setAvatar(response.data.path);
+    } catch (error) {
+      console.error("Error uploading picture:", error);
+    }
+  };
   return (
-    <div className="absolute  z-50 left-[30%] m-auto opacity-100 right-[30%] top-[30%]  bg-black  rounded-2xl">
+    <div className="absolute z-50 left-12 lg:left-[30%] opacity-100 right-12 lg:right-[30%]  top-[20%]  bg-black  rounded-2xl">
       <button onClick={() => setNewGroup(false)} className="m-4 ">
         <svg
           fill="#ffffff"
@@ -70,23 +94,25 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
           xmlnsXlink="http://www.w3.org/1999/xlink"
           viewBox="0 0 460.775 460.775"
           xmlSpace="preserve"
-          stroke="#ffffff">
+          stroke="#ffffff"
+        >
           <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
           <g
             id="SVGRepo_tracerCarrier"
             strokeLinecap="round"
-            strokeLinejoin="round"></g>
+            strokeLinejoin="round"
+          ></g>
           <g id="SVGRepo_iconCarrier">
             <path d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55 c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55 c-4.126,0-8.08,1.639-10.992,4.55L4.558,37.284c-6.077,6.075-6.077,15.909,0,21.986l171.138,171.128L4.575,401.505 c-6.074,6.077-6.074,15.911,0,21.986l32.709,32.719c2.911,2.911,6.865,4.55,10.992,4.55c4.127,0,8.08-1.639,10.994-4.55 l171.117-171.12l171.118,171.12c2.913,2.911,6.866,4.55,10.993,4.55c4.128,0,8.081-1.639,10.992-4.55l32.709-32.719 c6.074-6.075,6.074-15.909,0-21.986L285.08,230.397z"></path>
           </g>
         </svg>
       </button>
       <div className="  flex justify-center ">
-        <header className="  items-center">
+        <header className="m-2">
           <p className="text-center text-2xl  text-white   font-mono leading-normal">
             Create New Group
           </p>
-          <p className="text-gray-400 text-xs mt-2 font-mono leading-normal">
+          <p className="text-gray-400 text-xs mt-2 font-mono leading-normal flex justify-center break-words">
             {" "}
             Give your new group Name you can always change it later.
           </p>
@@ -95,22 +121,57 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
 
       {!isCreated && (
         <div className="mt-6 ">
-          <div className="-500 ml-6 ">
+          <div className="relative m-4">
+            <div className="w-32 h-32 z-10 mx-auto">
+              {/* {filePreview ? (
+              <Image
+                className="h-32 w-32 rounded-full bg-cover"
+                src={filePreview}
+                alt="Shh"
+                width={32}
+                height={32}
+              />
+            ) : ( */}
+              <div
+                className="h-32 w-32 rounded-full bg-cover"
+                style={{ backgroundImage: `url(/bmaaqoul.png)` }}
+              ></div>
+              {/* )} */}
+            </div>
+            <div className="absolute left-[56%] top-[85px]  bg-[#ffff]   text-[#000000] rounded-full p-1">
+              <label htmlFor="image-upload" className="">
+                <TbPhotoEdit
+                  className="  cursor-pointer"
+                  size={25}
+                ></TbPhotoEdit>
+              </label>
+              <input
+                className="hidden"
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                onChange={() => {}}
+              />
+            </div>
+          </div>
+          <div className="flex justify-center">
             <input
               type="text"
               onChange={(input) => setGroupName(input.target.value)}
               name="text"
               maxLength={parseInt("13")}
-              className="font-mono w-[78%]  ml-8 px-3 py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white text-sm"
+              className="font-mono w-[78%]   px-3 py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white text-sm"
               pattern="\d+"
-              placeholder="Group Name"></input>
+              placeholder="Group Name"
+            ></input>
           </div>
-          <div className=" ml-6 mt-4 ">
+          <div className="flex justify-center">
             <select
               onChange={(select) => setTypeGroup(select.target.value)}
               name="text"
-              className="font-mono w-[78%]  ml-8 px-3  py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white"
-              placeholder="Group Name">
+              className="font-mono w-[78%]  px-3  py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white"
+              placeholder="Group Name"
+            >
               <option value="public"> public </option>
               <option value="private"> private </option>
               <option value="protected"> protected </option>
@@ -124,14 +185,16 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
                 name="text"
                 className="text-sm w-[78%] min-[5]:  ml-8 px-3 py-3 mt-6 border bg-black border-gray-300 font-mono rounded focus:outline-none text-white"
                 pattern="\d+"
-                placeholder="Password"></input>
+                placeholder="Password"
+              ></input>
             </div>
           )}
           <div className=" w-[100%] flex justify-center mt-8  mb-8">
             {checkInfoCreatGroup() && (
               <button
                 onClick={handelCreatGroup}
-                className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer">
+                className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer"
+              >
                 <span className=" text-xl leading-6 text-black font-mono">
                   Create
                 </span>
