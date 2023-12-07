@@ -7,6 +7,7 @@ import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationService } from './notification/service/notification.service';
 import { NotificationModule } from './notification/notification.module';
+import { ImageModule } from './image/image.module';
 
 
 
@@ -20,6 +21,7 @@ import { NotificationModule } from './notification/notification.module';
     GameModule,
     ChatModule,
     NotificationModule,
+    ImageModule
   ],
   providers:[PrismaService],
 

@@ -80,10 +80,12 @@ export default function Edit() {
     }
   };
   const uploadPicture = async (picture: File) => {
+    console.log("here")
     const formData = new FormData();
     formData.append("file", picture);
     try {
-      const response = await API.post("/user/uploadPicture", formData);
+      const response = await API.post("/image/uploadPicture", formData);
+      console.log(response.data)
       setAvatar(response.data.path);
     } catch (error) {
       console.error("Error uploading picture:", error);
