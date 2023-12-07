@@ -39,12 +39,13 @@ export class GameSession {
 
 	// botGames = new Array<Game>();
 	// game = new Game();
+	playersInfo: Record<string, string> = {};
 	queuePlayers = new Queue<string>();
 	matchPlayers: Record<string, {Game: Game, player:number}> = {};
 
 	botGames: Record<string, Game> = {};
 
-	public async createBotGame(data: { playerId1: number,boot: boolean}, clientId: string) {// playerid2?: number, }, clientId: string) {
+	public async createBotGame(data: { playerId1: string,boot: boolean}, clientId: string) {// playerid2?: number, }, clientId: string) {
 		// const game = this.prisma.gameSession.create({
 		//   data: {
 		// 	gameId: data.gameId,
@@ -67,7 +68,7 @@ export class GameSession {
 
 		
 		newgame.gameId = Math.floor(Math.random() * 1000);
-		newgame.playerId1 = Math.floor(Math.random() * 1000);
+		newgame.playerId1 = data.playerId1;
 		newgame.playerAI = data.boot;
 		newgame.socket1 = clientId;
 		// newgame.start = false;
@@ -83,28 +84,52 @@ export class GameSession {
 		// this.game.status = 'waiting';
 	}
 
-	public async joinQueue(data: { playerId1: number, boot: boolean }, clientId: string) {
+	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
 		// const newgame = new Game();
 		// newgame.gameId = Math.floor(Math.random() * 1000);
 		// newgame.playerId1 = Math.floor(Math.random() * 1000);
 
 		if (this.queuePlayers.contains(clientId)){
 			if (this.queuePlayers.size() > 1) {
-				// console.log('more than one player in queue');
-				// console.log(this.queuePlayers);
-				const player1 = this.queuePlayers.dequeue();
-				const player2 = this.queuePlayers.dequeue();
-				const newgame = new Game();
-				newgame.gameId = Math.floor(Math.random() * 1000);
-				newgame.playerId1 = Math.floor(Math.random() * 1000);
-				newgame.socket1 = player1;
-				newgame.socket2 = player2;
-				this.matchPlayers[player1] = {Game:newgame, player: 0};
-				this.matchPlayers[player2] = {Game:newgame, player: 1};
-				// console.log('------------------------------------- create matchMaking game size of ', this.matchPlayers);
-				// console.log('palyer 1 ', player1);
-				// console.log('palyer 2 ', player2);
-				// console.log('game ', newgame);
+				const socket1 = this.queuePlayers.dequeue();
+				const socket2 = this.queuePlayers.dequeue();
+				const playerId1 = this.playersInfo[socket1];
+				const playerId2 = this.playersInfo[socket2];
+				delete this.playersInfo[socket1];
+				delete this.playersInfo[socket2];
+				const newGame = new Game();
+				// create the game in the database and get its id here before starting it
+				// TODO(H-J): create the game in the database and get its id here before starting it
+				const game = await this.prisma.game.create({
+					data: {
+						// user1_id: Number(playerId1),
+						// user2_id: Number(playerId2),
+						user1_id: playerId1,
+						user2_id: playerId2,
+						// winner: "notStarted",
+						// score1: 0,
+						// score2: 0,
+						// time: newgame.time,
+						// endAt: new Date(),
+						// duration: game.endAt.getTime() - game.startAt.getTime(),
+						// duration: game.sec,
+						// duration: game.endAt.getTime() - game.startAt.g
+					}
+				});
+				newGame.gameId = game.gameId;
+				newGame.playerId1 = playerId1;
+				newGame.playerId2 = playerId2;
+				newGame.playerAI = data.boot;
+				newGame.status = 'notStarted';
+				newGame.socket1 = socket1;
+				newGame.socket2 = socket2;
+				newGame.time = new Date();
+				// i use socket id for each player to identify them
+				this.matchPlayers[socket1] = {Game:newGame, player: 0};
+				this.matchPlayers[socket2] = {Game:newGame, player: 1};
+				// if i wanna use the player id to identify them i need to change the following lines on other functions too
+				// this.matchPlayers[playerId1] = {Game:newGame, player: 0};
+				// this.matchPlayers[playerId2] = {Game:newGame, player: 1};
 			}
 			else {
 				// console.log('one player in queue', this.queuePlayers);
@@ -113,6 +138,7 @@ export class GameSession {
 		else {
 			// console.log('insert player in queue', clientId, this.queuePlayers.size());
 			this.queuePlayers.enqueue(clientId);
+			this.playersInfo[clientId] = data.playerId1;
 		}
 	}
 
@@ -259,4 +285,33 @@ export class GameSession {
 		return null;
 	}
 
+	public async saveGameDatabase(game: Game) {
+		const datagame = {
+			user1_id: game.playerId1,
+			user2_id: game.playerId2,
+			score1: game.score[0],
+			score2: game.score[1],
+			winner: game.score[0] > game.score[1] ? game.playerId1 : game.playerId2,
+			time: game.start,
+			// endAt: new Date(),
+			// duration: game.endAt.getTime() - game.startAt.getTime(),
+			// duration: game.sec,
+			// duration: game.endAt.getTime() - game.startAt.g
+		}
+		const startTime = new Date(); // Create a new Date object for the start time
+		const savedData = await this.prisma.game.update({
+			where: {
+				gameId: game.gameId
+			},
+			data: {
+				user1_id: game.playerId1,
+				user2_id: game.playerId2,
+				score1: game.score[0],
+				score2: game.score[1],
+				// time: startTime, // Assign the start time to the 'time' property
+				winner: game.score[0] > game.score[1] ? String(game.playerId1) : String(game.playerId2),
+			}
+		});
+		// return savedData;
+	}
 }

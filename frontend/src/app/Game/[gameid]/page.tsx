@@ -1,4 +1,6 @@
 "use client";
+import NavBar from "@/components/navBar";
+import { useAuth } from "@/components/providers/AuthContext";
 import { useEffect, useState } from "react";
 
 interface GameObject {
@@ -123,9 +125,10 @@ const updateGame = (game: GameState): GameState => {
   };
 };
 
-export default function Game2d() {
-  const [game, setGame] = useState(initializeGame());
+export default function Game2d({params}) {
 
+  const [game, setGame] = useState(initializeGame());
+  const { dataUser, isAuthenticated } = useAuth();
   useEffect(() => {
     const gameLoop = setInterval(() => {
       setGame((prevGame) => updateGame(prevGame));

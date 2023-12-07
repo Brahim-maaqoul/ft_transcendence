@@ -15,12 +15,14 @@ const physic: Game = new Game();
 import io from 'socket.io-client'
 import { set } from "react-hook-form";
 import { PSize, key } from "../types/component";
+import { useAuth } from "@/components/providers/AuthContext";
 
-const token = localStorage.getItem('token');
-const socket = io('http://localhost:8000/Game2d', { query: { token: token } });
 const keys: key = { left: false, right: false, rotate_pos: false, rotate_neg: false, start: false };
 
 export function Body3D() {
+	const { dataUser } = useAuth();
+	console.log('dataUser: ', dataUser);
+	const socket = io('http://localhost:8000/Game2d', {query:{user : dataUser}});
 	// const [gameData, setConfig] = useState(physic.get_data());
 	// const { progress } = useProgress()
 	// useEffect(() => {
@@ -46,7 +48,6 @@ export function Body3D() {
 	// 		document.addEventListener('keyup', handleKeyUp);
 	// 	};
 	// }, []);
-	console.log('storage', localStorage);
 
 	const [gameData, setGameData] = useState(gameState.get_data());
 	useEffect(() => {
@@ -87,14 +88,17 @@ export function Body3D() {
 			// console.log('sockets: ', socket);
 			// console.log('sockets id: ', socket.id);
 			socket.emit('keyGameUpdate', { keys: keys });
-		}, 5); //5
-
+		}, 500000000); //5
 
 		// socket.on('gaming', (data) => {
 		socket.on('gameUpdate', (data) => {
 			setGameData(data);
 			gameData.player = data.player;
-			console.log('data: ', gameData);
+			// console.log('data: ', gameData);
+			if (data.status === 'finished') {
+				clearInterval(interval);
+				socket.off('gameUpdate');
+			}
 		});
 
 		document.addEventListener('keydown', handelKeyDown);

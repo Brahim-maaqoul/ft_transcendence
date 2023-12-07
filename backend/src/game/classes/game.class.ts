@@ -6,8 +6,8 @@ import { GameConfig, key } from '../interfaces/utils.interface';
 export class Game 
 {
 	gameId: number;
-	playerId1: number;
-	playerId2?: number;
+	playerId1: string;
+	playerId2?: string;
 	socket1: string;
 	socket2?: string;
 	playerAI: boolean;
@@ -19,11 +19,10 @@ export class Game
 	score: {p1: number, p2: number};
 	keysPressed: Set<string>;
 	sec: number;
+	winner: string;
 	time : Date;
 	start: [boolean, boolean];
 	status: string;
-	turn: number;
-	round: number;
 	createAt: Date;
 	startedAt: Date;
 	updatedAt: Date;
@@ -77,9 +76,9 @@ export class Game
 
 		this.start[player] = keys.start
 		if (keys.left)
-			this.paddle[player].move_left(1, 0)
+			this.paddle[player].move_left(2, 0)
 		if (keys.right)
-			this.paddle[player].move_right(1, 600)
+			this.paddle[player].move_right(2, 600)
 		if (keys.rotate_pos)
 			this.paddle[player].rotate(Math.PI/6)
 		else if (keys.rotate_neg)
@@ -148,7 +147,9 @@ export class Game
 			}
 		}
 		this.check_intersection()
-		// this.bot()
+		if (this.playerAI){
+			this.bot()
+		}
 		if (this.bricks.length < 1 && Math.floor(Math.random() * 1000) == 0)
 			this.bricks.push(new Brick())
 		if (this.ball.length)
@@ -162,6 +163,10 @@ export class Game
 			}
 			else
 				this.ball[0].update()
+		}
+		if ((this.score.p1 > 10 || this.score.p2 > 10) && (Math.abs(this.score.p1 - this.score.p2)) > 2){
+			this.status = 'finished';
+			this.winner = (this.score.p1 > this.score.p2) ? this.socket1 : this.socket2;
 		}
 	}
 

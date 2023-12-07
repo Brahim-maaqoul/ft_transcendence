@@ -61,9 +61,19 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		// else {
 		// 	await this.gameSessionService.createBotGame({playerId1: client.id, boot: true}, client.id);
 		// }
-		console.log("auth_id", client.user.userId) 
 		if (client.id in this.gameSessionService.matchPlayers){
-			this.gameSessionService.matchPlayers[client.id].Game.update()
+			this.gameSessionService.matchPlayers[client.id].Game.update();
+			if (this.gameSessionService.matchPlayers[client.id].Game.status === 'finished') {
+				console.log('game finished saving the game in the database');
+				// save the game in the database
+				await this.gameSessionService.saveGameDatabase(this.gameSessionService.matchPlayers[client.id].Game);
+				// stop the game
+				// delete this.gameSessionService.matchPlayers[client.id];
+				// delete this.gameSessionService.matchPlayers[this.gameSessionService.matchPlayers[client.id].Game.socket1];
+				// delete this.gameSessionService.matchPlayers[this.gameSessionService.matchPlayers[client.id].Game.socket2];
+// TODO: rematch the game if he chose to rematch
+				
+			}
 			this.gameSessionService.matchPlayers[client.id].Game.check_keys(keys.keys, this.gameSessionService.matchPlayers[client.id].player);
 			client.emit('gameUpdate', this.gameSessionService.matchPlayers[client.id].Game.get_data(this.gameSessionService.matchPlayers[client.id].player));
 			// const p2 = this.gameSessionService.matchPlayers[client.id].Game.socket1 === client.id ? this.gameSessionService.matchPlayers[client.id].Game.socket2 : this.gameSessionService.matchPlayers[client.id].Game.socket1;
@@ -74,17 +84,16 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				// console.log('allready waiting');
 			}
 			else {
-				await this.gameSessionService.joinQueue({playerId1: client.id, boot: false}, client.id);
+				// await this.gameSessionService.joinQueue({playerId1: client.id, boot: false}, client.id);
+				await this.gameSessionService.joinQueue({playerId1: client.user.userId, boot: false}, client.id);
 			}
 		}
 
 	}
 
+	@UseGuards(JwtGuard)
 	async handleConnection(client: any, ...args: any[]) {
-		// const { sockets } = this.server.sockets;
-
-		// this.logger.log(`Client id: ${client.id} connected!`);
-		// this.logger.debug(`Number of connected clients: ${sockets.size}`);
+		console.log('connecting client id: ', client.user);
 	}
 
 	async handleDisconnect(client: any) {
