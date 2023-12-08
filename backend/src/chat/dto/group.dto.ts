@@ -6,6 +6,7 @@ export class groupDto
     groupName: string
     @IsString()
     type: 'public' | 'protected' | 'private'
-
+    @IsString()
+    picture: string
     password?: string
 }

@@ -50,6 +50,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
       groupName: GroupName,
       password: GroupPassword,
       type: typegroup,
+      picture: avatar,
     });
   };
 
