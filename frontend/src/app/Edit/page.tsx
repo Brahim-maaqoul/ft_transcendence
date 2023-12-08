@@ -12,6 +12,7 @@ import TfaToggle from "@/components/tfaToggle";
 import { redirect } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import { upload } from "../api/chatApi/chatApiFunctions";
 
 const API = axios.create({
   baseURL: "http://localhost:8000/v1/api/",
@@ -41,11 +42,17 @@ export default function Edit() {
     },
   });
   const { isSuccess, isLoading, isError } = mutation;
+
+  const uploadMutation = useMutation({
+    mutationFn: upload,
+  });
+
   useEffect(() => {
     if (isSuccess) {
       redirect("/" + mutation.data.nickname + "/profile");
     }
-  }, [mutation.isSuccess, router]);
+    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data.path);
+  }, [mutation.isSuccess, router, uploadMutation.isSuccess, avatar]);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 20) setDisplayname(e.target.value);
@@ -79,17 +86,12 @@ export default function Edit() {
       uploadPicture(file);
     }
   };
+
   const uploadPicture = async (picture: File) => {
-    console.log("here")
+    console.log("here");
     const formData = new FormData();
     formData.append("file", picture);
-    try {
-      const response = await API.post("/image/uploadPicture", formData);
-      console.log(response.data)
-      setAvatar(response.data.path);
-    } catch (error) {
-      console.error("Error uploading picture:", error);
-    }
+    uploadMutation.mutate(formData);
   };
   if (!dataUser)
     return (

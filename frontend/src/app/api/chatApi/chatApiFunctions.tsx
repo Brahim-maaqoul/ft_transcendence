@@ -9,8 +9,8 @@ interface GroupCreate {
   type: string;
 }
 interface Message {
-  groupId: number
-  message: string
+  groupId: number;
+  message: string;
 }
 
 interface Chat {
@@ -33,15 +33,18 @@ interface idGroupMute {
   date: Date;
 }
 
-
 async function getInvited(data: string) {
-  const response: AxiosResponse = await API.get("/groups/getInvited?groupId=" + data);
+  const response: AxiosResponse = await API.get(
+    "/groups/getInvited?groupId=" + data
+  );
   return response.data;
 }
 
-export function useGetInvited(data: string)
-{
-  return useQuery({ queryKey: ["getInvited"], queryFn: () => getInvited(data) });
+export function useGetInvited(data: string) {
+  return useQuery({
+    queryKey: ["getInvited"],
+    queryFn: () => getInvited(data),
+  });
 }
 
 async function getGroups() {
@@ -61,12 +64,13 @@ export function usegetFriends(): UseQueryResult<any> {
 }
 
 export async function creatGroup(data: GroupCreate) {
-  try{
-    const response: AxiosResponse = await API.post("/groups/createGroup", data);
-    return response.data;
-  }
-  catch(err){
-  }
+  const response: AxiosResponse = await API.post("/groups/createGroup", data);
+  return response.data;
+}
+
+export async function upload(data: FormData) {
+  const response = await API.post("/image/uploadPicture", data);
+  return response.data;
 }
 
 async function getMessages(data: string) {
@@ -74,50 +78,63 @@ async function getMessages(data: string) {
   return response.data;
 }
 
-export function useGetMessages(data: string)
-{
-  return useQuery({ queryKey: ["getMessages"], queryFn: () => getMessages(data) });
+export function useGetMessages(data: string) {
+  return useQuery({
+    queryKey: ["getMessages"],
+    queryFn: () => getMessages(data),
+  });
 }
 
-
 export async function deleteGroup(data: number) {
-  const response: AxiosResponse = await API.post("/chat/removeRoom", {group: data});
+  const response: AxiosResponse = await API.post("/chat/removeRoom", {
+    group: data,
+  });
   return response.data;
 }
 
 export async function sendMessages(data: Message) {
-  const response: AxiosResponse = await API.post("/messages/sendMessages", data);
-  return response.data;
-}
-
-
-export async function addFriendToGroup(data: {group:number, userId: string}) {
-  const response: AxiosResponse = await API.post("/groups/addMember",data
+  const response: AxiosResponse = await API.post(
+    "/messages/sendMessages",
+    data
   );
   return response.data;
 }
 
+export async function addFriendToGroup(data: {
+  group: number;
+  userId: string;
+}) {
+  const response: AxiosResponse = await API.post("/groups/addMember", data);
+  return response.data;
+}
+
 export async function getMemberGroup(data: string) {
-  const response: AxiosResponse = await API.get("/groups/getMembers?groupId=" + data);
+  const response: AxiosResponse = await API.get(
+    "/groups/getMembers?groupId=" + data
+  );
   return response.data;
 }
 
-export function useGetMembers(data: string)
-{
-  return useQuery({ queryKey: ["getMembers"], queryFn: () => getMemberGroup(data) });
+export function useGetMembers(data: string) {
+  return useQuery({
+    queryKey: ["getMembers"],
+    queryFn: () => getMemberGroup(data),
+  });
 }
 
- async function getMemberShip(data: string) {
-  const response: AxiosResponse = await API.get("/groups/getMembership?groupId=" + data);
+async function getMemberShip(data: string) {
+  const response: AxiosResponse = await API.get(
+    "/groups/getMembership?groupId=" + data
+  );
   return response.data;
 }
 
-export function useGetMemberShip(data: string)
-{
-  return useQuery({ queryKey: ["getMembership"], queryFn: () => getMemberShip(data) });
+export function useGetMemberShip(data: string) {
+  return useQuery({
+    queryKey: ["getMembership"],
+    queryFn: () => getMemberShip(data),
+  });
 }
-
-
 
 export async function banUserFromGroup(data: idGroup) {
   const response: AxiosResponse = await API.post("/groups/banUser", data);
@@ -145,29 +162,32 @@ export async function unmuteFromGroup(data: idGroup) {
   return response.data;
 }
 
-export async function joinToGroup(data: {group:number, password: string}) {
+export async function joinToGroup(data: { group: number; password: string }) {
   const response: AxiosResponse = await API.post("/groups/joinGroup", data);
   return response.data;
 }
-export async function quitGroup(data: {group:number}) {
+export async function quitGroup(data: { group: number }) {
   const response: AxiosResponse = await API.post("/groups/quit", data);
   return response.data;
 }
 
 async function checkIsGroupMember(data: idGroup) {
-    const response: AxiosResponse = await API.get("/groups/memberType/"+"?groupId="+data.group);
-    return response.data;
-}
-
-export function useCheckIsGroupMember(data: idGroup){
-  return useQuery({
-    queryKey:['groupId', data.group],
-    queryFn: () => checkIsGroupMember(data)
-  })
-}
-
-export async function createDuo(friendId:string){
-  const response: AxiosResponse = await API.post("/duo/create", {user_id: friendId});
+  const response: AxiosResponse = await API.get(
+    "/groups/memberType/" + "?groupId=" + data.group
+  );
   return response.data;
 }
 
+export function useCheckIsGroupMember(data: idGroup) {
+  return useQuery({
+    queryKey: ["groupId", data.group],
+    queryFn: () => checkIsGroupMember(data),
+  });
+}
+
+export async function createDuo(friendId: string) {
+  const response: AxiosResponse = await API.post("/duo/create", {
+    user_id: friendId,
+  });
+  return response.data;
+}
