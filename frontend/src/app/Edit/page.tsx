@@ -121,13 +121,10 @@ export default function Edit() {
         <div className="relative">
           <div className="w-32 h-32 z-10 mx-auto">
             {filePreview ? (
-              <Image
+              <div
                 className="h-32 w-32 rounded-full bg-cover"
-                src={filePreview}
-                alt="Shh"
-                width={32}
-                height={32}
-              />
+                style={{ backgroundImage: `url(${filePreview})` }}
+              ></div>
             ) : (
               <div
                 className="h-32 w-32 rounded-full bg-cover"
