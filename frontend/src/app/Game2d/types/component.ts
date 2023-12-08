@@ -4,9 +4,13 @@ interface Position
     x: number
     y: number
 }
-export enum key
+export interface key
 {
-
+	start: boolean
+	left : boolean
+	right : boolean
+	rotate_pos : boolean
+	rotate_neg : boolean
 }
 export interface PSize {
 	width: number
