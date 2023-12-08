@@ -7,6 +7,7 @@ interface GroupCreate {
   groupName: string;
   password: string;
   type: string;
+  picture: string;
 }
 interface Message {
   groupId: number;

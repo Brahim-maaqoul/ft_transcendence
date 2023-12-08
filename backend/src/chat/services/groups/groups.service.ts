@@ -150,6 +150,7 @@ export class GroupsService {
         type: 'group',
         privacy: group.type,
         password: hash,
+        picture: group.picture,
         members: {
           create: {
             user_id: creator_id,
