@@ -42,7 +42,7 @@ export default function Chat({ params }: { params: any }) {
             <div
               className={`bg-black bg-opacity-40 rounded-2xl shadow-black shadow-sm ${hidden} lg:flex flex-col  p-2 m-2 `}
             >
-              <Conversation id={params.id}></Conversation>
+              <Conversation id={params.id} socket={socket}></Conversation>
             </div>
             <div className={`h-full  w-full ${hidden1} lg:flex flex-col`}>
               <div className="h-[250px] bg-black bg-opacity-40 rounded-2xl shadow-black shadow-sm m-2 overflow-y-scroll no-scrollbar">

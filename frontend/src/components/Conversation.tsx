@@ -16,6 +16,7 @@ import Profile from "@/app/[user]/profile/page";
 import { ProfileMessages } from "./profileMessage";
 import { AboutDuo } from "./abouDuo";
 import { useRouter } from "next/navigation";
+import { Socket } from 'dgram';
 
 
 
@@ -32,6 +33,7 @@ export interface MessageInfo {
 }
 interface ConversationProps {
   id: string;
+  socket: any;
 }
 
 const selectMessage = (
@@ -53,7 +55,7 @@ const selectMessage = (
     </p>
   </div>
 );
-export const Conversation: React.FC<ConversationProps> = ({ id }) => {
+export const Conversation: React.FC<ConversationProps> = ({ id, socket }) => {
   const [message, setMessage] = useState("");
   const [more, setMore] = useState(false);
   const { dataUser, show } = useAuth();
@@ -73,7 +75,7 @@ export const Conversation: React.FC<ConversationProps> = ({ id }) => {
     <div className="relative h-full">
       {isSuccess && (
         <div>
-          <ProfileMessages group={getMessages} more={more} setMore={setMore} />
+          <ProfileMessages group={getMessages} more={more} setMore={setMore} socket={socket}/>
           {more && !friendToGroup && (
             getMessages.type === "group"?
             <AboutGroup id={id} />:
