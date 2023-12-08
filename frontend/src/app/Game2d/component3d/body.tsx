@@ -87,7 +87,7 @@ export function Body3D({dataUser}: {dataUser: UserProfile}) {
 				<Suspense fallback={<Loader />}>
 
 					<ambientLight intensity={1} />
-					<Environment files="/game/hell.hdr" background={true} />
+					<Environment files="/game/cyberpunk.hdr" background={true} />
 					<OrbitControls target={[0, -200, 0]} />
 					{/* <Sky sunPosition={[1000, 1000, 1000]} /> */}
 					<pointLight castShadow intensity={1} position={[1000, 1000, 1000]} />
