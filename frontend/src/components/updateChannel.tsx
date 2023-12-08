@@ -20,7 +20,7 @@ interface CreatGroupProps {
   newGroup: boolean; // Assuming newGroup is a string, you can adjust the type as needed
   setNewGroup: React.Dispatch<React.SetStateAction<boolean>>; // Assuming setNewGroup is a React state setter for a string
 }
-export const CreatGroup: React.FC<CreatGroupProps> = ({
+export const UpdateChannel: React.FC<CreatGroupProps> = ({
   newGroup,
   setNewGroup,
 }) => {
@@ -99,7 +99,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
   };
 
   return (
-    <div className="absolute z-50 left-12 lg:left-[30%] opacity-100 right-12 lg:right-[30%]  top-[20%]  bg-black  rounded-2xl">
+    <div className="absolute z-50  opacity-100   top-[10%] w-full bg-blue-950  rounded-2xl">
       <button onClick={() => setNewGroup(false)} className="m-4 ">
         <svg
           fill="#ffffff"
@@ -127,11 +127,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
       <div className="  flex justify-center ">
         <header className="m-2">
           <p className="text-center text-2xl  text-white   font-mono leading-normal">
-            Create New Group
-          </p>
-          <p className="text-gray-400 text-xs mt-2 font-mono leading-normal flex justify-center break-words">
-            {" "}
-            Give your new group Name you can always change it later.
+            Update your Channel
           </p>
         </header>
       </div>
@@ -174,7 +170,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
               onChange={(input) => setGroupName(input.target.value)}
               name="text"
               maxLength={parseInt("13")}
-              className="font-mono w-[78%]   px-3 py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white text-sm"
+              className="font-mono w-[78%]   px-3 py-3 mt-1 border bg-blue-950 border-gray-300 rounded focus:outline-none text-white text-sm"
               pattern="\d+"
               placeholder="Group Name"
             ></input>
@@ -183,7 +179,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
             <select
               onChange={(select) => setTypeGroup(select.target.value)}
               name="text"
-              className="font-mono w-[78%]  px-3  py-3 mt-1 border bg-black border-gray-300 rounded focus:outline-none text-white"
+              className="font-mono w-[78%]  px-3  py-3 mt-1 border bg-blue-950 border-gray-300 rounded focus:outline-none text-white"
               placeholder="Group Name"
             >
               <option value="public"> public </option>
@@ -210,29 +206,24 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
                 className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer"
               >
                 <span className=" text-xl leading-6 text-black font-mono">
-                  Create
+                  Update
                 </span>
               </button>
             )}
             {!checkInfoCreatGroup() && (
               <button className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-gray-400  rounded-full cursor-not-allowed">
                 <span className=" text-xl leading-6 text-black font-mono ">
-                  Create
+                  Update
                 </span>
               </button>
             )}
           </div>
-          {isError && (
-            <p className=" text-sm leading-6 text-[#c4c5ba] font-mono mb-2  text-center">
-              Group name Already exist
-            </p>
-          )}
         </div>
       )}
       {isCreated && (
         <div className="flex justify-center items-center  mt-14 mb-8">
           <h1 className="text-2xl text-white  font-mono">
-            Group created successfully
+            Group Updated successfully
           </h1>
         </div>
       )}
