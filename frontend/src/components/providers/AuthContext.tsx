@@ -25,7 +25,6 @@ export interface UserProfile {
   nickname: string;
   displayname: string;
   picture: string;
-  // bio: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

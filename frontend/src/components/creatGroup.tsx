@@ -3,7 +3,11 @@ import React, { use, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { usegetGroups, creatGroup } from "@/app/api/chatApi/chatApiFunctions";
+import {
+  usegetGroups,
+  creatGroup,
+  upload,
+} from "@/app/api/chatApi/chatApiFunctions";
 import { set } from "react-hook-form";
 import Toggle from "./toggle";
 import { stringify } from "querystring";
@@ -26,7 +30,12 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
   const [isCreated, setIsCreated] = useState(false);
   const [message, setmessage] = useState("");
   const [isError, setIsErro] = useState(false);
+  const [avatar, setAvatar] = useState(
+    "https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png"
+  );
+
   const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: creatGroup,
     onSuccess: () => {
@@ -35,6 +44,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
     },
     onError: () => setIsErro(true),
   });
+
   const handelCreatGroup = () => {
     mutation.mutate({
       groupName: GroupName,
@@ -49,6 +59,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
     const hasNumber = /\d/.test(password);
     return hasUppercase && hasLowercase && hasNumber;
   }
+
   function checkInfoCreatGroup() {
     if (
       GroupName.length < 3 ||
@@ -60,6 +71,15 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
     }
     return true;
   }
+
+  const uploadMutation = useMutation({
+    mutationFn: upload,
+  });
+
+  useEffect(() => {
+    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data.path);
+  }, [uploadMutation.isSuccess, avatar]);
+
   const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,18 +89,14 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
       uploadPicture(file);
     }
   };
+
   const uploadPicture = async (picture: File) => {
     console.log("here");
     const formData = new FormData();
     formData.append("file", picture);
-    try {
-      const response = await API.post("/image/uploadPicture", formData);
-      console.log(response.data);
-      // setAvatar(response.data.path);
-    } catch (error) {
-      console.error("Error uploading picture:", error);
-    }
+    uploadMutation.mutate(formData);
   };
+
   return (
     <div className="absolute z-50 left-12 lg:left-[30%] opacity-100 right-12 lg:right-[30%]  top-[20%]  bg-black  rounded-2xl">
       <button onClick={() => setNewGroup(false)} className="m-4 ">
@@ -123,20 +139,20 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
         <div className="mt-6 ">
           <div className="relative m-4">
             <div className="w-32 h-32 z-10 mx-auto">
-              {/* {filePreview ? (
-              <Image
-                className="h-32 w-32 rounded-full bg-cover"
-                src={filePreview}
-                alt="Shh"
-                width={32}
-                height={32}
-              />
-            ) : ( */}
-              <div
-                className="h-32 w-32 rounded-full bg-cover"
-                style={{ backgroundImage: `url(/bmaaqoul.png)` }}
-              ></div>
-              {/* )} */}
+              {filePreview ? (
+                <Image
+                  className="h-32 w-32 rounded-full bg-cover"
+                  src={filePreview}
+                  alt="Shh"
+                  width={32}
+                  height={32}
+                />
+              ) : (
+                <div
+                  className="h-32 w-32 rounded-full bg-cover"
+                  style={{ backgroundImage: `url(${avatar})` }}
+                ></div>
+              )}
             </div>
             <div className="absolute left-[56%] top-[85px]  bg-[#ffff]   text-[#000000] rounded-full p-1">
               <label htmlFor="image-upload" className="">
@@ -150,7 +166,7 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
                 id="image-upload"
                 type="file"
                 accept="image/*"
-                onChange={() => {}}
+                onChange={handleFileChange}
               />
             </div>
           </div>

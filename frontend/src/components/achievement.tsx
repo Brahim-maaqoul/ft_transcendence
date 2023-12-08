@@ -13,7 +13,7 @@ const colors = [
 ];
 
 export const Achievement = () => (
-  <div className="bg-black bg-opacity-40 rounded-2xl shadow-black shadow-2xl flex flex-col p-4 mx-2 my-3">
+  <div className="bg-black bg-opacity-40 rounded-2xl shadow-black shadow-2xl flex flex-col p-4 mx-2 my-2">
     <span className="text-white text-2xl font-mono">Achievements</span>
     <Splide
       options={{
@@ -23,7 +23,8 @@ export const Achievement = () => (
         drag: "free",
         autoWidth: true,
         gap: "2rem",
-      }}>
+      }}
+    >
       {colors.map((color, index) => (
         <SplideSlide key={index} className="p-4">
           <Image
