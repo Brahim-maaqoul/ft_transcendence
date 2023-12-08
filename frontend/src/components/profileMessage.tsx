@@ -10,23 +10,36 @@ import { usegetGroups } from "@/app/api/chatApi/chatApiFunctions";
 import { group } from "console";
 import { Chat } from "./Groups";
 import { spinner } from "@/app/[user]/profile/page";
+import { io } from "socket.io-client";
+import { Socket } from "dgram";
 
 interface ProfileMessagesProps {
   group: any;
   more: boolean;
   setMore: React.Dispatch<React.SetStateAction<boolean>>;
+  socket: any
   // data: MessageInfo[];
   // setData: React.Dispatch<React.SetStateAction<MessageInfo[]>>;
   // dataUser: any;
 }
+
 export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   group,
   more,
   setMore,
+  socket
 }) => {
-  const [isTyping, setisTyping] = useState<boolean>(false);
+  const [isTyping, setisTyping] = useState<string | null>("");
   const { dataUser, showFalse } = useAuth();
-
+  socket.on("isTyping", (data: {message: string, id: number}) => {
+    console.log("isTyping111", data, group.id)
+    if (data.id === Number(group.id))
+      setisTyping(data.message)
+  })
+  socket.on("notTyping", () => {
+    setisTyping(null)
+    console.log("baddrr")
+  })
   return (
     <div className="w-full h-1/10 border-b border-gray-300 flex items-center p-1">
       <div className="flex">
@@ -57,7 +70,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
         {!isTyping ? (
           <p className="text-xs font-mono ">online last 08:30</p>
         ) : (
-          <p className="text-xs font-mono ">isTyping...</p>
+          <p className="text-xs font-mono ">{isTyping}</p>
         )}
       </div>
 

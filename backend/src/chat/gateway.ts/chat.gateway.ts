@@ -3,6 +3,7 @@ import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessa
 import { Server } from "socket.io";
 import { Socket } from "socket.io";
 import { GroupsService } from "../services/groups/groups.service";
+import { subscribe } from "diagnostics_channel";
 
 @WebSocketGateway({
     namespace: 'chat',
@@ -21,6 +22,7 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async afterInit(server: any) {
     }
     async handleConnection(client: any, ...args: any[]) {
+        console.log(client.id)
 
     }
     async handleDisconnect(client: any) {
@@ -29,6 +31,7 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage("getId")
     async handelGetId(client: Socket, payload: {auth_id: string})
     {
+        console.log(payload.auth_id)
         if (!payload.auth_id)
             return ;
         this.IdToSocket[payload.auth_id] = client;
@@ -44,5 +47,30 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             }
         })
     }
+    @SubscribeMessage("typing")
+    async typing(client: Socket, payload: {group_id: string, user: string})
+    {
+        const members = await this.GroupsService.getMembers(Number(payload.group_id))
+        members.map((member) => {
+            if (this.IdToSocket[member.user_id])
+            {
+                console.log("typing")
+                this.IdToSocket[member.user_id].emit("isTyping", {message: payload.user + ' is typing', id: Number(payload.group_id)})
+            }
+        })
+    }
+    @SubscribeMessage("stop typing")
+    async stopTyping(client: Socket, payload: {group_id: string})
+    {
+        const members = await this.GroupsService.getMembers(Number(payload.group_id))
+        members.map((member) => {
+            if (this.IdToSocket[member.user_id])
+            {
+                console.log("not typing")
+                this.IdToSocket[member.user_id].emit("notTyping")
+            }
+        })
+    }
+
 
 }

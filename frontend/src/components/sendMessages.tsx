@@ -48,8 +48,16 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
         onFocus={() => {
         }}
         onBlur={() => {
+          console.log("not typing")
+          socket.emit("stop typing", {group_id: id})
         }}
-        onChange={(input) => setMessage(input.target.value)}
+        onChange={(input) => {
+          if (input.target.value.length)
+            socket.emit("typing", {group_id: id, user: dataUser.nickname})
+          else
+            socket.emit("stop typing", {group_id: id})
+          setMessage(input.target.value)
+        }}
         id="msg"
         placeholder="Type your message here..."
         className="border bg-gray-600 text-white rounded-3xl w-[85%] pl-4 shadow-black"
