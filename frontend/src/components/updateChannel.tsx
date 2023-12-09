@@ -7,6 +7,7 @@ import {
   usegetGroups,
   creatGroup,
   upload,
+  updateGroup,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { set } from "react-hook-form";
 import Toggle from "./toggle";
@@ -17,37 +18,37 @@ import { m } from "framer-motion";
 import { TbPhotoEdit } from "react-icons/tb";
 import { API } from "@/app/api/checkAuthentication";
 interface CreatGroupProps {
-  newGroup: boolean; // Assuming newGroup is a string, you can adjust the type as needed
+  group: any; // Assuming newGroup is a string, you can adjust the type as needed
   setNewGroup: React.Dispatch<React.SetStateAction<boolean>>; // Assuming setNewGroup is a React state setter for a string
 }
 export const UpdateChannel: React.FC<CreatGroupProps> = ({
-  newGroup,
+  group,
   setNewGroup,
 }) => {
-  const [typegroup, setTypeGroup] = useState("public");
-  const [GroupName, setGroupName] = useState("");
+  const [typegroup, setTypeGroup] = useState(group.type);
+  const [GroupName, setGroupName] = useState(group.name);
   const [GroupPassword, setGroupPassword] = useState("");
   const [isCreated, setIsCreated] = useState(false);
   const [message, setmessage] = useState("");
   const [isError, setIsErro] = useState(false);
-  const [avatar, setAvatar] = useState(
-    "https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png"
-  );
+  const [avatar, setAvatar] = useState(group.picture);
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: creatGroup,
+    mutationFn: updateGroup,
     onSuccess: () => {
       setIsCreated(true);
-      queryClient.invalidateQueries(["dataGroups"]);
+      queryClient.invalidateQueries(["getMessages"]);
+      queryClient.invalidateQueries(['dataGroups'])
     },
     onError: () => setIsErro(true),
   });
 
   const handelCreatGroup = () => {
     mutation.mutate({
-      groupName: GroupName,
+      group_id: group.id,
+      name: GroupName,
       password: GroupPassword,
       type: typegroup,
       picture: avatar,
