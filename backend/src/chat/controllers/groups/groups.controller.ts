@@ -293,7 +293,8 @@ export class GroupsController {
     );
     return res.status(200).json(member);
   }
-  @Post('/changePrivacy')
+
+  @Post('/UpdateGroup')
   @UseGuards(AuthGuard('jwt'))
   async changePrivacy(
     @Res() res,
@@ -304,7 +305,8 @@ export class GroupsController {
       req.user.auth_id,
       group.group_id,
     );
-    if (checkAdmin === 'creator') return res.status(401, "you're the creator");
+    console.log("here")
+    if (checkAdmin !== 'creator') return res.status(401).json({messqge: "you're not the creator"});
     await this.GroupsService.changePrivacy(group);
     return res.status(201).send();
   }

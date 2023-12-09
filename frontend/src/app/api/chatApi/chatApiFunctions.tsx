@@ -9,6 +9,14 @@ interface GroupCreate {
   type: string;
   picture: string;
 }
+
+interface GroupUpdate {
+  group_id: number;
+  name: string;
+  password: string;
+  type: string;
+  picture: string;
+}
 interface Message {
   groupId: number;
   message: string;
@@ -66,6 +74,11 @@ export function usegetFriends(): UseQueryResult<any> {
 
 export async function creatGroup(data: GroupCreate) {
   const response: AxiosResponse = await API.post("/groups/createGroup", data);
+  return response.data;
+}
+
+export async function updateGroup(data: GroupUpdate) {
+  const response: AxiosResponse = await API.post("/groups/UpdateGroup", data);
   return response.data;
 }
 

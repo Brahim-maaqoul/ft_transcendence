@@ -51,7 +51,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   return (
     <div className=" w-full h-1/10 border-b border-gray-300 flex items-center p-1">
       {newGroup && (
-        <UpdateChannel newGroup={newGroup} setNewGroup={setNewGroup} />
+        <UpdateChannel group={group} setNewGroup={setNewGroup} />
       )}
       <div className="flex">
         {group.type === "duo" ? (
