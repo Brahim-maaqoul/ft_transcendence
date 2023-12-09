@@ -391,19 +391,36 @@ export class GroupsService {
     if (!member) throw new HttpException('not a member', HttpStatus.NOT_FOUND);
     return member;
   }
+
   async changePrivacy(group: changePrivacyDto) {
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(group.password, salt);
-    await this.prisma.groups.update({
+    if (group.type === "protected")
+    {
+      const salt = await bcrypt.genSalt();
+      const hash = await bcrypt.hash(group.password, salt);
+      return await this.prisma.groups.update({
+        where: {
+          id: group.group_id,
+        },
+        data: {
+          name: group.name,
+          picture: group.picture,
+          privacy: group.type,
+          password: hash,
+        },
+      });
+    }
+    return await this.prisma.groups.update({
       where: {
         id: group.group_id,
       },
       data: {
-        privacy: 'protected',
-        password: hash,
+        name: group.name,
+        picture: group.picture,
+        privacy: group.type,
       },
     });
   }
+
   async getInvite(group: number) {
     return await this.prisma.users.findMany({
       where: {
