@@ -1,0 +1,70 @@
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
+import { Queue } from "../classes/queue.class";
+import { Game } from "../classes/game.class";
+
+@Injectable()
+export class MatchMakingService {
+	constructor(private prisma: PrismaService) { }
+
+	playersInfo: Record<string, string> = {};
+	queuePlayers = new Queue<string>();
+	matchPlayers: Record<string, { Game: Game, player: number }> = {};
+
+	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
+		if (this.queuePlayers.contains(clientId) && this.queuePlayers.size() > 1) {
+			const socket1 = this.queuePlayers.dequeue();
+			const socket2 = this.queuePlayers.dequeue();
+			const playerId1 = this.playersInfo[socket1];
+			const playerId2 = this.playersInfo[socket2];
+			delete this.playersInfo[socket1];
+			delete this.playersInfo[socket2];
+			const newGame = new Game();
+			const game = await this.prisma.game.create({
+				data: {
+					user1_id: playerId1,
+					user2_id: playerId2,
+				}
+			});
+			newGame.gameId = game.gameId;
+			newGame.playerId1 = playerId1;
+			newGame.playerId2 = playerId2;
+			newGame.playerAI = data.boot;
+			newGame.status = 'notStarted';
+			newGame.socket1 = socket1;
+			newGame.socket2 = socket2;
+			newGame.time = new Date();
+			this.matchPlayers[socket1] = {Game:newGame, player: 0};
+			this.matchPlayers[socket2] = {Game:newGame, player: 1};
+		}
+		else {
+			this.queuePlayers.enqueue(clientId);
+			this.playersInfo[clientId] = data.playerId1;
+		}
+	}
+
+	async deleteGame(clientId: string) {
+		if (clientId in this.matchPlayers){
+			const sock1 = this.matchPlayers[clientId].Game.socket1;
+			const sock2 = this.matchPlayers[clientId].Game.socket2;
+			const winner = this.matchPlayers[clientId].Game.score.p1 > this.matchPlayers[sock2].Game.score.p2 && this.matchPlayers[clientId].Game.status === 'finished' ? this.matchPlayers[sock1].Game.playerId1 : this.matchPlayers[sock2].Game.playerId2;
+			
+			await this.prisma.game.update({
+				where: {
+					gameId: this.matchPlayers[sock1].Game.gameId
+				},
+				data: {
+					score1: this.matchPlayers[sock1].Game.score.p1,
+					score2: this.matchPlayers[sock2].Game.score.p2,
+					status: 'finished',
+					winner: winner,
+					time: new Date()
+				}
+			});
+
+			delete this.matchPlayers[sock1];
+			delete this.matchPlayers[sock2];
+		}
+	}
+
+}

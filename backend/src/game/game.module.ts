@@ -6,11 +6,13 @@ import { GameGateway } from './gateway/game.gateway';
 import { GameSession } from './services/gameSession.service';
 import { JwtGuard } from 'src/auth/Guard/jwt.guard';
 import { AuthService } from 'src/auth/auth.service';
+import { BotService } from './services/bot.service';
+import { MatchMakingService } from './services/matchMaking.service';
 
 
 @Module({
   controllers: [GameController],
-  providers: [PrismaService,GameService, GameGateway, GameSession, AuthService],
+  providers: [PrismaService,GameService, GameGateway, GameSession, AuthService,BotService, MatchMakingService],
 })
 export class GameModule {
 }

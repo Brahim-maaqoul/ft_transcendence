@@ -58,16 +58,16 @@ export class Game
 		if (this.ball.length)
 		{
 			if (this.ball[0].position.y < this.paddle[1].position.y)
-			 	this.paddle[1].move_left(1, 0)
+			 	this.paddle[1].move_left(2, 0)
 			if (this.ball[0].position.y > this.paddle[1].position.y)
-				this.paddle[1].move_right(1, 600)
+				this.paddle[1].move_right(2, 600)
 		}
 		else
 		{
 			if (this.world.w/2 < this.paddle[1].position.y)
-			 	this.paddle[1].move_left(1, 0)
+			 	this.paddle[1].move_left(2, 0)
 			if (this.world.w/2 > this.paddle[1].position.y)
-				this.paddle[1].move_right(1, 600)
+				this.paddle[1].move_right(2, 600)
 		}
 	}
 	check_keys(keys: key, player: number)

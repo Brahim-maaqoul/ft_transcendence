@@ -43,6 +43,17 @@ model Game {
 	time		DateTime	@default(now())
 }
 
+model BotGame {
+	botGameId	Int			@id @default(autoincrement())
+	score1		Int			@default(0)
+	score2		Int			@default(0)
+	status		String		@default("notStarted")
+	user1		Users		@relation("User1ToBotGame", fields: [user1_id], references: [auth_id])
+	user1_id	String
+	winner		String		@default("noWinner")
+	time		DateTime	@default(now())
+}
+
 model image{
   id        Int @id @default(autoincrement())
   type      String

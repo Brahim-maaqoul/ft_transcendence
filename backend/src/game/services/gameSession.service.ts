@@ -4,33 +4,12 @@ import { Game } from '../classes/game.class';
 import { generate, queue } from 'rxjs';
 import { Paddle } from '../classes/paddle.class';
 import { Socket } from 'socket.io';
+import { Queue } from '../classes/queue.class';
 
-class Queue<T> {
-	private items: T[];
-
-	constructor() {
-		this.items = [];
-	}
-
-	enqueue(item: T) {
-		this.items.push(item);
-	}
-
-	dequeue(): T | undefined {
-		return this.items.shift();
-	}
-
-	isEmpty(): boolean {
-		return this.items.length === 0;
-	}
-
-	size(): number {
-		return this.items.length;
-	}
-
-	contains(item: T): boolean {
-		return this.items.includes(item);
-	}
+export enum gameStatus {
+	bot,
+	matchMaking,
+	invite,
 }
 
 @Injectable()
@@ -45,44 +24,8 @@ export class GameSession {
 
 	botGames: Record<string, Game> = {};
 
-	public async createBotGame(data: { playerId1: string,boot: boolean}, clientId: string) {// playerid2?: number, }, clientId: string) {
-		// const game = this.prisma.gameSession.create({
-		//   data: {
-		// 	gameId: data.gameId,
-		// 	host: clientId,
-		// 	players: {
-		// 	  connect: {
-		// 		id: clientId
-		// 	  }
-		// 	}
-		//   }
-		// });
-		// return game;
-
-
-		// this.botGames = [];
-
-
-		const newgame = new Game();
-
-
-		
-		newgame.gameId = Math.floor(Math.random() * 1000);
-		newgame.playerId1 = data.playerId1;
-		newgame.playerAI = data.boot;
-		newgame.socket1 = clientId;
-		// newgame.start = false;
-		// this.botGames.push(newgame);
-		this.botGames[clientId] = newgame;
-		// this.game = newgame;
-		// console.log('------------------------------------- create bot game size of ', this.botGames.length);
-		// for (let i=0;i<this.botGames.length;i++) {
-		// 	console.log('game ', this.botGames[i]);
-		// }
-		// this.game.gameId = this.botGames.length * Math.floor(Math.random() * 1000) + 1;
-		// this.game.gameId = this.botGames[this.botGames.length - 1] ? this.botGames[this.botGames.length - 1].gameId + 1 : 1;
-		// this.game.status = 'waiting';
-	}
+	games: Record<string, gameStatus> = {};
+	clients: Record<string, any> = {};
 
 	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
 
@@ -125,10 +68,6 @@ export class GameSession {
 			this.queuePlayers.enqueue(clientId);
 			this.playersInfo[clientId] = data.playerId1;
 		}
-	}
-
-	public async getBotGames() {
-		return this.botGames;
 	}
 
 	public async deleteBotGame(clientId: string) {
