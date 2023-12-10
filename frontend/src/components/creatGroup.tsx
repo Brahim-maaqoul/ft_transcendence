@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  usegetGroups,
+  UsegetGroups,
   creatGroup,
   upload,
 } from "@/app/api/chatApi/chatApiFunctions";
@@ -78,8 +78,8 @@ export const CreatGroup: React.FC<CreatGroupProps> = ({
   });
 
   useEffect(() => {
-    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data.path);
-  }, [uploadMutation.isSuccess, avatar]);
+    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data?.path);
+  }, [uploadMutation.isSuccess, avatar, uploadMutation.data?.path]);
 
   const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
 

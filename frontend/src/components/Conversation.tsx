@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { get } from "http";
 import {
   deleteGroup,
-  useGetMessages,
+  UseGetMessages,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { AboutGroup } from "./aboutGroup";
 import { FriendsToGroup } from "./friendsToGroup";
@@ -66,7 +66,7 @@ export const Conversation: React.FC<ConversationProps> = ({ id, socket }) => {
   if (isNaN(Number(id)))
     //another bug here
     return <>{selectMessage}</>;
-  const { data: getMessages, isSuccess, isError } = useGetMessages(id);
+  const { data: getMessages, isSuccess, isError } = UseGetMessages(id);
   if (isError) {
     route.push("/chat/id");
     return <></>;

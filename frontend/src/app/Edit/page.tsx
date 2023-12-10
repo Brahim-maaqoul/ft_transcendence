@@ -49,10 +49,10 @@ export default function Edit() {
 
   useEffect(() => {
     if (isSuccess) {
-      redirect("/" + mutation.data.nickname + "/profile");
+      redirect("/" + mutation.data?.nickname + "/profile");
     }
-    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data.path);
-  }, [mutation.isSuccess, router, uploadMutation.isSuccess, avatar]);
+    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data?.path);
+  }, [isSuccess, uploadMutation.isSuccess, uploadMutation.data?.path, mutation.data?.nickname]);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 20) setDisplayname(e.target.value);

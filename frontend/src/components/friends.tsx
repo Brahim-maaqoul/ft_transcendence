@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
-import { usegetFriends } from "@/app/api/getFriends";
+import { UsegetFriends } from "@/app/api/getFriends";
 import { UserProfile, useAuth } from "./providers/AuthContext";
 import { spinner } from "@/app/[user]/profile/page";
 
@@ -18,7 +18,7 @@ function FriendButton() {
 }
 
 export default function Friends({ auth_id }: { auth_id: string }) {
-  const { data, isLoading, isError } = usegetFriends(auth_id);
+  const { data, isLoading, isError } = UsegetFriends(auth_id);
   const { dataUser } = useAuth();
 
   if (isLoading) return <>{spinner}</>;

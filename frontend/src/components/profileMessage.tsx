@@ -8,7 +8,7 @@ import NextImage from "next/image";
 import Link from "next/link";
 import {
   useGetMemberShip,
-  usegetGroups,
+  UsegetGroups,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { group } from "console";
 import { Chat } from "./Groups";

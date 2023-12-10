@@ -295,13 +295,15 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id }) => {
               >
                 <div className=" flex  col-span-1 ">
                   <Link href={`/${user.user?.nickname}/profile`}>
-                    <img
-                      src={user.user?.picture!}
-                      alt="Profile picture"
-                      width={52}
-                      height={52}
-                      className="rounded-full"
-                    />
+                    {/* src={user.user?.picture!} */}
+                    <div className="w-12 h-12">
+                      <div
+                        className="h-full w-full rounded-full bg-cover"
+                        style={{
+                          backgroundImage: `url(${user.user?.picture!})`,
+                        }}
+                      ></div>
+                    </div>
                   </Link>
                 </div>
                 <div

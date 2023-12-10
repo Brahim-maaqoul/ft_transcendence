@@ -118,13 +118,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@UseGuards(JwtGuard)
 	async handleConnection(client: any, ...args: any[]) {
-		console.log('connecting client id: ', client.user, client.id, client.handshake.query.user);
+		// console.log('connecting client id: ', client.user, client.id, client.handshake.query.user);
 		this.gameSessionService.clients[client.id] = client;
 	}
 
 	@UseGuards(JwtGuard)
 	async handleDisconnect(client: any) {
-		console.log(`Clinet id: ${client.id} disconnected!`);
+		// console.log(`Clinet id: ${client.id} disconnected!`);
 		if (client.id in this.gameSessionService.games){
 			if (this.gameSessionService.games[client.id] == gameStatus.bot){
 				await this.botService.deleteBotGame(client.id);

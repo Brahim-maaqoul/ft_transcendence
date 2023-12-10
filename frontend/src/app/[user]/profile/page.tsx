@@ -9,7 +9,7 @@ import { Achievement } from "@/components/achievement";
 import { useAuth } from "@/components/providers/AuthContext";
 import Infos from "@/components/infos";
 import RecentGames from "@/components/recentGames";
-import { getUser } from "@/app/api/getUserByNickname";
+import { GetUser } from "@/app/api/getUserByNickname";
 import { Link } from "lucide-react";
 import Friends from "@/components/friends";
 
@@ -39,7 +39,7 @@ export default function Profile() {
     data: profileData,
     isError,
     isLoading,
-  } = getUser(params.user.toString());
+  } = GetUser(params.user.toString());
   if (isLoading)
     return (
       <div className="flex justify-center items-center mt-10 ">{spinner}</div>
