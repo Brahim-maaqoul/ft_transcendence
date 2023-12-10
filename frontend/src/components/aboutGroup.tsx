@@ -9,7 +9,7 @@ import {
   makeUserAdmin,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { spinner } from "@/app/[user]/profile/page";
+import Spinner from "@/components/spinner";
 import Link from "next/link";
 import { io } from "socket.io-client";
 interface moreProps {
@@ -281,7 +281,11 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id }) => {
   const { data: getMembers, isLoading, isError } = useGetMembers(id);
   const { data: getMembership } = useGetMemberShip(id);
   if (isLoading)
-    return <div className="flex justify-content items-center">{spinner}</div>;
+    return (
+      <div className="flex justify-content items-center">
+        <Spinner />
+      </div>
+    );
   return (
     <div className=" w-full absolute overflow-auto no-scrollbar bottom-11 top-20 ">
       <span className="text-white text-lg m-3">Members</span>

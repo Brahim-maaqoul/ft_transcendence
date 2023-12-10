@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { UsegetFriends } from "@/app/api/getFriends";
 import { UserProfile, useAuth } from "./providers/AuthContext";
-import { spinner } from "@/app/[user]/profile/page";
+import Spinner from "@/components/spinner";
 
 function FriendButton() {
   return (
@@ -21,7 +21,7 @@ export default function Friends({ auth_id }: { auth_id: string }) {
   const { data, isLoading, isError } = UsegetFriends(auth_id);
   const { dataUser } = useAuth();
 
-  if (isLoading) return <>{spinner}</>;
+  if (isLoading) return <Spinner />;
 
   if (isError || !data) return <>You have no friends like Davies</>;
 
@@ -37,7 +37,8 @@ export default function Friends({ auth_id }: { auth_id: string }) {
                     className="h-16 w-16 rounded-full bg-cover"
                     style={{
                       backgroundImage: `url(${element.picture})`,
-                    }}></div>
+                    }}
+                  ></div>
                 </div>
                 <span className="text-sm xl:text-2xl text-white">
                   {element?.nickname}
