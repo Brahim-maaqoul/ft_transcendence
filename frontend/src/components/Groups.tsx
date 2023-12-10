@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { UsegetGroups } from "@/app/api/chatApi/chatApiFunctions";
 import { CreatGroup } from "./creatGroup";
 import { JoinGroup } from "./joinGroup";
-import { spinner } from "@/app/[user]/profile/page";
+import Spinner from "@/components/spinner";
 import { getTime } from "./messages";
 interface Message {
   timestamp: string;
@@ -58,7 +58,9 @@ export const Groups = () => {
   if (isError) return <div>error</div>;
   if (isLoading)
     return (
-      <div className="h-full flex justify-center items-center">{spinner}</div>
+      <div className="h-full flex justify-center items-center">
+        <Spinner />
+      </div>
     );
 
   return (

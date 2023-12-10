@@ -158,28 +158,18 @@ export default function Game2d() {
       document.removeEventListener("keydown", handleKeyDown);
       document.addEventListener("keyup", handleKeyUp);
     };
-  }, []);
+  }, [game.keysPressed]);
 
   return (
     <div className="h-full relative flex flex-col justify-between xl:justify-center  items-center">
       <div className="flex items-center  justify-between py-5  mx-auto w-[95vw] xl:max-w-[1000px]">
-        <div className="">
-          <img
-            className="w-[50px] h-[50px]"
-            src="https://mjalloul.vercel.app/user.svg"
-          />
-        </div>
+        <div className="text-white text-2xl">Tswira hna</div>
         <div className="flex items-center justify-between">
           <p className="text-white mx-5  text-2xl md:text-4xl ">0</p>
           <p className="text-white mx-5  text-2xl md:text-4xl ">-</p>
           <p className="text-white mx-5  text-2xl md:text-4xl ">0</p>
         </div>
-        <div className="">
-          <img
-            className="w-[50px] h-[50px]"
-            src="https://mjalloul.vercel.app/user.svg"
-          />
-        </div>
+        <div className="text-white text-2xl">Tswira hna</div>
       </div>
 
       <div className="bg-[#d48686] rotate-90 xl:rotate-0 relative  w-[100vw] h-[calc(100vw/1.5)]  sm:w-[70vw] sm:h-[calc(70vw/1.5)]   xl:h-[calc(1000px/1.5)] xl:mx-auto p-1   xl:w-[1000px]">
