@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import About from "./about";
 import Image from "next/image";
-import emailjs from "emailjs-com";
+import emailjs from "@emailjs/browser";
 import styles from "../app/styles.module.css";
 
 export const close = (
@@ -235,7 +235,7 @@ const Toggle = () => {
                   type="submit"
                   disabled={isButtonDisabled}
                   className={`${styles.notch_button} my-12 h-2 md:col-span-2 mx-auto md:h-4 w-[80%] md:w-[400px] mt-10 relative flex justify-center items-center`}>
-                  <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute hover:animate-bounce">
+                  <div className={`z-40 text-black md:text-lg lg:text-2xl font-mono absolute ${isButtonDisabled ? "cursor-not-allowed" : "hover:animate-bounce"}`}>
                     Save
                   </div>
                 </button>

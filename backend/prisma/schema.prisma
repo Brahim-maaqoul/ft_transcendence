@@ -29,7 +29,7 @@ model Users {
   stats               Stats?
   GameHost			  Game[]			@relation("User1ToGame")
   GamePlayer		  Game[]			@relation("User2ToGame")
-  Training		    BotGame[]			@relation("User1ToBotGame")
+  BotGame		  BotGame[]			@relation("User1ToBotGame")
 }
 model Game {
 	gameId		Int			@id @default(autoincrement())
