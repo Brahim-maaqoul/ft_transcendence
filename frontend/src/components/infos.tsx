@@ -59,8 +59,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
         <div className="w-48 h-48">
           <div
             className="h-48 w-48 rounded-full bg-cover relative"
-            style={{ backgroundImage: `url(${picturePath})` }}
-          >
+            style={{ backgroundImage: `url(${picturePath})` }}>
             {logged ? (
               <span className="absolute h-5 w-5 rounded-full bg-green-500 mt-40 ml-36 border-2 border-black"></span>
             ) : (
@@ -95,8 +94,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                           setShow(!show);
                         }}
                         className="relative bg-white flex justify-center items-center w-16 rounded-3xl  "
-                        ref={toggleButtonRef}
-                      >
+                        ref={toggleButtonRef}>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full  "></span>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
@@ -110,12 +108,10 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                               animate={{
                                 y: 200,
                               }}
-                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl"
-                            >
+                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl">
                               <Link
                                 className="flex     items-center "
-                                href={""}
-                              >
+                                href={""}>
                                 <Image
                                   src={"/challenge.png"}
                                   alt="Challenge"
@@ -129,8 +125,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                 className="flex  items-center "
                                 onClick={() => {
                                   mutation.mutate(profileData.auth_id);
-                                }}
-                              >
+                                }}>
                                 <Image
                                   src={"/Message.png"}
                                   alt="Send Message"

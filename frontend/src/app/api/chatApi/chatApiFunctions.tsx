@@ -14,7 +14,7 @@ interface GroupUpdate {
   group_id: number;
   name: string;
   password: string;
-  type: string;
+  privacy: string;
   picture: string;
 }
 interface Message {

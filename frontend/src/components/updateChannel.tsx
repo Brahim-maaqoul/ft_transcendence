@@ -25,7 +25,8 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
   group,
   setNewGroup,
 }) => {
-  const [typegroup, setTypeGroup] = useState(group.type);
+  console.log("beeedroooo", group);
+  const [typegroup, setTypeGroup] = useState(group.privacy);
   const [GroupName, setGroupName] = useState(group.name);
   const [GroupPassword, setGroupPassword] = useState("");
   const [isCreated, setIsCreated] = useState(false);
@@ -40,17 +41,26 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
     onSuccess: () => {
       setIsCreated(true);
       queryClient.invalidateQueries(["getMessages"]);
-      queryClient.invalidateQueries(['dataGroups'])
+      queryClient.invalidateQueries(["dataGroups"]);
     },
     onError: () => setIsErro(true),
   });
 
+  const handleGroupName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGroupName(e.target.value);
+  };
+  const handleGroupPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGroupPassword(e.target.value);
+  };
+  const handleGroupType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTypeGroup(e.target.value);
+  };
   const handelCreatGroup = () => {
     mutation.mutate({
       group_id: group.id,
       name: GroupName,
       password: GroupPassword,
-      type: typegroup,
+      privacy: typegroup,
       picture: avatar,
     });
   };
@@ -112,20 +122,18 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
           xmlnsXlink="http://www.w3.org/1999/xlink"
           viewBox="0 0 460.775 460.775"
           xmlSpace="preserve"
-          stroke="#ffffff"
-        >
+          stroke="#ffffff">
           <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
           <g
             id="SVGRepo_tracerCarrier"
             strokeLinecap="round"
-            strokeLinejoin="round"
-          ></g>
+            strokeLinejoin="round"></g>
           <g id="SVGRepo_iconCarrier">
             <path d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55 c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55 c-4.126,0-8.08,1.639-10.992,4.55L4.558,37.284c-6.077,6.075-6.077,15.909,0,21.986l171.138,171.128L4.575,401.505 c-6.074,6.077-6.074,15.911,0,21.986l32.709,32.719c2.911,2.911,6.865,4.55,10.992,4.55c4.127,0,8.08-1.639,10.994-4.55 l171.117-171.12l171.118,171.12c2.913,2.911,6.866,4.55,10.993,4.55c4.128,0,8.081-1.639,10.992-4.55l32.709-32.719 c6.074-6.075,6.074-15.909,0-21.986L285.08,230.397z"></path>
           </g>
         </svg>
       </button>
-      <div className="  flex justify-center ">
+      <div className="flex justify-center ">
         <header className="m-2">
           <p className="text-center text-2xl  text-white   font-mono leading-normal">
             Update your Channel
@@ -140,21 +148,18 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
               {filePreview ? (
                 <div
                   className="h-32 w-32 rounded-full bg-cover"
-                  style={{ backgroundImage: `url(${filePreview})` }}
-                ></div>
+                  style={{ backgroundImage: `url(${filePreview})` }}></div>
               ) : (
                 <div
                   className="h-32 w-32 rounded-full bg-cover"
-                  style={{ backgroundImage: `url(${avatar})` }}
-                ></div>
+                  style={{ backgroundImage: `url(${avatar})` }}></div>
               )}
             </div>
             <div className="absolute left-[56%] top-[85px]  bg-[#ffff]   text-[#000000] rounded-full p-1">
               <label htmlFor="image-upload" className="">
                 <TbPhotoEdit
                   className="  cursor-pointer"
-                  size={25}
-                ></TbPhotoEdit>
+                  size={25}></TbPhotoEdit>
               </label>
               <input
                 className="hidden"
@@ -168,44 +173,42 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
           <div className="flex justify-center">
             <input
               type="text"
-              onChange={(input) => setGroupName(input.target.value)}
+              value={GroupName}
+              onChange={handleGroupName}
               name="text"
               maxLength={parseInt("13")}
               className="font-mono w-[78%]   px-3 py-3 mt-1 border bg-blue-950 border-gray-300 rounded focus:outline-none text-white text-sm"
               pattern="\d+"
-              placeholder="Group Name"
-            ></input>
+              placeholder="Group Name"></input>
           </div>
           <div className="flex justify-center">
             <select
-              onChange={(select) => setTypeGroup(select.target.value)}
+              onChange={handleGroupType}
               name="text"
               className="font-mono w-[78%]  px-3  py-3 mt-1 border bg-blue-950 border-gray-300 rounded focus:outline-none text-white"
-              placeholder="Group Name"
-            >
+              defaultValue={group.privacy}
+              placeholder="Group Name">
               <option value="public"> public </option>
               <option value="private"> private </option>
               <option value="protected"> protected </option>
             </select>
           </div>
           {typegroup == "protected" && (
-            <div className="-500 ml-6">
+            <div className="flex justify-center">
               <input
                 type="password"
                 onChange={(input) => setGroupPassword(input.target.value)}
                 name="text"
-                className="text-sm w-[78%] min-[5]:  ml-8 px-3 py-3 mt-6 border bg-black border-gray-300 font-mono rounded focus:outline-none text-white"
+                className="font-mono w-[78%]  px-3  py-3 mt-6 border bg-blue-950 border-gray-300 rounded focus:outline-none text-white"
                 pattern="\d+"
-                placeholder="Password"
-              ></input>
+                placeholder="Password"></input>
             </div>
           )}
           <div className=" w-[100%] flex justify-center mt-8  mb-8">
             {checkInfoCreatGroup() && (
               <button
                 onClick={handelCreatGroup}
-                className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer"
-              >
+                className="flex justify-center items-center p-2 gap-2 h-8 w-32 bg-white  rounded-full hover:bg-white focus:outline-none cursor-pointer">
                 <span className=" text-xl leading-6 text-black font-mono">
                   Update
                 </span>
