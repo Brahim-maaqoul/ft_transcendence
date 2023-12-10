@@ -70,7 +70,7 @@ export function useCheckAuthentication(): UseQueryResult<any> {
 //   const response: AxiosResponse = await API.get("/chat/Groups");
 //   return response.data;
 // }
-// export function usegetGroups(): UseQueryResult<any> {
+// export function UsegetGroups(): UseQueryResult<any> {
 //   return useQuery({ queryKey: ["dataGroups"], queryFn: getGroups });
 // }
 
@@ -78,7 +78,7 @@ export function useCheckAuthentication(): UseQueryResult<any> {
 //   const response: AxiosResponse = await API.get("/chat/FriendsRome");
 //   return response.data;
 // }
-// export function usegetFriends(): UseQueryResult<any> {
+// export function UsegetFriends(): UseQueryResult<any> {
 //   return useQuery({ queryKey: ["dataFriend"], queryFn: getFriends });
 // }
 

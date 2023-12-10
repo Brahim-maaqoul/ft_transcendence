@@ -9,7 +9,7 @@ async function getFriends(auth_id: string) {
   return response.data;
 }
 
-export function usegetFriends(auth_id: string): UseQueryResult<any> {
+export function UsegetFriends(auth_id: string): UseQueryResult<any> {
   return useQuery({
     queryKey: ["Friends"],
     queryFn: () => getFriends(auth_id),
@@ -24,7 +24,7 @@ async function getChat()
   return response.data;
 }
 
-export function useGetChat(): UseQueryResult<any> {
+export function UseGetChat(): UseQueryResult<any> {
   return useQuery({
     queryKey: ["getChat"],
     queryFn: () => getChat(),
