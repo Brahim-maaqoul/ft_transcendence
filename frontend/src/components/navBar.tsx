@@ -64,30 +64,26 @@ export default function NavBar() {
             <div className=" m-2 flex  justify-between flex-row md:flex-col">
               <div>
                 <Link
-                  href={"/" + dataUser?.nickname + "/profile"}
-                  className="my-2"
-                >
+                  href={"/profile/" + dataUser?.nickname}
+                  className="my-2">
                   <div className="w-12 h-12">
                     <div
                       className="h-12 w-12 rounded-full bg-cover"
-                      style={{ backgroundImage: `url(${imageUrl})` }}
-                    ></div>
+                      style={{ backgroundImage: `url(${imageUrl})` }}></div>
                   </div>
                 </Link>
               </div>
               <div className="my-2">
                 <Link
                   href={"/"}
-                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center"
-                >
+                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
                   <Image src="/home.svg" alt="home" width={32} height={32} />
                 </Link>
               </div>
               <div className="my-2">
                 <Link
                   href={"/chat/id"}
-                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center"
-                >
+                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
                   <Image
                     src="/add.svg"
                     alt="add friends"
@@ -99,9 +95,8 @@ export default function NavBar() {
 
               <div className="my-2">
                 <Link
-                  href={"/" + dataUser?.displayname + "/rank"}
-                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center"
-                >
+                  href={"/Rank"}
+                  className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
                   <Image
                     src="/friends.svg"
                     alt="online friends"
@@ -115,15 +110,13 @@ export default function NavBar() {
                   onClick={() => {
                     setNot(true);
                   }}
-                  className="hover:bg-slate-400 w-12 h-12 text-[#fff] rounded-full flex justify-center items-center"
-                >
+                  className="hover:bg-slate-400 w-12 h-12 text-[#fff] rounded-full flex justify-center items-center">
                   <IoNotificationsOutline size={32}></IoNotificationsOutline>
                 </button>
               </div>
               <Link
                 href={"http://localhost:8000/v1/api/auth/logout"}
-                className="hover:bg-slate-400  w-12 my-2 mt-auto flex items-center justify-center  h-12 text-[#ffffff] rounded-full "
-              >
+                className="hover:bg-slate-400  w-12 my-2 mt-auto flex items-center justify-center  h-12 text-[#ffffff] rounded-full ">
                 <FiLogOut size={32}></FiLogOut>
               </Link>
             </div>
@@ -134,43 +127,36 @@ export default function NavBar() {
               <div className="absolute lg:block bottom-0  right-0 top-0 left-0 bg-slate-950   lg:bg-opacity-50 backdrop-blur-sm h-full z-50"></div>
               <div
                 ref={menuRef}
-                className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50"
-              >
+                className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50">
                 <div className="flex h-full flex-col w-full overflow-y-auto no-scrollbar">
                   <span className="text-lg font-bold">Notifications</span>
                   {notifications.map(
                     (notification: notification, id: number) => (
                       <div key={id} className="flex flex-col w-full">
-                        <div
-                          className={`flex justify-evenly w-full h0- p-4  hover:bg-slate-100 hover:rounded-2xl`}
-                        >
-                          <Link
-                            href={notification.Source.picture}
-                            onClick={() => {
-                              setNot(false);
-                            }}
-                            className={`flex items-center  gap-x-4 w-full p-4 rounded-2xl ${
-                              !notification.seen && "bg-slate-600"
-                            }`}
-                          >
-                            <div className="w-14 h-14">
-                              <div
-                                className="h-14 w-14 rounded-full bg-cover"
-                                style={{
-                                  backgroundImage: `url(${notification.Source.picture})`,
-                                }}
-                              ></div>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="text-black-500 text-lg">
-                                {notification.Source.nickname}
-                              </span>
-                              <span className="text-slate-500 text-sm">
-                                {notification.type}
-                              </span>
-                            </div>
-                          </Link>
-                        </div>
+                        <Link
+                          href={notification.Source.picture}
+                          onClick={() => {
+                            setNot(false);
+                          }}
+                          className={`flex items-center  gap-x-4 w-full p-4 mt-6 rounded-2xl ${
+                            !notification.seen && "bg-slate-600"
+                          }`}>
+                          <div className="w-14 h-14">
+                            <div
+                              className="h-14 w-14 rounded-full bg-cover"
+                              style={{
+                                backgroundImage: `url(${notification.Source.picture})`,
+                              }}></div>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-black-500 text-lg">
+                              {notification.Source.nickname}
+                            </span>
+                            <span className="text-slate-500 text-sm">
+                              {notification.type}
+                            </span>
+                          </div>
+                        </Link>
                       </div>
                     )
                   )}
@@ -179,8 +165,7 @@ export default function NavBar() {
                       setNot(false);
                     }}
                     className="lg:hidden"
-                    size={32}
-                  ></IoIosClose>
+                    size={32}></IoIosClose>
                 </div>
               </div>
             </>

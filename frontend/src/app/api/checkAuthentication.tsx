@@ -25,20 +25,29 @@ export const API = axios.create({
 
 // checkAuthentication
 async function checkAuthentication() {
-  const response: AxiosResponse = await API.post("/auth/checkauth");
-  return response.data;
+    const response: AxiosResponse = await API.get("/auth/checkAuth");
+    console.log("test")
+    return response.data;
 }
 // updateUserProfile
 export async function updateUserProfile(data: UserProfileUpdate) {
+  console.log(data)
   const response: AxiosResponse = await API.post("/auth/UpdateData", data);
   return response.data;
 }
 
 export function useCheckAuthentication(): UseQueryResult<any> {
-  return useQuery({
-    queryKey: ["data"],
-    queryFn: checkAuthentication,
-  });
+  // try{
+    return useQuery({
+      queryKey: ["data"],
+      queryFn: checkAuthentication,
+      onError: (err) => console.log("error", err)
+    });
+
+  // }
+  // catch{
+  //   console.log("jsgfjksncx")
+  // }
 }
 
 // export function useAddFriend(auth_id: string) {
@@ -70,7 +79,7 @@ export function useCheckAuthentication(): UseQueryResult<any> {
 //   const response: AxiosResponse = await API.get("/chat/Groups");
 //   return response.data;
 // }
-// export function usegetGroups(): UseQueryResult<any> {
+// export function UsegetGroups(): UseQueryResult<any> {
 //   return useQuery({ queryKey: ["dataGroups"], queryFn: getGroups });
 // }
 
@@ -78,7 +87,7 @@ export function useCheckAuthentication(): UseQueryResult<any> {
 //   const response: AxiosResponse = await API.get("/chat/FriendsRome");
 //   return response.data;
 // }
-// export function usegetFriends(): UseQueryResult<any> {
+// export function UsegetFriends(): UseQueryResult<any> {
 //   return useQuery({ queryKey: ["dataFriend"], queryFn: getFriends });
 // }
 

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useGetChat, usegetFriends } from "@/app/api/getFriends";
-import { spinner } from "@/app/[user]/profile/page";
+import { UseGetChat, UsegetFriends } from "@/app/api/getFriends";
+import Spinner from "@/components/spinner";
 import { useAuth } from "./providers/AuthContext";
 import { getTime } from "./messages";
 
@@ -23,11 +23,13 @@ export const Pepoule = () => {
     route.push(`/chat/` + id);
   };
   const [isClicked, setIsClicked] = useState(false);
-  const { data, isError, isLoading } = useGetChat();
+  const { data, isError, isLoading } = UseGetChat();
   if (isError) return <div>error</div>;
   if (isLoading)
     return (
-      <div className="h-full flex justify-center items-center">{spinner}</div>
+      <div className="h-full flex justify-center items-center">
+        <Spinner />
+      </div>
     );
   // return <></>
   return (

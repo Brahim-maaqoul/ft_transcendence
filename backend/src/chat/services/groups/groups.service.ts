@@ -76,6 +76,7 @@ export class GroupsService {
         name: true,
         type: true,
         picture: true,
+        privacy: true,
         members: {
           where: {
             NOT: {
@@ -192,7 +193,7 @@ export class GroupsService {
   }
   async changeRole(creator_id: string, add_member: memberDto) {
     const admin = await this.checkAdmin(creator_id, add_member.group);
-    console.log('test', admin)
+    console.log('test', admin);
     if (!admin || admin !== 'creator')
       throw new HttpException("you're not an admin!", 401);
     const member = await this.checkAdmin(add_member.userId, add_member.group);
@@ -347,9 +348,15 @@ export class GroupsService {
         group_id: group_id,
       },
     });
+	await this.prisma.message.deleteMany({
+		where: {
+			group_id: group_id
+		}
+	});
     await this.prisma.groups.delete({
       where: { id: group_id },
     });
+
   }
   async quitGroup(user_id: string, group_id: number) {
     const checkAdmin = await this.checkAdmin(user_id, group_id);
@@ -359,26 +366,23 @@ export class GroupsService {
         user_id: user_id,
       },
     });
-    if(checkAdmin === "creator")
-    {
+    if (checkAdmin === 'creator') {
       const newCreator = await this.prisma.members.findFirst({
-        where:{
-          group_id : group_id,
-          banned: false
-        }
-      })
-      if (!newCreator)
-        return this.deleteGroup(group_id)
-      await this.prisma.members.update({
-        where:{
-          id: newCreator.id
+        where: {
+          group_id: group_id,
+          banned: false,
         },
-        data:{
-          type: "creator",
-          muted: new Date(0)
-        }
-
-      })
+      });
+      if (!newCreator) return this.deleteGroup(group_id);
+      await this.prisma.members.update({
+        where: {
+          id: newCreator.id,
+        },
+        data: {
+          type: 'creator',
+          muted: new Date(0),
+        },
+      });
     }
   }
   async getMembership(user_id: string, group_id: number) {
@@ -393,8 +397,7 @@ export class GroupsService {
   }
 
   async changePrivacy(group: changePrivacyDto) {
-    if (group.type === "protected")
-    {
+    if (group.privacy === 'protected') {
       const salt = await bcrypt.genSalt();
       const hash = await bcrypt.hash(group.password, salt);
       return await this.prisma.groups.update({
@@ -404,7 +407,7 @@ export class GroupsService {
         data: {
           name: group.name,
           picture: group.picture,
-          privacy: group.type,
+          privacy: group.privacy,
           password: hash,
         },
       });
@@ -416,7 +419,7 @@ export class GroupsService {
       data: {
         name: group.name,
         picture: group.picture,
-        privacy: group.type,
+        privacy: group.privacy,
       },
     });
   }

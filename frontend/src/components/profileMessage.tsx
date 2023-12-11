@@ -8,11 +8,10 @@ import NextImage from "next/image";
 import Link from "next/link";
 import {
   useGetMemberShip,
-  usegetGroups,
+  UsegetGroups,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { group } from "console";
 import { Chat } from "./Groups";
-import { spinner } from "@/app/[user]/profile/page";
 import { io } from "socket.io-client";
 import { Socket } from "dgram";
 import { CreatGroup } from "./creatGroup";
@@ -55,7 +54,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
       )}
       <div className="flex">
         {group.type === "duo" ? (
-          <Link href={"/" + group.members[0].user.nickname + "/profile"}>
+          <Link href={"/profile/" + group.members[0].user.nickname}>
             <div className="w-12 h-12">
               <div
                 className="h-12 w-12 rounded-full bg-cover"

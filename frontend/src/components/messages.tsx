@@ -46,7 +46,7 @@ export const Messages: React.FC<messageProps> = ({
               </div>
             
                 <Link
-                  href={"/" + message.sender.nickname + "/profile"}
+                  href={"/profile/" + message.sender.nickname}
                   className={`my-2 ${message?.sender_id !== dataUser?.auth_id ? 'mx-2' : ''}`}>
                   <div className="w-8 h-8">
                     <div

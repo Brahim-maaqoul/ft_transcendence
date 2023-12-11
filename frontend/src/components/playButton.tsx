@@ -45,8 +45,8 @@ function DropDownValue({
       className={`z-10 bg-white w-full ${isOpen ? "block" : "hidden"} relative`}
     >
       <ul
-        className={`absolute w-full bg-slate-950/70 flex ${
-          isVertical ? "flex-col" : "flex-row"
+        className={`absolute w-full bg-slate-950/70 ${
+          isVertical ? "flex flex-col" : "grid grid-cols-3"
         } justify-center`}
       >
         {array.map((value, index) => (
@@ -232,13 +232,16 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     if (isRightOpen) setIsRightOpen(false);
   };
 
-  const [Mode, setMode] = useState("Bot");
-  const [dimension, setDimension] = useState("2D");
-  const [type, setType] = useState("haja");
-
   const modes = ["1v1", "Bot"];
   const dimensions = ["2D", "3D"];
-  const types = ["Classic", "haja", "n3mer"];
+  const map3D = ["Autumn", "Cherry", "Desert"];
+  const map2D = ["Blue", "Red", "Green"];
+  const [Mode, setMode] = useState("Bot");
+  const [dimension, setDimension] = useState("2D");
+  const [map, setMap] = useState(
+    dimension === dimensions[0] ? map2D[0] : map3D[0]
+  );
+  const maps = dimension === "2D" ? map2D : map3D;
 
   const handleModeClick = (selectedMode: string) => {
     setMode(selectedMode);
@@ -247,11 +250,12 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
 
   const handleDimensionClick = (selectedDimension: string) => {
     setDimension(selectedDimension);
+    setMap(dimension === "2D" ? map2D[0] : map3D[0]);
     setIsRightOpen(false);
   };
 
-  const handleTypeClick = (selectedType: string) => {
-    setType(selectedType);
+  const handleMapClick = (selectedmap: string) => {
+    setMap(selectedmap);
     setIsBottomOpen(false);
   };
 
@@ -390,16 +394,16 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
               >
                 <div className="flex items-center gap-2.5">
                   <DoubleSword />
-                  <p>{type}</p>
+                  <p>{map}</p>
                 </div>
                 <DropDownArrow isOpen={isBottomOpen} />
               </button>
               <DropDownValue
                 isVertical={false}
                 isOpen={isBottomOpen}
-                array={types}
+                array={maps}
                 id={"bottomDropdown"}
-                click={handleTypeClick}
+                click={handleMapClick}
               />
               <HorizontalLine />
               <ul className="flex gap-2.5 items-center w-full">

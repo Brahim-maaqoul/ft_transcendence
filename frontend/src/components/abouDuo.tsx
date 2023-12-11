@@ -1,7 +1,7 @@
 import {
-  usegetFriends,
+  UsegetFriends,
   getMemberGroup,
-  usegetGroups,
+  UsegetGroups,
   banUserFromGroup,
   useGetMembers,
   useGetMemberShip,
@@ -12,7 +12,7 @@ import { set } from "react-hook-form";
 import { UserProfile, useAuth } from "./providers/AuthContext";
 import { AnyARecord } from "dns";
 import FriendCases, { Block, Unblock } from "./friendStatus";
-import { getUser } from "@/app/api/getUserByNickname";
+import { GetUser } from "@/app/api/getUserByNickname";
 import { useFriendType } from "@/app/api/getFriendtype";
 import { blockFriend } from "@/app/api/blockFriend";
 import Image from "next/image";
@@ -45,7 +45,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
     mutation1.mutate(group.members[0].user_id);
   };
   if (FriendshipType?.type === "blocked") {
-    return <>your're blocked bitch</>;
+    return <>your&apos;re blocked bitch</>;
   }
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">

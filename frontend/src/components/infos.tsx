@@ -8,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { UserProfile, useAuth } from "./providers/AuthContext";
 import { useFriendType } from "@/app/api/getFriendtype";
 import { useGetStats } from "@/app/api/getStats";
-import { getUser } from "@/app/api/getUserByNickname";
 import Modal from "./modal";
 import FriendCases, { Block } from "./friendStatus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -50,9 +49,11 @@ function Infos({ profileData }: { profileData: UserProfile }) {
     mutationFn: createDuo,
     onSuccess: () => queryClient.invalidateQueries(["Friends"]),
   });
-  if (mutation.isSuccess) {
-    router.push("/chat/" + mutation.data.id);
-  }
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      router.push("/chat/" + mutation.data?.id);
+    }
+  }, [mutation.isSuccess, mutation.data?.id, router]);
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
       <div className="flex items-start flex-col md:flex-row  gap-8">
@@ -125,7 +126,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                 />
                                 Challenge
                               </Link>
-                              <button
+                              <div
                                 className="flex  items-center "
                                 onClick={() => {
                                   mutation.mutate(profileData.auth_id);
@@ -139,7 +140,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                   className="mr-3"
                                 />
                                 Message
-                              </button>
+                              </div>
 
                               <Block authId={profileData.auth_id} />
                             </motion.div>
