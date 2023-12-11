@@ -8,11 +8,19 @@ import { JwtGuard } from 'src/auth/Guard/jwt.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { BotService } from './services/bot.service';
 import { MatchMakingService } from './services/matchMaking.service';
-
+import { ImageService } from 'src/image/image.service';
 
 @Module({
   controllers: [GameController],
-  providers: [PrismaService,GameService, GameGateway, GameSession, AuthService,BotService, MatchMakingService],
+  providers: [
+    PrismaService,
+    GameService,
+    GameGateway,
+    GameSession,
+    AuthService,
+    BotService,
+    MatchMakingService,
+    ImageService,
+  ],
 })
-export class GameModule {
-}
+export class GameModule {}

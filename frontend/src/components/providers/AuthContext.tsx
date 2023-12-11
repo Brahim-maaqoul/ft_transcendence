@@ -8,11 +8,12 @@ import React, {
   useEffect,
 } from "react";
 import io, { Socket } from "socket.io-client";
+import login from "../../app/login/page";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  dataUser: UserProfile;
-  socketchat: Socket;
+  dataUser: UserProfile | null;
+  socketchat: Socket | null;
   login: () => void;
   logout: () => void;
   setuserdata: (data: UserProfile) => void;
@@ -21,6 +22,26 @@ interface AuthContextType {
   showTrue: () => void;
   showFalse: () => void;
 }
+
+// export class AuthClass {
+//   isAuthenticated: boolean;
+//   dataUser: UserProfile | null;
+//   socket: Socket | null;
+//   show: boolean;
+//   constructor() {
+//     this.isAuthenticated = false;
+//     this.dataUser = null;
+//     this.socket = null;
+//     this.show = false;
+//   }
+//   login() {}
+//   logout() {}
+//   setUserData(data: UserProfile) {}
+//   resetUserData() {}
+//   showTrue() {}
+//   showFalse() {}
+// }
+
 export interface UserProfile {
   user: any;
   auth_id: string;
@@ -42,16 +63,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [socketchat, setSocketchat] = useState<Socket | null>(null);
   const [show, setShow] = useState(false);
 
-//   useEffect(() => {
-//     if (!socketchat) {
-//       const newSocket = io("http://localhost5555:8000", {
-//         withCredentials: true,
-//       });
-//       setSocketchat(newSocket);
-//     //   console.log(newSocket);
-//     }
-//   }, [socketchat]);
-
   const showTrue = () => {
     setShow(true);
   };
@@ -62,11 +73,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = () => {
     setIsAuthenticated(true);
-	const token = localStorage?.getItem('token')
-	const newSocket = io("http://localhost:8000/Game2d", {
-		query:{user : token}
-	  });
-	setSocketchat(newSocket);
+    const token = localStorage?.getItem("token");
+    const newSocket = io("http://localhost:8000/Game2d", {
+      query: { user: token },
+    });
+    setSocketchat(newSocket);
   };
 
   const logout = () => {

@@ -9,6 +9,7 @@ import {
   UseGuards,
   Redirect,
   UnauthorizedException,
+  UseFilters,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -38,7 +39,7 @@ export class AuthController {
         `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
       );
     }
-    const token = this.authService.generateToken({ userId });
+    const token = this.authService.generateToken({userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
@@ -89,13 +90,15 @@ export class AuthController {
     return res.redirect('http://localhost:3000');
   }
 
-  @Post('checkauth')
+  @Get('checkAuth')
   @UseGuards(AuthGuard('jwt'))
   async checkAuthentication(@Req() request, @Res() res, @Body() body) {
-    try {
-      let user = await this.authService.findUserById(request.user.auth_id);
+    try{
+      const user = await this.authService.findUserById(request.user.auth_id);
+      if (!user) res.status(200).json({ isAuthenticated: false });
       return res.status(200).json({ isAuthenticated: true, user: user });
-    } catch (error) {
+    }
+    catch{
       return res.status(200).json({ isAuthenticated: false });
     }
   }
