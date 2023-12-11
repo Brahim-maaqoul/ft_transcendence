@@ -1,16 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { UsegetFriends } from "@/app/api/getFriends";
 import { UserProfile, useAuth } from "./providers/AuthContext";
 import Spinner from "@/components/spinner";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createDuo } from "@/app/api/chatApi/chatApiFunctions";
 
-function FriendButton() {
+function FriendButton({ element }: { element: UserProfile }) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createDuo,
+    onSuccess: () => queryClient.invalidateQueries(["Friends"]),
+  });
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      router.push("/chat/" + mutation.data?.id);
+    }
+  }, [mutation.isSuccess, mutation.data?.id, router]);
   return (
     <div className="flex justify-around">
       <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl   relative flex justify-center items-center px-5 text-xs md:text-sm xl:text-lg ">
         Play Now
       </button>
-      <button className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl relative flex justify-center items-center px-5 text-xs md.text-sm xl:text-lg">
+      <button
+        onClick={() => {
+          mutation.mutate(element?.auth_id);
+        }}
+        className="bg-black hover:bg-cyan-600 text-white p-2 ml-4 rounded-2xl relative flex justify-center items-center px-5 text-xs md.text-sm xl:text-lg">
         Message
       </button>
     </div>
@@ -37,8 +57,7 @@ export default function Friends({ auth_id }: { auth_id: string }) {
                     className="h-16 w-16 rounded-full bg-cover"
                     style={{
                       backgroundImage: `url(${element.picture})`,
-                    }}
-                  ></div>
+                    }}></div>
                 </div>
                 <span className="text-sm xl:text-2xl text-white">
                   {element?.nickname}
@@ -46,7 +65,9 @@ export default function Friends({ auth_id }: { auth_id: string }) {
               </div>
             </Link>
 
-            {dataUser?.auth_id !== element?.auth_id && <FriendButton />}
+            {dataUser?.auth_id !== element?.auth_id && (
+              <FriendButton element={element} />
+            )}
           </div>
         ))}
     </>
