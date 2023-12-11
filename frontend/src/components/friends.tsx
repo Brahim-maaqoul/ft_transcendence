@@ -30,7 +30,7 @@ export default function Friends({ auth_id }: { auth_id: string }) {
       {!isLoading &&
         data.map((element: UserProfile, index: number) => (
           <div key={index} className="flex justify-between px-4 mx-2 mt-6">
-            <Link href={"/" + element?.nickname + "/profile"}>
+            <Link href={ "/profile/" + element?.nickname}>
               <div className="flex gap-x-4 items-center">
                 <div className="w-16 h-16 flex items-center">
                   <div

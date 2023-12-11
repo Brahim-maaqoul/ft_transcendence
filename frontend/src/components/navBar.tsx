@@ -64,7 +64,7 @@ export default function NavBar() {
             <div className=" m-2 flex  justify-between flex-row md:flex-col">
               <div>
                 <Link
-                  href={"/" + dataUser?.nickname + "/profile"}
+                  href={"/profile/" + dataUser?.nickname}
                   className="my-2">
                   <div className="w-12 h-12">
                     <div

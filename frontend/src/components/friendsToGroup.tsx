@@ -102,7 +102,7 @@ export function FriendsToGroup({ idGroup }: { idGroup: string }) {
                 className={`grid grid-cols-6 p-2 w-fullborder-gray-300 hover:bg-black hover:bg-opacity-5 items-center `}
               >
                 <div className=" flex  col-span-1 ">
-                  <Link href={`/${user?.nickname}/profile`}>
+                  <Link href={`/profile/${user?.nickname}`}>
                     <div className="w-12 h-12">
                       <div
                         className="h-full w-full rounded-full bg-cover"

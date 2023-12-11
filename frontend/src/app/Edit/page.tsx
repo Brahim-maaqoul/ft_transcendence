@@ -45,7 +45,7 @@ export default function Edit() {
 
   useEffect(() => {
     if (isSuccess) {
-      redirect("/" + mutation.data?.nickname + "/profile");
+      redirect("/profile/" + mutation.data?.nickname);
     }
     if (uploadMutation.isSuccess) setAvatar(uploadMutation.data?.path);
   }, [isSuccess, uploadMutation.isSuccess, uploadMutation.data?.path, mutation.data?.nickname]);
