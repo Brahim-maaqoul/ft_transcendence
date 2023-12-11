@@ -100,7 +100,7 @@ export function UseGetMessages(data: string) {
 }
 
 export async function deleteGroup(data: number) {
-  const response: AxiosResponse = await API.post("/chat/removeRoom", {
+  const response: AxiosResponse = await API.post("/groups/delete", {
     group: data,
   });
   return response.data;
