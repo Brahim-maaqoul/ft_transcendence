@@ -80,10 +80,8 @@ export class GameGateway
 					this.matchMaking.matchPlayers[client.id].Game.update();
 					if (this.matchMaking.matchPlayers[client.id].Game.status === 'finished'){
 						// socket off
-						// await client.disconnect();
-						// await this.handleDisconnect(client);
-							await this.gameend.rankDuoUpdate(this.matchMaking.matchPlayers[client.id].Game);
-							await this.matchMaking.deleteGame(client.id);
+						await this.handleDisconnect(client);
+						await client.disconnect();
 						return ;
 					}
 					this.matchMaking.matchPlayers[client.id].Game.check_keys(keys.keys, this.matchMaking.matchPlayers[client.id].player);
