@@ -14,10 +14,6 @@ import axios from "axios";
 import Image from "next/image";
 import { upload } from "../api/chatApi/chatApiFunctions";
 
-const API = axios.create({
-  baseURL: "http://localhost:8000/v1/api/",
-  withCredentials: true,
-});
 
 export default function Edit() {
   const { dataUser } = useAuth();
@@ -49,7 +45,7 @@ export default function Edit() {
 
   useEffect(() => {
     if (isSuccess) {
-      redirect("/" + mutation.data?.nickname + "/profile");
+      redirect("/profile/" + mutation.data?.nickname);
     }
     if (uploadMutation.isSuccess) setAvatar(uploadMutation.data?.path);
   }, [isSuccess, uploadMutation.isSuccess, uploadMutation.data?.path, mutation.data?.nickname]);

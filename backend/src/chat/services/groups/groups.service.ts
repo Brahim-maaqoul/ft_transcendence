@@ -348,9 +348,15 @@ export class GroupsService {
         group_id: group_id,
       },
     });
+	await this.prisma.message.deleteMany({
+		where: {
+			group_id: group_id
+		}
+	});
     await this.prisma.groups.delete({
       where: { id: group_id },
     });
+
   }
   async quitGroup(user_id: string, group_id: number) {
     const checkAdmin = await this.checkAdmin(user_id, group_id);

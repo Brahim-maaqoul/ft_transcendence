@@ -12,7 +12,17 @@ export class MatchMakingService {
 	matchPlayers: Record<string, { Game: Game, player: number }> = {};
 
 	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
-		if (this.queuePlayers.contains(clientId) && this.queuePlayers.size() > 1) {
+		if (!this.queuePlayers.contains(clientId)) {
+			console.log('join queue');
+			this.queuePlayers.enqueue(clientId);
+			console.log(this.queuePlayers.size());
+			this.playersInfo[clientId] = data.playerId1;
+		}
+	}
+
+	async createDuoGame(data: { playerId1: string, boot: boolean }) {
+		if (this.queuePlayers.size() > 1) {
+				console.log('create duo game');
 			const socket1 = this.queuePlayers.dequeue();
 			const socket2 = this.queuePlayers.dequeue();
 			const playerId1 = this.playersInfo[socket1];
@@ -34,12 +44,9 @@ export class MatchMakingService {
 			newGame.socket1 = socket1;
 			newGame.socket2 = socket2;
 			newGame.time = new Date();
+			console.log('game created', game);
 			this.matchPlayers[socket1] = {Game:newGame, player: 0};
 			this.matchPlayers[socket2] = {Game:newGame, player: 1};
-		}
-		else {
-			this.queuePlayers.enqueue(clientId);
-			this.playersInfo[clientId] = data.playerId1;
 		}
 	}
 

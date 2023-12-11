@@ -27,10 +27,12 @@ model Users {
   NoticationRecipient Notification[] @relation("Recipient")
   NoticationSource    Notification[] @relation("Source")
   stats               Stats?
+  achievement		  Achievement[]
   GameHost			  Game[]			@relation("User1ToGame")
   GamePlayer		  Game[]			@relation("User2ToGame")
-  BotGame		  BotGame[]			@relation("User1ToBotGame")
+  BotGame			  BotGame[]		
 }
+
 model Game {
 	gameId		Int			@id @default(autoincrement())
 	score1		Int			@default(0)
@@ -49,7 +51,7 @@ model BotGame {
 	score1		Int			@default(0)
 	score2		Int			@default(0)
 	status		String		@default("notStarted")
-	user1		Users		@relation("User1ToBotGame", fields: [user1_id], references: [auth_id])
+	user1		Users		@relation(fields: [user1_id], references: [auth_id])
 	user1_id	String
 	winner		String		@default("noWinner")
 	time		DateTime	@default(now())
@@ -100,7 +102,7 @@ model Groups {
   type         String         @default("duo")
   privacy      String         @default("private")
   password     String?
-  picture      String?        @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  picture      String         @default("")
   lastChange   DateTime       @default(now())
   members      Members[]
   messages     Message[]
@@ -129,11 +131,13 @@ model Message {
 
 model Achievement {
   achievement_id Int    @id @default(autoincrement())
-  name           String
-  description    String
-  goal_conceded  Int
-  goal_scoared   Int
-  clean_sheets   Int
+  user_id		 String
+  user		 	 Users  @relation(fields: [user_id], references: [auth_id])
+  name           String	@default("")
+  description    String	@default("")
+  level			 Int	@default(0)
+  goal_scoared   Int	@default(0)
+  clean_sheets   Int	@default(0)
 }
 
 model Notification {

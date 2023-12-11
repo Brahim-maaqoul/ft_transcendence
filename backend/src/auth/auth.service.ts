@@ -6,12 +6,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { authenticator, totp } from 'otplib';
 import axios from 'axios';
 import * as fs from 'fs';
+import { ImageService } from 'src/image/image.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    private image: ImageService,
   ) {}
 
   private get secretKey(): string {
@@ -41,8 +43,7 @@ export class AuthService {
 
   async createRandomName() {
     const name = (Math.random() + 1).toString(36).substring(7);
-    // if (await this.isNicknameUnique(name))
-    //     return this.createRandomName();
+    if (await this.isNicknameUnique(name)) return await this.createRandomName();
     return name;
   }
 
@@ -71,17 +72,13 @@ export class AuthService {
   async saveImage(username: string, imageUrl: string): Promise<string> {
     try {
       const response = await axios.get(imageUrl, {
-        responseType: 'arraybuffer',
+        responseType: 'arraybuffer'
       });
-
-      const fileName = `${username}_${this.getFormattedCurrentDate()}.jpg`;
-      const filePath = `upload/${fileName}`;
-
-      fs.writeFileSync(filePath, response.data);
-
-      return `http://localhost:8000/${filePath}`;
+      console.log(response.data.mimetype)
+      return this.image.uploadFromAuth(response.data);
+      return imageUrl
     } catch (error) {
-      return '';
+      return imageUrl;
     }
   }
 
@@ -115,9 +112,6 @@ export class AuthService {
 
   async findUserById(auth_id: string) {
     const user = await this.prisma.users.findUnique({ where: { auth_id } });
-    if (!user) {
-      return null;
-    }
     return user;
   }
 
@@ -165,7 +159,7 @@ export class AuthService {
         to: email,
         subject: '2FA of ft_transcendence.',
         text: `Here is your 6-digit code: ${code}
-  It expires in 2 minutes, Hurry up!`,
+          It expires in 2 minutes, Hurry up!`,
       };
       await transporter.sendMail(mailOptions);
     } catch (error) {

@@ -24,9 +24,9 @@ export default function Game2d() {
 				<NavBar></NavBar>
 				{/* <Body game={game}/> */}
 				{/* <HJ/> */}
-				<div className="bg-[#000] bg-opacity-0 relative max-w-[90%] max-h-[90%] w-[80vw] h-[65vh] mx-auto mb-4 mt-6">
-					{/* {dataUser && <Body3D dataUser={dataUser} />} */}
-					{dataUser && <Body dataUser={dataUser} />}
+				<div className="flex justify-center items-center bg-[#000] bg-opacity-0 relative max-w-[90%] max-h-[90%] w-[80vw] h-[65vh] mx-auto mb-4 mt-6">
+					{dataUser && <Body3D dataUser={dataUser} />}
+					{/* {dataUser && <Body dataUser={dataUser} />} */}
 				</div>
 			</div>
 		</div>

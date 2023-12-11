@@ -72,7 +72,6 @@ export function Body({ dataUser }: { dataUser: UserProfile }) {
         keys.rotate_neg = true;
       }
     };
-
     const handelKeyUp = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
         keys.left = false;
@@ -115,10 +114,10 @@ export function Body({ dataUser }: { dataUser: UserProfile }) {
     // <div className="absolute max-w-[90vmin] max-h-[90vmin]  top-0 left-0  bottom-0  right-0 m-auto  bg-[#0ff] bg-opacity-5">
     //  	<div className='h-full relative flex flex-col justify-between xl:justify-center  items-center'>
     //  		<div className="flex items-center  justify-between py-5  mx-auto w-[95vw] xl:max-w-[1000px]">
-    <div className="bg-[#000]  top-10 left-0  bottom-10  right-0 m-auto rotate-0 relative w-[90%] xl:w-[90%] aspect-[10/6] m-auto">
+    <div className="bg-[#000]   top-10 left-0  bottom-10  right-0 m-auto rotate-90 md:rotate-0 relative w-full md:w-[90%] aspect-[10/6] m-auto">
       <div>
         <div className=" absolute left-[49.75%] right-[49.75%] w-[.5%] sm:w-[.5%] bottom-0 top-0 bg-white"></div>
-        <div className="absolute left-1/2 top-[40%] rotate-[270deg] xl:rotate-0 transform -translate-x-1/2 w-1/11 h-1/7 bg-black rounded-full flex items-center justify-center">
+        <div className="absolute left-1/2 top-[40%] rotate-[270deg]   transform  -translate-x-1/2 w-1/11 h-1/7 bg-black rounded-full flex items-center justify-center">
           <p className="text-4xl sm:text-8xl md:text-10xl lg:text-12xl xl:text-14xl text-white">
             {gameData.sec < 0 ? "" : 3 - gameData.sec}
           </p>
