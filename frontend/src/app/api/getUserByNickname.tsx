@@ -13,7 +13,7 @@ async function getUserbyNickName(nickname: string) {
   }
 }
 
-export function getUser(nickname: string) {
+export function GetUser(nickname: string) {
   return useQuery({
     queryKey: ["profileData", nickname],
     queryFn: () => getUserbyNickName(nickname),

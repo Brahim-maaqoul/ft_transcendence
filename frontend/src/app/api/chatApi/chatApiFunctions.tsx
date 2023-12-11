@@ -14,7 +14,7 @@ interface GroupUpdate {
   group_id: number;
   name: string;
   password: string;
-  type: string;
+  privacy: string;
   picture: string;
 }
 interface Message {
@@ -60,7 +60,7 @@ async function getGroups() {
   const response: AxiosResponse = await API.get("/groups/getGroups");
   return response.data;
 }
-export function usegetGroups(): UseQueryResult<any> {
+export function UsegetGroups(): UseQueryResult<any> {
   return useQuery({ queryKey: ["dataGroups"], queryFn: getGroups });
 }
 
@@ -68,7 +68,7 @@ async function getFriends() {
   const response: AxiosResponse = await API.get("/chat/FriendsRoom");
   return response.data;
 }
-export function usegetFriends(): UseQueryResult<any> {
+export function UsegetFriends(): UseQueryResult<any> {
   return useQuery({ queryKey: ["dataFriend"], queryFn: getFriends });
 }
 
@@ -92,7 +92,7 @@ async function getMessages(data: string) {
   return response.data;
 }
 
-export function useGetMessages(data: string) {
+export function UseGetMessages(data: string) {
   return useQuery({
     queryKey: ["getMessages"],
     queryFn: () => getMessages(data),

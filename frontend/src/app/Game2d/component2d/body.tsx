@@ -52,8 +52,6 @@ function resize(Game: GameConfig): GameConfig {
 export function Body({ dataUser }: { dataUser: UserProfile }) {
   const { socketchat } = useAuth();
   const socket = socketchat;
-  if (!socket) return <></>;
-
   const [gameData, setGameData] = useState(resize(gameState.get_data()));
   useEffect(() => {
     const handelKeyDown = (event: KeyboardEvent) => {
@@ -109,8 +107,9 @@ export function Body({ dataUser }: { dataUser: UserProfile }) {
       clearInterval(interval);
       socket.off("gameUpdate");
     };
-  }, []);
+  }, [gameData, socket]);
 
+  if (!socket) return <></>;
   return (
     // <div className="absolute max-w-[90vmin] max-h-[90vmin]  top-0 left-0  bottom-0  right-0 m-auto  bg-[#0ff] bg-opacity-5">
     //  	<div className='h-full relative flex flex-col justify-between xl:justify-center  items-center'>

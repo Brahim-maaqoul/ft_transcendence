@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { useAuth } from "@/components/providers/AuthContext";
 import { useRouter } from "next/navigation";
 
-import { usegetGroups } from "@/app/api/chatApi/chatApiFunctions";
+import { UsegetGroups } from "@/app/api/chatApi/chatApiFunctions";
 import { CreatGroup } from "./creatGroup";
 import { JoinGroup } from "./joinGroup";
-import { spinner } from "@/app/[user]/profile/page";
+import Spinner from "@/components/spinner";
 import { getTime } from "./messages";
 interface Message {
   timestamp: string;
@@ -23,14 +23,14 @@ export interface Chat {
   picture: string;
   password: string;
   lastChange: string;
-  Privacy: string;
+  privacy: string;
   members: member[];
   messages: any[];
 }
 
 export const Groups = () => {
   const { showTrue } = useAuth();
-  const { data: dataGroups, isError, isLoading } = usegetGroups();
+  const { data: dataGroups, isError, isLoading } = UsegetGroups();
 
   const [newGroup, setNewGroup] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
@@ -58,7 +58,9 @@ export const Groups = () => {
   if (isError) return <div>error</div>;
   if (isLoading)
     return (
-      <div className="h-full flex justify-center items-center">{spinner}</div>
+      <div className="h-full flex justify-center items-center">
+        <Spinner />
+      </div>
     );
 
   return (
@@ -126,13 +128,12 @@ export const Groups = () => {
               style={{ cursor: "pointer" }}
             >
               <div className="flex col-span-1">
-                <img
-                  src={user.picture}
-                  alt="Profile picture"
-                  width={52}
-                  height={52}
-                  className="rounded-full"
-                />
+                <div className="w-12 h-12">
+                  <div
+                    className="h-full w-full rounded-full bg-cover"
+                    style={{ backgroundImage: `url(${user.picture})` }}
+                  ></div>
+                </div>
               </div>
               <div
                 id="info"

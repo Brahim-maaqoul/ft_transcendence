@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
-import { usegetFriends } from "@/app/api/getFriends";
+import { UsegetFriends } from "@/app/api/getFriends";
 import { UserProfile, useAuth } from "./providers/AuthContext";
-import { spinner } from "@/app/[user]/profile/page";
+import Spinner from "@/components/spinner";
 
 function FriendButton() {
   return (
@@ -18,10 +18,10 @@ function FriendButton() {
 }
 
 export default function Friends({ auth_id }: { auth_id: string }) {
-  const { data, isLoading, isError } = usegetFriends(auth_id);
+  const { data, isLoading, isError } = UsegetFriends(auth_id);
   const { dataUser } = useAuth();
 
-  if (isLoading) return <>{spinner}</>;
+  if (isLoading) return <Spinner />;
 
   if (isError || !data) return <>You have no friends like Davies</>;
 
@@ -30,14 +30,15 @@ export default function Friends({ auth_id }: { auth_id: string }) {
       {!isLoading &&
         data.map((element: UserProfile, index: number) => (
           <div key={index} className="flex justify-between px-4 mx-2 mt-6">
-            <Link href={"/" + element?.nickname + "/profile"}>
+            <Link href={ "/profile/" + element?.nickname}>
               <div className="flex gap-x-4 items-center">
                 <div className="w-16 h-16 flex items-center">
                   <div
                     className="h-16 w-16 rounded-full bg-cover"
                     style={{
                       backgroundImage: `url(${element.picture})`,
-                    }}></div>
+                    }}
+                  ></div>
                 </div>
                 <span className="text-sm xl:text-2xl text-white">
                   {element?.nickname}

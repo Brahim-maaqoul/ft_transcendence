@@ -9,7 +9,7 @@ import {
   makeUserAdmin,
 } from "@/app/api/chatApi/chatApiFunctions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { spinner } from "@/app/[user]/profile/page";
+import Spinner from "@/components/spinner";
 import Link from "next/link";
 import { io } from "socket.io-client";
 interface moreProps {
@@ -281,7 +281,11 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id }) => {
   const { data: getMembers, isLoading, isError } = useGetMembers(id);
   const { data: getMembership } = useGetMemberShip(id);
   if (isLoading)
-    return <div className="flex justify-content items-center">{spinner}</div>;
+    return (
+      <div className="flex justify-content items-center">
+        <Spinner />
+      </div>
+    );
   return (
     <div className=" w-full absolute overflow-auto no-scrollbar bottom-11 top-20 ">
       <span className="text-white text-lg m-3">Members</span>
@@ -294,14 +298,16 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id }) => {
                 className={`grid grid-cols-6 p-2 w-full  border-gray-300 hover:bg-black hover:bg-opacity-5   items-center `}
               >
                 <div className=" flex  col-span-1 ">
-                  <Link href={`/${user.user?.nickname}/profile`}>
-                    <img
-                      src={user.user?.picture!}
-                      alt="Profile picture"
-                      width={52}
-                      height={52}
-                      className="rounded-full"
-                    />
+                  <Link href={`/profile/${user.user?.nickname}`}>
+                    {/* src={user.user?.picture!} */}
+                    <div className="w-12 h-12">
+                      <div
+                        className="h-full w-full rounded-full bg-cover"
+                        style={{
+                          backgroundImage: `url(${user.user?.picture!})`,
+                        }}
+                      ></div>
+                    </div>
                   </Link>
                 </div>
                 <div

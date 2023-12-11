@@ -21,7 +21,18 @@ export class ImageService {
     const image = await this.prisma.image.create({
         data:{
             data: Buffer.from(file.buffer),
-            type: file.mimetype
+            type: file?.mimetype ? file?.mimetype : "image/*"
+        }
+    })
+    console.log(image)
+    return "http://localhost:8000/v1/api/image/get/" + image.id;
+  }
+  async uploadFromAuth(file: ArrayBuffer)
+  {
+    const image = await this.prisma.image.create({
+        data:{
+            data: Buffer.from(file),
+            type: "image/*"
         }
     })
     console.log(image)

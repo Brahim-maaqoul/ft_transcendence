@@ -24,4 +24,11 @@ export class Queue<T> {
 	contains(item: T): boolean {
 		return this.items.includes(item);
 	}
+
+	erase(item: T): void {
+		const index = this.items.indexOf(item);
+		if (index > -1) {
+			this.items.splice(index, 1);
+		}
+	}
 }
