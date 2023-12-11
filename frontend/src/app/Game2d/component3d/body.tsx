@@ -110,8 +110,7 @@ export function Body3D({ dataUser }: { dataUser: UserProfile }) {
           position: [gameData.player === 0 ? -1200 : 1200, 200, 0],
         }}
         flat
-        linear
-      >
+        linear>
         <Suspense fallback={<Loader />}>
           <ambientLight intensity={1} />
           <Environment files="/game/cyberpunk.hdr" background={true} />
@@ -138,8 +137,7 @@ export function Body3D({ dataUser }: { dataUser: UserProfile }) {
               scale={[100, 100, 100]}
               color="black"
               anchorX="center"
-              anchorY="middle"
-            >
+              anchorY="middle">
               {gameData.sec >= 0
                 ? 3 - gameData.sec
                 : gameData.score.p1 + " - " + gameData.score.p2}
@@ -158,9 +156,9 @@ function Loader() {
   const { progress } = useProgress();
   return (
     <Html center>
-      <div class="relative">
-        <div class="w-20 h-20 border-purple-200 border-2 rounded-full"></div>
-        <div class="w-20 h-20 border-purple-700 border-t-2 animate-spin rounded-full absolute left-0 top-0"></div>
+      <div className="relative">
+        <div className="w-20 h-20 border-purple-200 border-2 rounded-full"></div>
+        <div className="w-20 h-20 border-purple-700 border-t-2 animate-spin rounded-full absolute left-0 top-0"></div>
       </div>
     </Html>
   );
@@ -223,8 +221,7 @@ function Paddle({ paddle }: { paddle: PSize }) {
         <RoundedBox
           args={[paddle.width, paddle.width, paddle.height]}
           radius={paddle.width / 2}
-          rotation-y={-paddle.rotation}
-        >
+          rotation-y={-paddle.rotation}>
           {/* <meshPhysicalMaterial map={texture} bumpMap={bump} /> */}
           <meshBasicMaterial color={[1, 10, 8]} toneMapped={false} />
         </RoundedBox>
