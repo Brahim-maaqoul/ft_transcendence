@@ -1,45 +1,29 @@
-import { NextResponse } from 'next/server';
-import { NextRequest } from 'next/server';
-import axios, { AxiosResponse } from 'axios';
+import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import axios, { AxiosResponse } from "axios";
+import next from "next";
 
-const API = axios.create({
-  baseURL: 'http://localhost:8000',
-  withCredentials: true,
-});
-export async function middleware(request: NextRequest) {
-  // try {
-    const jwtCookie = request.cookies.get('token')?.value;
-    const isAuthorized = await checkAuthorization(jwtCookie);
-  //   if (!isAuthorized) {
-  //     return NextResponse.redirect(new URL('/login', request.url).toString());
-  //   }
-  // } catch (error) {
-  //   return NextResponse.redirect(new URL('/login', request.url).toString());
-  // }
 
+export async function middleware(request: NextRequest, res: NextResponse) {
+  const jwtCookie = request.cookies.get("token")?.value;
+  if (!jwtCookie)
+  {
+    if (request.nextUrl.pathname === "/login")
+      return NextResponse.next();
+    return NextResponse.redirect(new URL("/login", request.url).toString());
+  }
+  console.log("h111erere")
+  if (request.nextUrl.pathname === "/login")
+  {
+    console.log("herere")
+    const response = NextResponse.redirect(new URL("/login", request.url).toString())
+    response.cookies.delete('token')
+    return response
+
+  }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/chat/:path*','/:user/Edit','/:user/profile'],
+  matcher: ["/((?!_next).*)"],
 };
-
-async function checkAuthorization(jwtCookie: string | undefined): Promise<boolean> {
-  try {
-    const apiUrl = 'http://localhost:8000/v1/api/auth/checkauth';
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: jwtCookie ? `Bearer ${jwtCookie}` : '',
-      },
-    });
-    if (response.ok) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    return false;
-  }
-}

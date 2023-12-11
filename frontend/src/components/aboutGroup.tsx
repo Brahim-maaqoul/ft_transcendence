@@ -298,7 +298,7 @@ export const AboutGroup: React.FC<ConversationProps> = ({ id }) => {
                 className={`grid grid-cols-6 p-2 w-full  border-gray-300 hover:bg-black hover:bg-opacity-5   items-center `}
               >
                 <div className=" flex  col-span-1 ">
-                  <Link href={`/${user.user?.nickname}/profile`}>
+                  <Link href={`/profile/${user.user?.nickname}`}>
                     {/* src={user.user?.picture!} */}
                     <div className="w-12 h-12">
                       <div

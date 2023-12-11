@@ -130,6 +130,9 @@ export class Game
 	}
 	update()
 	{
+		if (this.status == 'finished'){
+			return ;
+		}
 		if(!this.start[0] && !this.start[1])
 		{
 			this.time = new Date()
@@ -164,9 +167,9 @@ export class Game
 			else
 				this.ball[0].update()
 		}
-		if ((this.score.p1 > 10 || this.score.p2 > 10) && (Math.abs(this.score.p1 - this.score.p2)) > 2){
+		if ((this.score.p1 >= 10 || this.score.p2 >= 10) && (Math.abs(this.score.p1 - this.score.p2)) > 2){
 			this.status = 'finished';
-			this.winner = (this.score.p1 > this.score.p2) ? this.socket1 : this.socket2;
+			this.winner = (this.score.p1 > this.score.p2) ? this.playerId1 : this.playerId2;
 		}
 	}
 
