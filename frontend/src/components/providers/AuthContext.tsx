@@ -13,7 +13,7 @@ import login from "../../app/login/page";
 interface AuthContextType {
   isAuthenticated: boolean;
   dataUser: UserProfile | null;
-  socketchat: Socket | null;
+  socket: Socket | null;
   login: (data: UserProfile) => void;
   logout: () => void;
   setuserdata: (data: UserProfile) => void;
@@ -60,7 +60,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataUser, setDataUser] = useState<UserProfile | null>(null);
-  const [socketchat, setSocketchat] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [show, setShow] = useState(false);
 
   const showTrue = () => {
@@ -77,7 +77,7 @@ const login = (data: UserProfile) => {
 	const newSocket = io("http://localhost:8000/Game2d", {
 		query: { user: data?.auth_id },
 	});
-	setSocketchat(newSocket);
+	setSocket(newSocket);
 };
 
 const logout = () => {
@@ -93,7 +93,7 @@ const logout = () => {
   const contextValue: AuthContextType = {
     isAuthenticated,
     dataUser,
-    socketchat,
+    socket,
     login,
     logout,
     setuserdata,

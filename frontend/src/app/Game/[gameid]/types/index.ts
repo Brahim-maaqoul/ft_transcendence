@@ -2,13 +2,21 @@
 import {Ball, Brick, PSize, Paddle} from "./component"
 
 export interface GameConfig {
+	player: number
 	bricks: Array<PSize>
 	ball: Array<PSize>
 	paddle1: PSize
 	paddle2: PSize
 	score: {p1: number, p2: number}
 	sec: number
+	
 }
+// interface key {
+// 	left: boolean
+// 	right: boolean
+// 	turn_left: boolean
+// 	turn_right: boolean
+// }
 
 export class Game 
 {
@@ -37,6 +45,7 @@ export class Game
 	{
 		const b = new Array(this.bricks)
 		const data: GameConfig = {
+			player: -1,
 			ball: this.ball.map(value => value.get_data(this.world.h, this.world.w, 0xffffff)),
 			paddle1: this.paddle[0].get_data(this.world.h, this.world.w, 0xffffff),
 			paddle2: this.paddle[1].get_data(this.world.h, this.world.w, 0xffffff),
