@@ -50,8 +50,7 @@ function resize(Game: GameConfig): GameConfig {
 }
 
 export function Body({ dataUser }: { dataUser: UserProfile }) {
-  const { socketchat } = useAuth();
-  const socket = socketchat;
+  const { socket } = useAuth();
   const [gameData, setGameData] = useState(resize(gameState.get_data()));
   useEffect(() => {
     const handelKeyDown = (event: KeyboardEvent) => {
@@ -87,15 +86,15 @@ export function Body({ dataUser }: { dataUser: UserProfile }) {
       }
     };
     const interval = setInterval(() => {
-      socket.emit("keyGameUpdate", { keys: keys });
+      socket?.emit("keyGameUpdate", { keys: keys });
     }, 5); //5
 
-    socket.on("gameUpdate", (data) => {
+    socket?.on("gameUpdate", (data) => {
       setGameData(resize(data));
       gameData.player = data.player;
       if (data.status === "finished") {
         clearInterval(interval);
-        socket.off("gameUpdate");
+        socket?.off("gameUpdate");
       }
     });
 
@@ -105,7 +104,7 @@ export function Body({ dataUser }: { dataUser: UserProfile }) {
       document.removeEventListener("keydown", handelKeyDown);
       document.removeEventListener("keyup", handelKeyUp);
       clearInterval(interval);
-      socket.off("gameUpdate");
+      socket?.off("gameUpdate");
     };
   }, [gameData, socket]);
 

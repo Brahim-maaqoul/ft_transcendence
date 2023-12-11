@@ -3,24 +3,32 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { Queue } from "../classes/queue.class";
 import { Game } from "../classes/game.class";
 
+interface Data{
+	mode: string
+	dimension: string
+	map: string
+}
+
 @Injectable()
 export class MatchMakingService {
 	constructor(private prisma: PrismaService) { }
 
 	playersInfo: Record<string, string> = {};
-	queuePlayers = new Queue<string>();
+	gameData: Data;
+	queuePlayers = new Queue<string, Data>();
 	matchPlayers: Record<string, { Game: Game, player: number }> = {};
 
-	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
-		if (!this.queuePlayers.contains(clientId)) {
-			console.log('join queue');
-			this.queuePlayers.enqueue(clientId);
-			console.log(this.queuePlayers.size());
-			this.playersInfo[clientId] = data.playerId1;
+	public async joinQueue(playerId1: string, data: Data) {
+		if (this.queuePlayers.contains(playerId1)) {
+			this.queuePlayers.erase(playerId1);
 		}
+		console.log('join queue');
+		this.queuePlayers.enqueue(playerId1);
+		console.log(this.queuePlayers.size());
+		this.playersInfo[playerId1] = playerId1;
 	}
 
-	async createDuoGame(data: { playerId1: string, boot: boolean }) {
+	async createDuoGame(data: { playerId1: string, boot: boolean }):Promise<boolean> {
 		if (this.queuePlayers.size() > 1) {
 				console.log('create duo game');
 			const socket1 = this.queuePlayers.dequeue();
@@ -48,6 +56,7 @@ export class MatchMakingService {
 			this.matchPlayers[socket1] = {Game:newGame, player: 0};
 			this.matchPlayers[socket2] = {Game:newGame, player: 1};
 		}
+		return true;
 	}
 
 	async deleteGame(clientId: string) {

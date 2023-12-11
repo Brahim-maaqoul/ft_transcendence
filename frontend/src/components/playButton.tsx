@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import styles from "../app/styles.module.css";
+import { useAuth } from "./providers/AuthContext";
 
 interface PlayButtonProps {
   isAuthenticated: boolean;
@@ -155,7 +156,7 @@ const HorizontalLine = () => {
 function PlayButton({ isAuthenticated }: PlayButtonProps) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-
+  const {socket} = useAuth()
   const handleLinkClick = (e: any) => {
     e.preventDefault();
     isAuthenticated ? setShowModal(true) : router.push("/login");
@@ -314,7 +315,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
         onClick={handleLinkClick}
         className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}
       >
-        <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute">
+        <div className=" z-10 text-black md:text-lg lg:text-2xl font-mono absolute">
           {isAuthenticated ? "Play Now " : "Sign In"}
         </div>
       </a>
@@ -420,7 +421,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
             <div className="w-full h-full flex flex-col-reverse">
               <button
                 id="searchButton"
-                onClick={findMatch}
+                onClick={isSearching ? findMatch :  findMatch}
                 className={`w-full h-1/3 rounded ${
                   isSearching ? " bg-red-600" : "bg-green-600"
                 } text-white`}

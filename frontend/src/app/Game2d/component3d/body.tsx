@@ -39,8 +39,7 @@ const keys: key = {
 };
 
 export function Body3D({ dataUser }: { dataUser: UserProfile }) {
-  const { socketchat } = useAuth();
-  const socket = socketchat;
+  const { socket } = useAuth();
 
   const [gameData, setGameData] = useState(gameState.get_data());
   useEffect(() => {
