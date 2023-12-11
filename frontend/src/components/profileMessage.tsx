@@ -54,7 +54,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
       )}
       <div className="flex">
         {group.type === "duo" ? (
-          <Link href={"/" + group.members[0].user.nickname + "/profile"}>
+          <Link href={"/profile/" + group.members[0].user.nickname}>
             <div className="w-12 h-12">
               <div
                 className="h-12 w-12 rounded-full bg-cover"

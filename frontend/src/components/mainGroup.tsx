@@ -81,7 +81,7 @@ export default function MainGroup() {
                   (user: UserProfile, index: number) =>
                     searchText && (
                       <Link
-                        href={"/" + user?.nickname + "/profile"}
+                        href={"/profile/" + user?.nickname }
                         key={index}
                         className="  w-full h-full"
                       >

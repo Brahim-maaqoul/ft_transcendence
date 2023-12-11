@@ -26,16 +26,13 @@ export function CheckAuth()
   const router = useRouter();
   const { data, isLoading, isError, error} = useCheckAuthentication();
   useEffect(() => {
-    console.log(data?.isAuthenticated, isLoading , isError, error);
     if (!isLoading || isError) {
-      console.log("isAuthenticated");
       if (data?.isAuthenticated) {
         login();
         setuserdata(data.user);
       } else {
         logout();
         setuserdatanull();
-        console.log("here")
         router.push("/login");
       }
     }
