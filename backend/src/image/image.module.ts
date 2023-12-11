@@ -6,5 +6,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Module({
     controllers: [ImageController],
     providers: [ImageService, PrismaService],
+    exports: [ImageService]
 })
 export class ImageModule {};

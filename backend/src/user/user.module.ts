@@ -9,6 +9,7 @@ import { BlockController } from './controllers/block/block.controller';
 import { DuoService } from 'src/chat/services/chats/chats.service';
 import { AuthService } from 'src/auth/auth.service';
 import { NotificationService } from 'src/notification/service/notification.service';
+import { ImageService } from 'src/image/image.service';
 
 @Module({
   controllers: [UserController, FriendController, BlockController],
@@ -20,6 +21,7 @@ import { NotificationService } from 'src/notification/service/notification.servi
     DuoService,
     AuthService,
     NotificationService,
+    ImageService
   ],
 })
 export class UserModule {}

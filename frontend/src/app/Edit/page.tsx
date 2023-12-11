@@ -14,10 +14,6 @@ import axios from "axios";
 import Image from "next/image";
 import { upload } from "../api/chatApi/chatApiFunctions";
 
-const API = axios.create({
-  baseURL: "http://localhost:8000/v1/api/",
-  withCredentials: true,
-});
 
 export default function Edit() {
   const { dataUser } = useAuth();

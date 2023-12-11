@@ -95,7 +95,7 @@ export default function NavBar() {
 
               <div className="my-2">
                 <Link
-                  href={"/" + dataUser?.displayname + "/rank"}
+                  href={"/Rank"}
                   className="hover:bg-slate-400 w-12 h-12 rounded-full flex justify-center items-center">
                   <Image
                     src="/friends.svg"

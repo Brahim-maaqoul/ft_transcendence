@@ -7,6 +7,7 @@ import { AuthProvider } from "@/components/providers/AuthContext";
 
 import { Auth } from "../components/Auth";
 
+
 const inter = Inter({ subsets: ["latin"] });
 const backgroundStyle = {
   backgroundSize: "cover",
@@ -24,6 +25,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const { pathname } = route;
   return (
     <html lang="en">
       <head>
@@ -37,7 +39,7 @@ export default function RootLayout({
         <AuthProvider>
           <TanstackProvider>
             <main className=" relative flex flex-col justify-center items-center h-[calc(100vh-80px)] md:h-[100%] ">
-              <Auth></Auth>
+              <Auth ></Auth>
               {children}
             </main>
           </TanstackProvider>

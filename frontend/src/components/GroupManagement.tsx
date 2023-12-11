@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 interface groupManagementProps {
-  userId: string;
+  userId: string| undefined;
   group: any;
   idG: string;
   more: boolean;
