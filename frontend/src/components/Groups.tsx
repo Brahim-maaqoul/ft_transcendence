@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/components/providers/AuthContext";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 import { UsegetGroups } from "@/app/api/chatApi/chatApiFunctions";
 import { CreatGroup } from "./creatGroup";
 import { JoinGroup } from "./joinGroup";
 import Spinner from "@/components/spinner";
 import { getTime } from "./messages";
+import { useQueryClient } from "@tanstack/react-query";
 interface Message {
   timestamp: string;
 }
@@ -38,7 +39,6 @@ export const Groups = () => {
   const [joinConfirm, setJoinConfirm] = useState(false);
 
   const route = useRouter();
-
   const pushId = (id: string) => {
     route.push(`/chat/${id}`);
   };
@@ -50,8 +50,10 @@ export const Groups = () => {
     ) {
       setJoinId(group);
     } else {
-      pushId(String(group.id));
       showTrue();
+      pushId(String(group.id));
+      console.log("aaaaaaaa");
+      console.log("aabbaaaaaa");
     }
   };
 
@@ -71,8 +73,7 @@ export const Groups = () => {
         </h1>
         <button
           onClick={() => setNewGroup(true)}
-          className="ml-2 mt-0.5 cursor-pointer"
-        >
+          className="ml-2 mt-0.5 cursor-pointer">
           <svg
             aria-label="New post"
             className="text-gray-300 hover:text-white x1lliihq x1n2onr6 x5n08af"
@@ -80,8 +81,7 @@ export const Groups = () => {
             height="19"
             role="img"
             viewBox="0 0 24 24"
-            width="20"
-          >
+            width="20">
             <title>New Group</title>
             <path
               d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552Z"
@@ -89,8 +89,7 @@ export const Groups = () => {
               stroke="currentColor"
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="2"
-            ></path>
+              strokeWidth="2"></path>
             <line
               fill="none"
               stroke="currentColor"
@@ -100,8 +99,7 @@ export const Groups = () => {
               x1="6.545"
               x2="17.455"
               y1="12.001"
-              y2="12.001"
-            ></line>
+              y2="12.001"></line>
             <line
               fill="none"
               stroke="currentColor"
@@ -111,8 +109,7 @@ export const Groups = () => {
               x1="12.003"
               x2="12.003"
               y1="6.545"
-              y2="17.455"
-            ></line>
+              y2="17.455"></line>
           </svg>
         </button>
       </div>
@@ -125,20 +122,17 @@ export const Groups = () => {
                 isClicked ? "" : ""
               }`}
               onClick={() => handleJoninGroup(user)}
-              style={{ cursor: "pointer" }}
-            >
+              style={{ cursor: "pointer" }}>
               <div className="flex col-span-1">
                 <div className="w-12 h-12">
                   <div
                     className="h-full w-full rounded-full bg-cover"
-                    style={{ backgroundImage: `url(${user.picture})` }}
-                  ></div>
+                    style={{ backgroundImage: `url(${user.picture})` }}></div>
                 </div>
               </div>
               <div
                 id="info"
-                className="pt-1 col-span-3 text-xm font-mono tracking-normal text-white"
-              >
+                className="pt-1 col-span-3 text-xm font-mono tracking-normal text-white">
                 {user.name}
                 <p className="text-sm text-gray-400">
                   {user.messages.length
@@ -163,8 +157,7 @@ export const Groups = () => {
           <div className="absolute z-50 left-0 rounded-2xl opacity-100 right-0 top-0 bottom-0 m-auto backdrop-blur-sm"></div>
           <CreatGroup
             newGroup={newGroup}
-            setNewGroup={setNewGroup}
-          ></CreatGroup>
+            setNewGroup={setNewGroup}></CreatGroup>
         </>
       )}
 
@@ -175,8 +168,7 @@ export const Groups = () => {
             joinId={joinId}
             setJoinId={setJoinId}
             joinConfirm={joinConfirm}
-            setJoinConfirm={setJoinConfirm}
-          ></JoinGroup>
+            setJoinConfirm={setJoinConfirm}></JoinGroup>
         </>
       )}
     </div>
