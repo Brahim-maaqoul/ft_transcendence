@@ -14,6 +14,7 @@ const socket = io("http://localhost:8000/chat");
 
 export default function Chat({ params }: { params: any }) {
   const { dataUser, show, showFalse, showTrue } = useAuth();
+  console.log(dataUser);
   let hidden: string;
   let hidden1: string;
 
