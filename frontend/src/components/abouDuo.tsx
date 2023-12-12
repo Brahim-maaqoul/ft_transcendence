@@ -17,6 +17,7 @@ import { useFriendType } from "@/app/api/getFriendtype";
 import { blockFriend } from "@/app/api/blockFriend";
 import Image from "next/image";
 import { unblockFriend } from "@/app/api/unBlock";
+import Challenge from "./challengeButton";
 
 interface ConversationProps {
   id: string;
@@ -81,15 +82,9 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
                 />
                 Block
               </div>
+
               <div className="bg-black text-white p-2 rounded-2xl hover:cursor-pointer  relative flex justify-center items-center px-5 text-xs lg:text-xl">
-                <Image
-                  src={"/challenge.png"}
-                  alt="challenge Friend"
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                />
-                Play A Game
+                <Challenge />
               </div>
             </div>
           )}
