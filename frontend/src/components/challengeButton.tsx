@@ -143,7 +143,7 @@ function Challenge() {
 
   const handleDimensionClick = (selectedDimension: string) => {
     setDimension(selectedDimension);
-    setMap(dimension === "2D" ? map2D[0] : map3D[0]);
+	setMap((prevMap) => (selectedDimension === "2D" ? map2D[0] : map3D[0]));
     setIsRightOpen(false);
   };
 

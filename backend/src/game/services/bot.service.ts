@@ -28,13 +28,19 @@ export class BotService {
     newgame.playerAI = true;
     newgame.start = [false, true];
     this.gameSessionService.botGames[game.botGameId] = newgame;
-	this.gameSessionService.playersInfo[playerId] = {type: 'Bot', id: String(game.botGameId)};
+    this.gameSessionService.playersInfo[playerId] = {
+      type: 'Bot',
+      id: String(game.botGameId),
+    };
     return game;
   }
 
   public async deleteBotGame(clientId: string) {
-    if (clientId in this.gameSessionService.botGames && this.gameSessionService.botGames[clientId].status === 'finished') {
-      console.log('delete finished game');
+    if (
+      clientId in this.gameSessionService.botGames &&
+      this.gameSessionService.botGames[clientId].status === 'finished'
+    ) {
+      console.log('delete finished game from botGames');
       let theWinner =
         this.gameSessionService.botGames[clientId].score.p1 >
         this.gameSessionService.botGames[clientId].score.p2
@@ -52,10 +58,14 @@ export class BotService {
           time: new Date(),
         },
       });
+      console.log(this.gameSessionService.botGames[clientId]);
+      this.gameSessionService.playersSocket[
+        this.gameSessionService.botGames[clientId].playerId1
+      ].emit('gameEnd');
       delete this.gameSessionService.botGames[clientId];
       return;
     }
-    console.log('delete uncompleted game');
+    console.log('delete uncompleted game from botGames');
     await this.prisma.botGame.update({
       where: {
         botGameId: Number(clientId),
@@ -64,5 +74,10 @@ export class BotService {
         status: 'uncompleted',
       },
     });
+    if (clientId in this.gameSessionService.botGames) {
+      this.gameSessionService.playersSocket[
+        this.gameSessionService.botGames[clientId].playerId1
+      ].emit('gameEnd');
+    }
   }
 }

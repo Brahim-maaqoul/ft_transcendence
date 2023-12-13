@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useGetGame } from "@/app/api/getGame";
 import FoundMatch from "@/components/foundMatch";
 import Score from "@/components/score";
+import { useQueryClient } from "@tanstack/react-query";
 // import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier"
 // import * as THREE from "three"
 // import { Fisheye, CameraControls, PerspectiveCamera, Environment } from '@react-three/drei'
@@ -25,13 +26,20 @@ export default function Game2d({
 }: {
   params: { type: string; gameId: string };
 }) {
-  const { dataUser } = useAuth();
+  const queryClient = useQueryClient();
+  const { dataUser, socket } = useAuth();
   const {
     data: gameData,
     isLoading,
     isError,
   } = useGetGame(params.type, params.gameId);
   console.log(dataUser);
+  if (socket) {
+    socket.on("gameEnd", () => {
+      console.log("gameEnd");
+      queryClient.invalidateQueries(["gameData", params.type, params.gameId]);
+    });
+  }
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
   return (
@@ -51,11 +59,7 @@ export default function Game2d({
           ) : (
             // <div className="flex flex-col items-center justify-between m-3">
             //   <Score dataUser={dataUser} />
-              <Body
-                dataUser={dataUser}
-                dataGame={gameData}
-                type={params.type}
-              />
+            <Body dataUser={dataUser} dataGame={gameData} type={params.type} />
             // </div>
           ))
         )}
