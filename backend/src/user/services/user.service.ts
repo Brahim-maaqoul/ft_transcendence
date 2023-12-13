@@ -17,6 +17,7 @@ export class UserService {
         nickname: nickname,
       },
     });
+    if (!user) return null;
     const stats = await this.prisma.stats.findUnique({
       where: {
         user_id: user.auth_id,
@@ -161,7 +162,6 @@ export class UserService {
       const stream = createWriteStream(picturePath);
       stream.write(file.buffer);
       stream.end();
-
 
       return `http://localhost:8000/${picturePath}`;
     } catch (error) {
