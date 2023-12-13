@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createDuo } from "@/app/api/chatApi/chatApiFunctions";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import Challenge from "./challengeButton";
 
 function Infos({ profileData }: { profileData: UserProfile }) {
   const { dataUser } = useAuth();
@@ -22,6 +23,18 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   const [show, setShow] = useState(false);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const [logged, setlogged] = useState(true);
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const handleLinkClick = (e: any) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  const modalRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const handleClickOutside = (event: MouseEvent<HTMLElement>) => {
     if (
@@ -31,15 +44,33 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       setShow(false);
     }
   };
+  const handleChallenge = (e: MouseEvent<HTMLDivElement>) => {
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(e.target as HTMLDivElement)
+    ) {
+      setShowModal(false);
+    }
+  };
   useEffect(() => {
     document.addEventListener(
       "click",
       handleClickOutside as unknown as (event: Event) => void
     );
+    // if (showModal) {
+    document.addEventListener(
+      "mousedown",
+      handleChallenge as unknown as (event: Event) => void
+    );
+    // }
     return () => {
       document.removeEventListener(
         "click",
         handleClickOutside as unknown as (event: Event) => void
+      );
+      document.removeEventListener(
+        "mousedown",
+        handleChallenge as unknown as (event: Event) => void
       );
     };
   }, []);
@@ -57,11 +88,19 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
       <div className="flex items-start flex-col md:flex-row  gap-8">
+        {showModal && (
+          <div
+            ref={modalRef}
+            className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-50`}>
+            <div className="w-full h-full flex flex-col items-center gap-[30px] rounded-[10px] p-[30px] bg-slate-950/70 backdrop-blur-xl">
+              <Challenge />
+            </div>
+          </div>
+        )}
         <div className="w-48 h-48">
           <div
             className="h-48 w-48 rounded-full bg-cover relative"
-            style={{ backgroundImage: `url(${picturePath})` }}
-          >
+            style={{ backgroundImage: `url(${picturePath})` }}>
             {logged ? (
               <span className="absolute h-5 w-5 rounded-full bg-green-500 mt-40 ml-36 border-2 border-black"></span>
             ) : (
@@ -96,8 +135,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                           setShow(!show);
                         }}
                         className="relative bg-white flex justify-center items-center w-16 rounded-3xl  "
-                        ref={toggleButtonRef}
-                      >
+                        ref={toggleButtonRef}>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full  "></span>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
                         <span className="h-2 w-2 mx-1 my-4 bg-black rounded-full "></span>
@@ -111,12 +149,10 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                               animate={{
                                 y: 200,
                               }}
-                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl"
-                            >
-                              <Link
-                                className="flex     items-center "
-                                href={""}
-                              >
+                              className="  flex flex-col  mb-44 p-5 w-44 gap-2  bg-black bg-opacity-80  text-md font-bold text-white rounded-2xl">
+                              <div
+                                className="flex items-center "
+                                onClick={() => setShowModal(true)}>
                                 <Image
                                   src={"/challenge.png"}
                                   alt="Challenge"
@@ -125,13 +161,12 @@ function Infos({ profileData }: { profileData: UserProfile }) {
                                   className="mr-3"
                                 />
                                 Challenge
-                              </Link>
+                              </div>
                               <div
                                 className="flex  items-center "
                                 onClick={() => {
                                   mutation.mutate(profileData.auth_id);
-                                }}
-                              >
+                                }}>
                                 <Image
                                   src={"/Message.png"}
                                   alt="Send Message"
