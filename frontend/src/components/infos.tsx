@@ -25,14 +25,6 @@ function Infos({ profileData }: { profileData: UserProfile }) {
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const handleLinkClick = (e: any) => {
-    e.preventDefault();
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
   const modalRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const handleClickOutside = (event: MouseEvent<HTMLElement>) => {
