@@ -11,9 +11,11 @@ import { MatchMakingService } from './services/matchMaking.service';
 import { ImageService } from 'src/image/image.service';
 import { GameEndService } from './services/gameEnd.service';
 import { MatchHistoryService } from './services/matchHistory.service';
+import { UserService } from 'src/user/services/user.service';
+import { GameMatchController } from './controllers/gamematch.controller';
 
 @Module({
-  controllers: [GameController],
+  controllers: [GameController, GameMatchController],
   providers: [
     PrismaService,
     GameService,
@@ -23,8 +25,9 @@ import { MatchHistoryService } from './services/matchHistory.service';
     BotService,
     MatchMakingService,
     ImageService,
-	GameEndService,
-	MatchHistoryService,
+	  GameEndService,
+	  MatchHistoryService,
+    UserService,
   ],
 })
 export class GameModule {}
