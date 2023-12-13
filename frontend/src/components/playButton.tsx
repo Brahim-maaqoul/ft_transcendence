@@ -1,6 +1,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import styles from "../app/styles.module.css";
+import { useAuth } from "./providers/AuthContext";
+import { set } from "react-hook-form";
 
 interface PlayButtonProps {
   isAuthenticated: boolean;
@@ -155,7 +157,7 @@ const HorizontalLine = () => {
 function PlayButton({ isAuthenticated }: PlayButtonProps) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-
+  const { socket } = useAuth();
   const handleLinkClick = (e: any) => {
     e.preventDefault();
     isAuthenticated ? setShowModal(true) : router.push("/login");
@@ -170,6 +172,20 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
   const [isBottomOpen, setIsBottomOpen] = useState(false);
+
+  const modes = ["Duo", "Bot"];
+  const dimensions = ["3D", "2D"];
+  const map3D = ["autumn", "cherry", "desert"];
+  const map2D = ["blue", "red", "green"];
+  const [Mode, setMode] = useState("Bot");
+  const [dimension, setDimension] = useState("3D");
+  const [map, setMap] = useState(
+    dimension === dimensions[0] ? map3D[0] : map2D[0]
+  );
+  const [msg, setMsg] = useState("");
+  const maps = dimension === "2D" ? map2D : map3D;
+  const [selectedOption, setSelectedOption] = useState("Ranked");
+  const options = ["Ranked", "Friendly", "Random"];
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -199,7 +215,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
         handleCloseModal();
       }
     };
-
+	dimension === "2D" ? setMap(map2D[0]) : setMap(map3D[0]);
     if (showModal) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -207,7 +223,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showModal, isBottomOpen, isLeftOpen, isRightOpen]);
+  }, [showModal, isBottomOpen, isLeftOpen, isRightOpen, dimension]);
 
   const textBorder = `-1px -1px 0 black,
                     1px -1px 0 black,
@@ -232,17 +248,6 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     if (isRightOpen) setIsRightOpen(false);
   };
 
-  const modes = ["1v1", "Bot"];
-  const dimensions = ["2D", "3D"];
-  const map3D = ["Autumn", "Cherry", "Desert"];
-  const map2D = ["Blue", "Red", "Green"];
-  const [Mode, setMode] = useState("Bot");
-  const [dimension, setDimension] = useState("2D");
-  const [map, setMap] = useState(
-    dimension === dimensions[0] ? map2D[0] : map3D[0]
-  );
-  const maps = dimension === "2D" ? map2D : map3D;
-
   const handleModeClick = (selectedMode: string) => {
     setMode(selectedMode);
     setIsLeftOpen(false);
@@ -259,19 +264,43 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     setIsBottomOpen(false);
   };
 
-  const [selectedOption, setSelectedOption] = useState("Ranked");
-  const options = ["Ranked", "Friendly", "Random"];
-
   const handleCheckboxChange = (value: string) => {
     setSelectedOption(value);
   };
 
   const [isSearching, setIsSearching] = useState(false);
-  const findMatch = () => {
-    setIsSearching((prev) => !prev);
+  const cancelMatch = () => {
+    console.log("cancel match");
+    socket?.emit("cancel");
+
     updateBoxShadow();
   };
+  const findMatch = () => {
+    console.log("find match");
+    socket?.emit("joinQueue", {
+      mode: Mode,
+      dimension: dimension,
+      map: map,
+      option: selectedOption,
+    });
 
+    updateBoxShadow();
+  };
+  socket?.on("ERROR", (msg: string) => {
+    setIsSearching(false);
+    setMsg(msg);
+    setTime(0);
+  });
+  socket?.on("startLoading", () => {
+    setIsSearching(true);
+  });
+  socket?.on("cancelLoading", () => {
+    setIsSearching(false);
+  });
+  socket?.on("gameStart", (path: string) => {
+    setIsSearching(true);
+    router.push(path);
+  });
   const updateBoxShadow = () => {
     const button = document.getElementById("searchButton");
     if (button) {
@@ -314,7 +343,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
         onClick={handleLinkClick}
         className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}
       >
-        <div className="z-40 text-black md:text-lg lg:text-2xl font-mono absolute">
+        <div className=" z-10 text-black md:text-lg lg:text-2xl font-mono absolute">
           {isAuthenticated ? "Play Now " : "Sign In"}
         </div>
       </a>
@@ -339,6 +368,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                 GAME
               </p>
             </div>
+            <div className="text-[#f00] text-[15px]">{msg}</div>
             <div className="flex gap-[20px] items-center justify-center w-full">
               <div className="flex-1 h-[74px] w-1/2">
                 <button
@@ -420,7 +450,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
             <div className="w-full h-full flex flex-col-reverse">
               <button
                 id="searchButton"
-                onClick={findMatch}
+                onClick={!isSearching ? findMatch : cancelMatch}
                 className={`w-full h-1/3 rounded ${
                   isSearching ? " bg-red-600" : "bg-green-600"
                 } text-white`}

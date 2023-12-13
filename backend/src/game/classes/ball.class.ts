@@ -44,14 +44,14 @@ export class Ball extends Circle
     constructor(h: number, w: number, r: number, arc: number)
     {
         const ang = Math.PI/ 6 + 2*(Math.PI * Math.random())/3;
-        // const dir = Math.floor(Math.random() * 2) * 2 - 1;
-        const dir = 1;
+        const dir = Math.floor(Math.random() * 2) * 2 - 1;
+        // const dir = 1;
         const x = h/2 + arc * Math.sin(ang) * dir
         const y = w/2 + arc * Math.cos(ang)
         // const x = 800;
         // const y = 250
         super(x, y, r);
-        this.speed = 2
+        this.speed = 6
         this.dx = Math.sin(ang) * dir * this.speed
         this.dy = Math.cos(ang) * this.speed
         this.time = new Date
