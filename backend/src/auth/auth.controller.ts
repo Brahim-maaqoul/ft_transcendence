@@ -96,7 +96,7 @@ export class AuthController {
     try{
       const user = await this.authService.findUserById(request.user.auth_id);
       if (!user) res.status(200).json({ isAuthenticated: false });
-      return res.status(200).json({ isAuthenticated: true, user: user });
+      return res.status(200).json({ isAuthenticated: true, user: user, token: request.cookies.token });
     }
     catch{
       return res.status(200).json({ isAuthenticated: false });
