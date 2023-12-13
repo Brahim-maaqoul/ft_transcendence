@@ -1,6 +1,4 @@
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 
 interface DropDownArrowProps {
   isOpen: boolean;
@@ -13,7 +11,8 @@ function DropDownArrow({ isOpen }: DropDownArrowProps) {
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
-      viewBox="0 0 16 10">
+      viewBox="0 0 16 10"
+    >
       <path d="M15.434 1.235A2 2 0 0 0 13.586 0H2.414A2 2 0 0 0 1 3.414L6.586 9a2 2 0 0 0 2.828 0L15 3.414a2 2 0 0 0 .434-2.179Z" />
     </svg>
   );
@@ -37,18 +36,19 @@ function DropDownValue({
   return (
     <div
       id={id}
-      className={`z-10 bg-white w-full ${
-        isOpen ? "block" : "hidden"
-      } relative`}>
+      className={`z-10 bg-white w-full ${isOpen ? "block" : "hidden"} relative`}
+    >
       <ul
         className={`absolute w-full bg-slate-950/70 ${
           isVertical ? "flex flex-col" : "grid grid-cols-3"
-        } justify-center`}>
+        } justify-center`}
+      >
         {array.map((value, index) => (
           <li
-            className="text-white px-5 py-2.5"
+            className="text-white px-5 py-2.5 hover:cursor-pointer hover:animate-pulse"
             key={index}
-            onClick={() => click(value)}>
+            onClick={() => click(value)}
+          >
             {value}
           </li>
         ))}
@@ -71,13 +71,15 @@ const DoubleSword = () => {
         width="30"
         height="30"
         viewBox="0 0 24 24"
-        style={{ filter: "drop-shadow(2px 2px 4px rgba(38, 99, 235, 0.8))" }}>
+        style={{ filter: "drop-shadow(2px 2px 4px rgba(38, 99, 235, 0.8))" }}
+      >
         <g
           fill="none"
           stroke="#2563eb"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2">
+          strokeWidth="2"
+        >
           <path d="M2 19.2L3.8 21m.9-7.2l.9 3.6m0 0l3.6.9m-3.6-.9l-2.7 2.7M16.4 3.9l-9 9l.45 2.25l2.25.45l9-9L20 3l-3.6.9Z" />
           <path d="M22 19.2L20.2 21m-.9-7.2l-.9 3.6m0 0l2.7 2.7m-2.7-2.7l-1.8.45l-1.8.45M9.3 11L4.9 6.6L4 3l3.6.9L12 8.3m.1 5.5l1.8 1.8l2.25-.45l.45-2.25l-1.8-1.8" />
         </g>
@@ -86,26 +88,7 @@ const DoubleSword = () => {
   );
 };
 
-// interface challengeProps {
-//   showModal: boolean;
-//   setShowModal: (t: boolean) => void;
-// }
-
 function Challenge() {
-  const router = useRouter();
-  // const [showModal, setShowModal] = useState(false);
-
-  // const handleLinkClick = (e: any) => {
-  //   e.preventDefault();
-  //   setShowModal(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setShowModal(false);
-  // };
-
-  // const modalRef = useRef<HTMLDivElement>(null);
-
   const [isRightOpen, setIsRightOpen] = useState(false);
   const [isBottomOpen, setIsBottomOpen] = useState(false);
 
@@ -125,18 +108,12 @@ function Challenge() {
       if (!isClickInsideBottom && isBottomOpen) {
         setIsBottomOpen(false);
       }
-
-      // if (ref?.current && !ref?.current.contains(e.target as Node)) {
-      //   handleCloseModal();
-      // }
     };
 
-    // if (showModal) {
-    //   document.addEventListener("mousedown", handleClickOutside);
-    // }
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      // document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isBottomOpen, isRightOpen]);
 
@@ -218,23 +195,11 @@ function Challenge() {
 
   return (
     <>
-      {/* <button
-        onClick={handleLinkClick}
-        className="p-1 flex items-center justify-center">
-        <Image
-          src={"/challenge.png"}
-          alt="challenge Friend"
-          width={20}
-          height={20}
-          className="mr-2"
-        />
-        Challenge
-      </button> */}
-
       <div className="w-full h-1/4 text-center flex flex-col">
         <p
           className="text-white text-[50px] p-3"
-          style={{ textShadow: `${textShadow}` }}>
+          style={{ textShadow: `${textShadow}` }}
+        >
           SETUP GAME
         </p>
       </div>
@@ -242,7 +207,8 @@ function Challenge() {
         <div className=" w-full ">
           <button
             onMouseDown={clickRight}
-            className="w-full h-1/2 p-5 text-white rounded-[10px] bg-slate-900/80 text-center flex items-center flex-shrink-0">
+            className="w-full h-1/2 p-5 text-white rounded-[10px] bg-slate-900/80 text-center flex items-center flex-shrink-0"
+          >
             <div className="flex flex-1 items-center">
               <div className="text-start">
                 <p>Dimension</p>
@@ -265,7 +231,8 @@ function Challenge() {
       <div className="w-full flex flex-col flex-start text-center gap-2.5 bg-left bg-cover rounded-2xl px-5 py-2.5 bg-slate-900/40">
         <button
           className="text-white w-full h-full flex items-center justify-between"
-          onMouseDown={clickBottom}>
+          onMouseDown={clickBottom}
+        >
           <div className="flex items-center gap-2.5">
             <DoubleSword />
             <p>{map}</p>
@@ -296,23 +263,26 @@ function Challenge() {
               ? redBoxShadow
               : blueBoxShadow)
           }
-          onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}>
+          onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
+        >
           {isSearching ? "CANCEL" : "FIND MATCH"}
         </button>
-        {isSearching ? (
+        {isSearching && (
           <>
             <div
               className="w-full h-1/3 text-white text-center text-4xl"
-              ref={timeRef as React.RefObject<HTMLDivElement>}>
+              ref={timeRef as React.RefObject<HTMLDivElement>}
+            >
               {format(time)}
             </div>
             <p
               className="w-full h-1/3 text-center text-white text-2xl"
-              style={{ textShadow: `${textBorder}` }}>
+              style={{ textShadow: `${textBorder}` }}
+            >
               FINDING GAME
             </p>
           </>
-        ) : null}
+        )}
       </div>
     </>
   );
