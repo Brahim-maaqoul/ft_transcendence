@@ -10,7 +10,7 @@ export class JwtGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const client = context.switchToWs().getClient();
-    const token = client.handshake.query.user;
+    const token = client.handshake.query.token;
     if (!token) {
       return false;
     }

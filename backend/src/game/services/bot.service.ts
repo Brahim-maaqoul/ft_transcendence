@@ -1,62 +1,68 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
-import { Game } from "../classes/game.class";
-import { GameEndService } from "./gameEnd.service";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Game } from '../classes/game.class';
+import { GameEndService } from './gameEnd.service';
+import { Data } from '../interfaces/utils.interface';
+import { GameSession } from './gameSession.service';
 
 @Injectable()
 export class BotService {
-	constructor(private prisma: PrismaService, private gameEnd: GameEndService) {	}
+  constructor(
+    private prisma: PrismaService,
+    private gameEnd: GameEndService,
+    private gameSessionService: GameSession,
+  ) {}
 
-	botGames: Record<string, Game> = {};
+  public async createBotGame(playerId: string, data: Data) {
+    const game = await this.prisma.botGame.create({
+      data: {
+        user1_id: playerId,
+        map: data.map,
+        dimension: data.dimension,
+        option: data.option,
+      },
+    });
+    const newgame = new Game();
+    newgame.gameId = game.botGameId;
+    newgame.playerId1 = playerId;
+    newgame.playerAI = true;
+    newgame.start = [false, true];
+    this.gameSessionService.botGames[game.botGameId] = newgame;
+	this.gameSessionService.playersInfo[playerId] = {type: 'Bot', id: String(game.botGameId)};
+    return game;
+  }
 
-	public async createBotGame(data: { playerId1: string,boot: boolean}, clientId: string) {
-		try {
-			const game = await this.prisma.botGame.create({
-				data: {
-					user1_id: data.playerId1,
-				}
-			});
-			const newgame = new Game();
-			
-			newgame.gameId = game.botGameId;
-			newgame.playerId1 = data.playerId1;
-			newgame.playerAI = data.boot;
-			newgame.socket1 = clientId;
-			this.botGames[clientId] = newgame;
-			// console.log('bot game created', this.botGames[clientId]);
-			// this.botGames[data.playerId1] = newgame;
-		}
-		catch(error){
-			throw error;
-		}
-	}
-
-	public async deleteBotGame(clientId: string) {
-		try{
-			if (clientId in this.botGames){
-				// const theWinner = this.botGames[clientId].score.p1 > this.botGames[clientId].score.p2 && !unexpectedQuit ? this.botGames[clientId].playerId1 : 'bot';
-				const theWinner = this.botGames[clientId].score.p1 > this.botGames[clientId].score.p2 && this.botGames[clientId].status === 'finished' ? this.botGames[clientId].playerId1 : 'bot';
-				await this.prisma.botGame.update({
-					where: {
-						botGameId: this.botGames[clientId].gameId
-					},
-					data: {
-						score1: this.botGames[clientId].score.p1,
-						score2: this.botGames[clientId].score.p2,
-						status: 'finished',
-						winner: theWinner,//this.botGames[clientId].score.p1 > this.botGames[clientId].score.p2 ? this.botGames[clientId].playerId1 : 'bot',
-						time: new Date()
-					}
-				});
-				if (theWinner !== 'bot'){
-					this.gameEnd.rankBotUpdate(this.botGames[clientId]);
-				}
-				delete this.botGames[clientId];
-			}
-		}
-		catch (error) {
-			throw error;
-		}
-	}
-
+  public async deleteBotGame(clientId: string) {
+    if (clientId in this.gameSessionService.botGames && this.gameSessionService.botGames[clientId].status === 'finished') {
+      console.log('delete finished game');
+      let theWinner =
+        this.gameSessionService.botGames[clientId].score.p1 >
+        this.gameSessionService.botGames[clientId].score.p2
+          ? this.gameSessionService.botGames[clientId].playerId1
+          : 'Bot';
+      await this.prisma.botGame.update({
+        where: {
+          botGameId: this.gameSessionService.botGames[clientId].gameId,
+        },
+        data: {
+          score1: this.gameSessionService.botGames[clientId].score.p1,
+          score2: this.gameSessionService.botGames[clientId].score.p2,
+          status: 'finished',
+          winner: theWinner,
+          time: new Date(),
+        },
+      });
+      delete this.gameSessionService.botGames[clientId];
+      return;
+    }
+    console.log('delete uncompleted game');
+    await this.prisma.botGame.update({
+      where: {
+        botGameId: Number(clientId),
+      },
+      data: {
+        status: 'uncompleted',
+      },
+    });
+  }
 }

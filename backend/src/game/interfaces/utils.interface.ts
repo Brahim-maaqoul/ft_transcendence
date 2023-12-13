@@ -35,3 +35,10 @@ export interface key
 	rotate_pos : boolean
 	rotate_neg : boolean
 }
+
+export interface Data{
+	mode: string
+	dimension: string
+	map: string
+	option: string
+}

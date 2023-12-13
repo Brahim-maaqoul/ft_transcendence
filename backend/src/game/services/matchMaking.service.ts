@@ -1,77 +1,91 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
-import { Queue } from "../classes/queue.class";
-import { Game } from "../classes/game.class";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Queue } from '../classes/queue.class';
+import { Game } from '../classes/game.class';
+import { Data } from '../interfaces/utils.interface';
+import { GameSession } from './gameSession.service';
 
 @Injectable()
 export class MatchMakingService {
-	constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private gameSessionService: GameSession,
+  ) {}
 
-	playersInfo: Record<string, string> = {};
-	queuePlayers = new Queue<string>();
-	matchPlayers: Record<string, { Game: Game, player: number }> = {};
+  // playersInfo: Record<string, string> = {};
+  // gameData: Data;
+  // queuePlayers = new Queue<string, Data>();
+  // matchPlayers: Record<string, { Game: Game, player: number}> = {};
 
-	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
-		if (!this.queuePlayers.contains(clientId)) {
-			console.log('join queue');
-			this.queuePlayers.enqueue(clientId);
-			console.log(this.queuePlayers.size());
-			this.playersInfo[clientId] = data.playerId1;
-		}
-	}
+  public async joinQueue(gameId: string, data: Data) {
+    this.gameSessionService.queuePlayers.enqueue(gameId, data);
+  }
 
-	async createDuoGame(data: { playerId1: string, boot: boolean }) {
-		if (this.queuePlayers.size() > 1) {
-				console.log('create duo game');
-			const socket1 = this.queuePlayers.dequeue();
-			const socket2 = this.queuePlayers.dequeue();
-			const playerId1 = this.playersInfo[socket1];
-			const playerId2 = this.playersInfo[socket2];
-			delete this.playersInfo[socket1];
-			delete this.playersInfo[socket2];
-			const newGame = new Game();
-			const game = await this.prisma.game.create({
-				data: {
-					user1_id: playerId1,
-					user2_id: playerId2,
-				}
-			});
-			newGame.gameId = game.gameId;
-			newGame.playerId1 = playerId1;
-			newGame.playerId2 = playerId2;
-			newGame.playerAI = data.boot;
-			newGame.status = 'notStarted';
-			newGame.socket1 = socket1;
-			newGame.socket2 = socket2;
-			newGame.time = new Date();
-			console.log('game created', game);
-			this.matchPlayers[socket1] = {Game:newGame, player: 0};
-			this.matchPlayers[socket2] = {Game:newGame, player: 1};
-		}
-	}
+  async createDuoGame(user1: string, user2: string, data: Data) {
+    const newGame = new Game();
+    const game = await this.prisma.game.create({
+      data: {
+        user1_id: user1,
+        user2_id: user2,
+        map: data.map,
+        dimension: data.dimension,
+        option: data.option,
+      },
+    });
+    newGame.gameId = game.gameId;
+    newGame.playerId1 = user1;
+    newGame.playerId2 = user2;
+    newGame.playerAI = false;
+    newGame.status = 'notStarted';
+    newGame.time = new Date();
+    newGame.start = [false, false];
+    this.gameSessionService.matchPlayers[game.gameId] = newGame;
+    this.gameSessionService.playersInfo[user1] = {
+      type: 'Duo',
+      id: String(game.gameId),
+    }
+    this.gameSessionService.playersInfo[user2] = {
+      type: 'Duo',
+      id: String(game.gameId),
+    };
+    return game;
+  }
 
-	async deleteGame(clientId: string) {
-		if (clientId in this.matchPlayers){
-			const sock1 = this.matchPlayers[clientId].Game.socket1;
-			const sock2 = this.matchPlayers[clientId].Game.socket2;
-			const winner = this.matchPlayers[clientId].Game.score.p1 > this.matchPlayers[sock2].Game.score.p2 && this.matchPlayers[clientId].Game.status === 'finished' ? this.matchPlayers[sock1].Game.playerId1 : this.matchPlayers[sock2].Game.playerId2;
-			
-			await this.prisma.game.update({
-				where: {
-					gameId: this.matchPlayers[sock1].Game.gameId
-				},
-				data: {
-					score1: this.matchPlayers[sock1].Game.score.p1,
-					score2: this.matchPlayers[sock2].Game.score.p2,
-					status: 'finished',
-					winner: winner,
-					time: new Date()
-				}
-			});
+  async deleteGame(gameId: string) {
+    if (
+      gameId in this.gameSessionService.matchPlayers &&
+      this.gameSessionService.matchPlayers[gameId].status === 'finished'
+    ) {
+      const user1 = this.gameSessionService.matchPlayers[gameId].user1_id;
+      const user2 = this.gameSessionService.matchPlayers[gameId].user2_id;
+      const winner =
+        this.gameSessionService.matchPlayers[gameId].score1 >
+        this.gameSessionService.matchPlayers[gameId].score2
+          ? user1
+          : user2;
 
-			delete this.matchPlayers[sock1];
-			delete this.matchPlayers[sock2];
-		}
-	}
-
+      await this.prisma.game.update({
+        where: {
+          gameId: this.gameSessionService.matchPlayers[gameId].gameId,
+        },
+        data: {
+          score1: this.gameSessionService.matchPlayers[gameId].score1,
+          score2: this.gameSessionService.matchPlayers[gameId].score2,
+          status: 'finished',
+          winner: winner,
+          time: new Date(),
+        },
+      });
+      delete this.gameSessionService.matchPlayers[gameId];
+      return;
+    }
+    await this.prisma.game.update({
+      where: {
+        gameId: Number(gameId),
+      },
+      data: {
+        status: 'uncompleted',
+      },
+    });
+  }
 }
