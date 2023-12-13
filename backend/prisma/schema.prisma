@@ -14,6 +14,7 @@ model Users {
   nickname            String         @unique
   firstSignIn         Boolean        @default(true)
   displayname         String?
+  status			  String         @default("online")
   picture             String?        @default("http://localhost:8000/upload/huh.jpeg")
   isTfaEnabled        Boolean        @default(false)
   isTfaValidated      Boolean        @default(false)
@@ -42,6 +43,9 @@ model Game {
 	user2		Users		@relation("User2ToGame", fields: [user2_id], references: [auth_id])
 	user1_id	String		
 	user2_id	String		
+	map			String		@default("winter.hdr")
+	dimension	String		@default("3D")
+	option 		String      @default("Ranked")
 	winner		String		@default("noWinner")
 	time		DateTime	@default(now())
 }
@@ -54,6 +58,9 @@ model BotGame {
 	user1		Users		@relation(fields: [user1_id], references: [auth_id])
 	user1_id	String
 	winner		String		@default("noWinner")
+	map			String		@default("winter.hdr")
+	dimension	String		@default("3D")
+	option 		String      @default("Ranked")
 	time		DateTime	@default(now())
 }
 

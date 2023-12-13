@@ -5,6 +5,7 @@ import { generate, queue } from 'rxjs';
 import { Paddle } from '../classes/paddle.class';
 import { Socket } from 'socket.io';
 import { Queue } from '../classes/queue.class';
+import { Data } from '../interfaces/utils.interface';
 
 export enum gameStatus {
 	bot,
@@ -18,17 +19,18 @@ export class GameSession {
 
 	// botGames = new Array<Game>();
 	// game = new Game();
-	playersInfo: Record<string, string> = {};
-	queuePlayers = new Queue<string>();
-	matchPlayers: Record<string, {Game: Game, player:number}> = {};
+	playersInfo: Record<string, {type: string, id: string}> = {};
+	playersSocket: Record<string, Socket> = {};
+	queuePlayers = new Queue<string, Data>();
 
+	
+	matchPlayers: Record<number, Game> = {};
 	botGames: Record<string, Game> = {};
 
 	games: Record<string, gameStatus> = {};
-	clients: Record<string, any> = {};
 
 	public async joinQueue(data: { playerId1: string, boot: boolean }, clientId: string) {
-
+		/*
 		if (this.queuePlayers.contains(clientId)){
 			if (this.queuePlayers.size() > 1) {
 				const socket1 = this.queuePlayers.dequeue();
@@ -68,6 +70,7 @@ export class GameSession {
 			this.queuePlayers.enqueue(clientId);
 			this.playersInfo[clientId] = data.playerId1;
 		}
+		*/
 	}
 
 	public async deleteBotGame(clientId: string) {
@@ -226,5 +229,15 @@ export class GameSession {
 			}
 		});
 		// return savedData;
+	}
+	async getGameByUser(userId: string) {
+		return await this.prisma.game.findFirst({
+			where: {
+				OR: [
+					{ user1_id: userId },
+					{ user2_id: userId },
+				]
+			}
+		});
 	}
 }

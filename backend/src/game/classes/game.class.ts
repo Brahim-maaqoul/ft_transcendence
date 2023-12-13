@@ -58,27 +58,27 @@ export class Game
 		if (this.ball.length)
 		{
 			if (this.ball[0].position.y < this.paddle[1].position.y)
-			 	this.paddle[1].move_left(2, 0)
+			 	this.paddle[1].move_left(4, 0)
 			if (this.ball[0].position.y > this.paddle[1].position.y)
-				this.paddle[1].move_right(2, 600)
+				this.paddle[1].move_right(4, 600)
 		}
 		else
 		{
 			if (this.world.w/2 < this.paddle[1].position.y)
-			 	this.paddle[1].move_left(2, 0)
+			 	this.paddle[1].move_left(4, 0)
 			if (this.world.w/2 > this.paddle[1].position.y)
-				this.paddle[1].move_right(2, 600)
+				this.paddle[1].move_right(4, 600)
 		}
 	}
 	check_keys(keys: key, player: number)
 	{
 		this.paddle[player].rotate(0)
 
-		this.start[player] = keys.start
+		// this.start[player] = keys.start
 		if (keys.left)
-			this.paddle[player].move_left(2, 0)
+			this.paddle[player].move_left(4, 0)
 		if (keys.right)
-			this.paddle[player].move_right(2, 600)
+			this.paddle[player].move_right(4, 600)
 		if (keys.rotate_pos)
 			this.paddle[player].rotate(Math.PI/6)
 		else if (keys.rotate_neg)
@@ -120,9 +120,9 @@ export class Game
 					this.ball[0].change_scale(0.7)
 				}
 				if (type == 5)
-					this.ball[0].setSpeed(3);
+					this.ball[0].setSpeed(6);
 				if(type == 6)
-					this.ball[0].setSpeed(4);
+					this.ball[0].setSpeed(8);
 
 			}	
 			
@@ -133,7 +133,7 @@ export class Game
 		if (this.status == 'finished'){
 			return ;
 		}
-		if(!this.start[0] && !this.start[1])
+		if(!this.start[0] || !this.start[1])
 		{
 			this.time = new Date()
 			return ;
