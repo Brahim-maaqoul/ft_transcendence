@@ -214,7 +214,7 @@ export function Body({
               ></div>
             );
           })}
-          {/* {gameData.bricks.map((b, id) => { return (<Brick key={id} brick={b} />) })} */}
+          {gameData.bricks.map((b, id) => { return (<Brick key={id} brick={b} />) })}
         </div>
       </div>
     </div>

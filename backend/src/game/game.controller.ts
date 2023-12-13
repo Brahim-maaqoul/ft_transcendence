@@ -25,7 +25,6 @@ export class GameController {
     @Param('type') type: string,
     @Param('id', ParseIntPipe) id: number,
   ) {
-	console.log('getGame', type, id);
     if (type === 'Bot') {
       const game = await this.gameService.getBotGame(id);
       if (game.user1_id !== req.user.auth_id)

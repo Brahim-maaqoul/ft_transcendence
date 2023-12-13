@@ -215,7 +215,6 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
         handleCloseModal();
       }
     };
-	dimension === "2D" ? setMap(map2D[0]) : setMap(map3D[0]);
     if (showModal) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -223,7 +222,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showModal, isBottomOpen, isLeftOpen, isRightOpen, dimension]);
+  }, [showModal, isBottomOpen, isLeftOpen, isRightOpen]);
 
   const textBorder = `-1px -1px 0 black,
                     1px -1px 0 black,
@@ -255,7 +254,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
 
   const handleDimensionClick = (selectedDimension: string) => {
     setDimension(selectedDimension);
-    setMap(dimension === "2D" ? map2D[0] : map3D[0]);
+	setMap((prevMap) => (selectedDimension === "2D" ? map2D[0] : map3D[0]));
     setIsRightOpen(false);
   };
 

@@ -167,7 +167,8 @@ export class Game
 			else
 				this.ball[0].update()
 		}
-		if ((this.score.p1 >= 10 || this.score.p2 >= 10) && (Math.abs(this.score.p1 - this.score.p2)) > 2){
+		// if ((this.score.p1 >= 10 || this.score.p2 >= 10) && (Math.abs(this.score.p1 - this.score.p2)) > 1){
+		if ((this.score.p1 >= 2 || this.score.p2 >= 2) && (Math.abs(this.score.p1 - this.score.p2)) > 1){
 			this.status = 'finished';
 			this.winner = (this.score.p1 > this.score.p2) ? this.playerId1 : this.playerId2;
 		}

@@ -2,15 +2,17 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Game } from "../classes/game.class";
 import { type } from "os";
+import { GameSession } from "./gameSession.service";
 
 @Injectable()
 export class GameEndService {
-	constructor(private prisma: PrismaService) {}
+	constructor(private prisma: PrismaService, private gameSessionService: GameSession) {}
 	
-	async rankBotUpdate(game: Game) {
+	async rankBotUpdate(gameId: string) {
+		const game = this.gameSessionService.botGames[gameId];
 		const userRank = await this.prisma.stats.findUnique({
 			where: {
-				user_id: game.playerId1
+				user_id: game.playerId1,
 			},
 		});
 		let rankNew = userRank.leaderboard;
@@ -137,7 +139,6 @@ export class GameEndService {
 			});
 		}
 		// clean sheet
-		console.log('user.clean_sheets ', user.clean_sheets)
 		if (user.clean_sheets === 1){
 			achiv.push({
 				name: '1 clean sheet',

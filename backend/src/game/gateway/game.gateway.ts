@@ -128,7 +128,7 @@ export class GameGateway
         game.playerId1 === client.user || game.start[0],
         game.playerId2 === client.user || game.start[1],
       ];
-	  console.log(this.gameSessionService.matchPlayers[payload.gameId].start)
+      console.log(this.gameSessionService.matchPlayers[payload.gameId].start);
     }
   }
 
@@ -160,6 +160,7 @@ export class GameGateway
       if (
         this.gameSessionService.botGames[payload.gameId].status === 'finished'
       ) {
+        await this.gameend.rankBotUpdate(payload.gameId);
         await this.botService.deleteBotGame(payload.gameId);
         return;
       }
@@ -167,13 +168,14 @@ export class GameGateway
         'gameUpdate',
         this.gameSessionService.botGames[payload.gameId].get_data(0),
       );
-    } else if (
+    }
+
+
+    if (
       payload.type === 'Duo' &&
       payload.gameId in this.gameSessionService.matchPlayers
     ) {
-      const user = this.authService.verifyToken(
-        client.handshake.query.token,
-      ).userId;
+      const user = client.user
       this.gameSessionService.matchPlayers[payload.gameId].check_keys(
         payload.keys,
         this.gameSessionService.matchPlayers[payload.gameId].playerId1 === user
@@ -181,25 +183,22 @@ export class GameGateway
           : 1,
       );
       this.gameSessionService.matchPlayers[payload.gameId].update();
-      if (
-        this.gameSessionService.matchPlayers[payload.gameId].status ===
-        'finished'
-      ) {
-        await this.gameend.rankDuoUpdate(payload.gameId);
-        await this.matchMaking.deleteGame(payload.gameId);
+	  const game = this.gameSessionService.matchPlayers[payload.gameId];
+	  if (game.status === 'finished') {
+		console.log('handelKeyGameUpdate', 'finished', game);
+		
+		await this.matchMaking.deleteGame(game);
+		return;
+	  }
+	  this.gameSessionService.playersSocket[game.playerId1].emit(
+		  'gameUpdate',
+		  game.get_data(game.playerId1 === user ? 0 : 1),
+	  );
+	  this.gameSessionService.playersSocket[game.playerId2].emit(
+		'gameUpdate',
+		game.get_data(game.playerId2 === user ? 0 : 1),
+	  );
 
-        return;
-      }
-      const game = this.gameSessionService.matchPlayers[payload.gameId];
-      //   console.log(user, game.playerId1, game.playerId2);
-      this.gameSessionService.playersSocket[game.playerId1].emit(
-        'gameUpdate',
-        game.get_data(game.playerId1 === user ? 0 : 1),
-      );
-      this.gameSessionService.playersSocket[game.playerId2].emit(
-        'gameUpdate',
-        game.get_data(game.playerId2 === user ? 0 : 1),
-      );
     }
     // if (client.id in this.gameSessionService.games){
     // 	// bot game
@@ -273,20 +272,18 @@ export class GameGateway
       return;
     }
     // console.log(`Clinet id: ${client.id} disconnected!`);
-    if (game.type == 'Bot') {
-		console.log(game);
+    if (game.type == 'Bot' && game.id in this.gameSessionService.botGames) {
       if (this.gameSessionService.botGames[game.id].status === 'finished') {
-        await this.gameend.rankBotUpdate(
-          this.gameSessionService.botGames[game.id],
-        );
+        await this.gameend.rankBotUpdate(game.id);
       }
       await this.botService.deleteBotGame(game.id);
-    } else if (game.type == 'Duo') {
+    }
+    if (game.type == 'Duo' && game.id in this.gameSessionService.matchPlayers) {
       console.log('deleting game', game.id);
       if (this.gameSessionService.matchPlayers[game.id].status === 'finished') {
         await this.gameend.rankDuoUpdate(game.id);
       }
-      await this.matchMaking.deleteGame(game.id);
+    //   await this.matchMaking.deleteGame(game);
     } else if (game.type == 'invite') {
       // await this.botGameService.deleteBotGame(client.id);
     }
