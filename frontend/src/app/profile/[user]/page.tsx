@@ -35,12 +35,12 @@ export default function Profile() {
         <NavBar />
         <div>
           <div className="w-full p-4 flex justify-center">
-            <Infos profileData={profileData} />
+            {profileData && <Infos profileData={profileData} />}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4">
             <div className="col-span-2">
               <div className="h-[700px] bg-black bg-opacity-40 rounded-2xl shadow-black shadow-xl p-4 mx-2 my-3 overflow-y-auto no-scrollbar">
-                <RecentGames />
+                <RecentGames nickname={params.user.toString()}/>
               </div>
             </div>
             <div className="col-span-2">
@@ -49,7 +49,7 @@ export default function Profile() {
                   <span className="text-white text-2xl font-mono">Friends</span>
                   <Friends auth_id={profileData?.auth_id} />
                 </div>
-                {params.user !== dataUser?.nickname && (
+                {dataUser && params.user !== dataUser?.nickname && (
                   <Stats profileData={profileData} />
                 )}
                 <Achievement />
