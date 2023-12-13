@@ -2,6 +2,15 @@ import { AxiosResponse } from "axios";
 import { API } from "./checkAuthentication";
 import { useQuery } from "@tanstack/react-query";
 
+export interface rankInterface {
+  leaderboard: string;
+  user: {
+    nickname: string;
+    picture: string;
+    auth_is: string;
+  };
+}
+
 async function getRank() {
   const response: AxiosResponse = await API.get("/user/Rank");
   return response.data;

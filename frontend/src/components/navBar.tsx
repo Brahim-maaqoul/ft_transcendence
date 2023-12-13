@@ -56,6 +56,9 @@ export default function NavBar() {
     };
   }, [not]);
   const imageUrl = dataUser?.picture;
+  console.log(dataUser?.nickname, "check")
+  if (!dataUser)
+    <></>
   return (
     <>
       {isAuthenticated && (
