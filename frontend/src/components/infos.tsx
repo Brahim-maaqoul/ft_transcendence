@@ -12,7 +12,6 @@ import Modal from "./modal";
 import FriendCases, { Block } from "./friendStatus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createDuo } from "@/app/api/chatApi/chatApiFunctions";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 function Infos({ profileData }: { profileData: UserProfile }) {
