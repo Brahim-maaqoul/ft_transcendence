@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import axios, { AxiosResponse } from "axios";
-import next from "next";
 
 
 export async function middleware(request: NextRequest, res: NextResponse) {

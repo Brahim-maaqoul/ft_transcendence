@@ -137,6 +137,7 @@ export class UserService {
     return await this.prisma.stats.findMany({
       orderBy: { leaderboard: 'asc' },
       select: {
+        leaderboard: true,
         user: {
           select: {
             nickname: true,
@@ -144,7 +145,6 @@ export class UserService {
             auth_id: true,
           },
         },
-        leaderboard: true,
       },
     });
   }
