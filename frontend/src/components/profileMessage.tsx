@@ -49,9 +49,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
 
   return (
     <div className=" w-full h-1/10 border-b border-gray-300 flex items-center p-1">
-      {newGroup && (
-        <UpdateChannel group={group} setNewGroup={setNewGroup} />
-      )}
+      {newGroup && <UpdateChannel group={group} setNewGroup={setNewGroup} />}
       <div className="flex">
         {group.type === "duo" ? (
           <Link href={"/profile/" + group.members[0].user.nickname}>
@@ -60,16 +58,14 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
                 className="h-12 w-12 rounded-full bg-cover"
                 style={{
                   backgroundImage: `url(${group.members[0].user.picture})`,
-                }}
-              ></div>
+                }}></div>
             </div>
           </Link>
         ) : (
           <div className="w-12 h-12">
             <div
               className="h-12 w-12 rounded-full bg-cover"
-              style={{ backgroundImage: `url(${group.picture})` }}
-            ></div>
+              style={{ backgroundImage: `url(${group.picture})` }}></div>
           </div>
         )}
       </div>
@@ -85,13 +81,12 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
       </div>
 
       <div className="ml-auto mr-0 flex items-center">
-        {getMembership?.type === "creator" && (
+        {group.type === "group" && getMembership?.type === "creator" && (
           <button className="mr-3" onClick={() => setNewGroup(true)}>
             <div className="w-6 h-6">
               <div
                 className="h-6 w-6 rounded-full bg-cover"
-                style={{ backgroundImage: `url(/edit.png)` }}
-              ></div>
+                style={{ backgroundImage: `url(/edit.png)` }}></div>
             </div>
           </button>
         )}
@@ -106,8 +101,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
             stroke="currentColor"
             fill="none"
             strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+            strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
             <path d="M12 9h.01"></path>

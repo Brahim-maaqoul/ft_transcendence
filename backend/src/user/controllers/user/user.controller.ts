@@ -6,6 +6,7 @@ import {
   Res,
   Post,
   UseGuards,
+  Query,
   Param,
   UseInterceptors,
   UploadedFile,
@@ -25,20 +26,16 @@ export class UserController {
 
   @Get('/Stats')
   @UseGuards(AuthGuard('jwt'))
-  async getStats(@Res() res, @Req() request) {
-    try {
-      const userState = await this.UserService.getUserStats(
-        request.query['nickname'],
-      );
-      if (!userState) {
-        return res.status(400).json({ message: 'User not found.' });
-      }
-      return res.status(200).json(userState);
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'An error occurred while fetching the user state.' });
+  async getStats(
+    @Res() res,
+    @Req() request,
+    @Query('nickname') nickname: string,
+  ) {
+    const userState = await this.UserService.getUserStats(nickname);
+    if (!userState) {
+      return res.status(400).json({ message: 'User not found.' });
     }
+    return res.status(200).json(userState);
   }
 
   @Get('/profile')
@@ -64,7 +61,7 @@ export class UserController {
     return res.status(200).json(users);
   }
 
-  @Get('/rank')
+  @Get('/Rank')
   @UseGuards(AuthGuard('jwt'))
   async Rank(@Res() res) {
     const users = await this.UserService.getUsersByRank();
@@ -78,7 +75,7 @@ export class UserController {
     const index = users.findIndex((user) => {
       return user.user.auth_id === req.user.auth_id;
     });
-    return res.status(200).json({ rank: index });
+    return res.status(200).json({ rank: index + 1 , user: users[index]});
   }
 
   @Post('/enableTfa')

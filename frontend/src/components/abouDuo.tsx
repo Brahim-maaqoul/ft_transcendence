@@ -17,6 +17,7 @@ import { useFriendType } from "@/app/api/getFriendtype";
 import { blockFriend } from "@/app/api/blockFriend";
 import Image from "next/image";
 import { unblockFriend } from "@/app/api/unBlock";
+import Challenge from "./challengeButton";
 
 interface ConversationProps {
   id: string;
@@ -44,9 +45,6 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
   const handler1 = () => {
     mutation1.mutate(group.members[0].user_id);
   };
-  if (FriendshipType?.type === "blocked") {
-    return <>your&apos;re blocked bitch</>;
-  }
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">
@@ -54,8 +52,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
           {FriendshipType?.type === "blocking" ? (
             <div
               onClick={handler1}
-              className=" bg-slate-400 hover:bg-cyan-600 hover:cursor-pointer p-2   rounded-2xl   relative flex justify-center items-center px-5 text-xs lg:text-xl"
-            >
+              className=" bg-slate-400 hover:bg-cyan-600 hover:cursor-pointer p-2   rounded-2xl   relative flex justify-center items-center px-5 text-xs lg:text-xl">
               <Image
                 src={"/unblock.png"}
                 alt="Unblock Friend"
@@ -70,8 +67,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
             <div className="flex flex-col gap-y-2">
               <div
                 className=" bg-red-600 text-white p-2 rounded-2xl hover:cursor-pointer  relative flex justify-center items-center px-5 text-xs lg:text-xl"
-                onClick={handler}
-              >
+                onClick={handler}>
                 <Image
                   src={"/block.png"}
                   alt="block Friend"
@@ -81,15 +77,9 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
                 />
                 Block
               </div>
+
               <div className="bg-black text-white p-2 rounded-2xl hover:cursor-pointer  relative flex justify-center items-center px-5 text-xs lg:text-xl">
-                <Image
-                  src={"/challenge.png"}
-                  alt="challenge Friend"
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                />
-                Play A Game
+                <Challenge />
               </div>
             </div>
           )}

@@ -6,6 +6,7 @@ import { UseGetChat, UsegetFriends } from "@/app/api/getFriends";
 import Spinner from "@/components/spinner";
 import { useAuth } from "./providers/AuthContext";
 import { getTime } from "./messages";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface duo {
   id: number;
@@ -18,6 +19,7 @@ interface duo {
 export const Pepoule = () => {
   const { showTrue } = useAuth();
   const route = useRouter();
+  const queryClient = useQueryClient();
   const pushId = (id: number) => {
     showTrue();
     route.push(`/chat/` + id);
@@ -48,22 +50,19 @@ export const Pepoule = () => {
                 isClicked ? "" : ""
               }`}
               onClick={() => pushId(group.id)}
-              style={{ cursor: "pointer" }}
-            >
+              style={{ cursor: "pointer" }}>
               <div className=" flex  col-span-1">
                 <div className="w-12 h-12">
                   <div
                     className="h-12 w-12 rounded-full bg-cover"
                     style={{
                       backgroundImage: `url(${group.members[0]?.user.picture})`,
-                    }}
-                  ></div>
+                    }}></div>
                 </div>
               </div>
               <div
                 id="info"
-                className=" col-span-5  flex justify-between text-gray-300 "
-              >
+                className=" col-span-5  flex justify-between text-gray-300 ">
                 <div className="flex flex-col justify-start">
                   <span className="text-xl font-bold">
                     {group.members[0]?.user.nickname}

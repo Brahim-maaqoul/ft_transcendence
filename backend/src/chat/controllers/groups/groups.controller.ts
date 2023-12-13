@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Delete,
   Query,
+  Param,
 } from '@nestjs/common';
 import { GroupsService } from 'src/chat/services/groups/groups.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -305,24 +306,25 @@ export class GroupsController {
       req.user.auth_id,
       group.group_id,
     );
-    console.log("here")
-    if (checkAdmin !== 'creator') return res.status(401).json({messqge: "you're not the creator"});
+    console.log('here');
+    if (checkAdmin !== 'creator')
+      return res.status(401).json({ messqge: "you're not the creator" });
     await this.GroupsService.changePrivacy(group);
     return res.status(201).send();
   }
-  @Get('/get')
+  @Get('/get/:groupId')
   @UseGuards(AuthGuard('jwt'))
   async getGroup(
     @Res() res,
     @Req() req,
-    @Query('groupId', ParseIntPipe) groupId: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
   ) {
     const checkAdmin = await this.GroupsService.checkAdmin(
       req.user.auth_id,
       groupId,
     );
     if (checkAdmin === 'notMember' || checkAdmin === 'banned')
-      return res.status(401, 'not a member').send();
+      return res.status(401).json({ msg: 'not a member' });
     const group = await this.GroupsService.getGroup(groupId, req.user.auth_id);
     return res.status(200).json(group);
   }

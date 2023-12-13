@@ -89,8 +89,8 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
   });
 
   useEffect(() => {
-    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data.path);
-  }, [uploadMutation.isSuccess, avatar, uploadMutation.data.path]);
+    if (uploadMutation.isSuccess) setAvatar(uploadMutation.data?.path);
+  }, [uploadMutation.isSuccess, avatar, uploadMutation.data?.path]);
 
   const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
 

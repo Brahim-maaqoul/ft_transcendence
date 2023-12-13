@@ -88,7 +88,9 @@ export async function upload(data: FormData) {
 }
 
 async function getMessages(data: string) {
-  const response: AxiosResponse = await API.get("/groups/get?groupId=" + data);
+  console.log("here1111", data);
+  const response: AxiosResponse = await API.get("/groups/get/" + data);
+  console.log("here1111", response.data);
   return response.data;
 }
 
@@ -100,7 +102,7 @@ export function UseGetMessages(data: string) {
 }
 
 export async function deleteGroup(data: number) {
-  const response: AxiosResponse = await API.post("/chat/removeRoom", {
+  const response: AxiosResponse = await API.post("/groups/delete", {
     group: data,
   });
   return response.data;
