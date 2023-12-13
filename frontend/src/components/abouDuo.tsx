@@ -17,6 +17,7 @@ import { useFriendType } from "@/app/api/getFriendtype";
 import { blockFriend } from "@/app/api/blockFriend";
 import Image from "next/image";
 import { unblockFriend } from "@/app/api/unBlock";
+import Challenge from "./challengeButton";
 
 interface ConversationProps {
   id: string;
@@ -44,9 +45,33 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
   const handler1 = () => {
     mutation1.mutate(group.members[0].user_id);
   };
-  if (FriendshipType?.type === "blocked") {
-    return <>your&apos;re blocked bitch</>;
-  }
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const handleChallenge = (e: MouseEvent) => {
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(e.target as HTMLDivElement)
+    ) {
+      setShowModal(false);
+    }
+  };
+  const handleButtonClick = (e: any) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+  useEffect(() => {
+    document.addEventListener(
+      "mousedown",
+      handleChallenge as unknown as (event: Event) => void
+    );
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleChallenge as unknown as (event: Event) => void
+      );
+    };
+  }, []);
   return (
     <div className=" w-full absolute overflow-auto bottom-11 top-20 ">
       <div className=" overflow-y-auto h-[100%] no-scrollbar">
@@ -81,7 +106,11 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
                 />
                 Block
               </div>
-              <div className="bg-black text-white p-2 rounded-2xl hover:cursor-pointer  relative flex justify-center items-center px-5 text-xs lg:text-xl">
+
+              <button
+                onClick={handleButtonClick}
+                className="p-2 flex items-center justify-center bg-black text-white rounded-full"
+              >
                 <Image
                   src={"/challenge.png"}
                   alt="challenge Friend"
@@ -89,7 +118,17 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
                   height={20}
                   className="mr-2"
                 />
-                Play A Game
+                Challenge
+              </button>
+            </div>
+          )}
+          {showModal && (
+            <div
+              ref={modalRef}
+              className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-50`}
+            >
+              <div className="w-full h-full flex flex-col items-center gap-[30px] rounded-[10px] p-[30px] bg-slate-950/70 backdrop-blur-xl">
+                <Challenge />
               </div>
             </div>
           )}
