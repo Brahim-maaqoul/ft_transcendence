@@ -5,8 +5,8 @@ const API = axios.create({
   baseURL: "http://localhost:8000/v1/api/",
   withCredentials: true,
 });
-const TfaToggle = () => {
-  const [isTfaEnabled, setIsTfaEnabled] = useState(false);
+const TfaToggle = ({ isEnabled }: { isEnabled: boolean }) => {
+  const [isTfaEnabled, setIsTfaEnabled] = useState(isEnabled);
   useEffect(() => {
     fetchTfaStatus();
   }, []);
