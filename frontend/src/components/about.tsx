@@ -26,7 +26,7 @@ function About(){
                  <div className="w-28 h-28">
                     <div
                       className="h-28 w-28 rounded-full bg-cover"
-                      style={{ backgroundImage: `url(/rjaanit.jpg)` }}></div>
+                      style={{ backgroundImage: `url(/sb3.jpg)` }}></div>
                   </div>
                     <span className="text-lg md:text-2xl text-cyan-950">Reda Jaanit</span>
                 </div>
