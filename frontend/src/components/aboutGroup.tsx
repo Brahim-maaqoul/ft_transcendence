@@ -228,11 +228,12 @@ const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
   console.log(new Date(user.muted), new Date());
   return (
     <div
-      className=" col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 "
-      onClick={() => handleMakeAdmin()}
-    >
+      className="col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 "
+      >
       {user.type === "member" && (
-        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt">
+        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt"
+        onClick={() => handleMakeAdmin()}
+        >
           {iconAdd}
         </button>
       )}
