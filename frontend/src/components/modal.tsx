@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
 import Settings from "./settings";
-import TfaToggle from "./tfaToggle";
 import Edit from "@/app/Edit/page";
 
 const API = axios.create({

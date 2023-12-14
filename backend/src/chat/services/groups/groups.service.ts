@@ -203,7 +203,7 @@ export class GroupsService {
         user_id: add_member.userId,
       },
     });
-	if (!relation) return;
+    if (!relation) return ;
     const new_member = await this.prisma.members.update({
       where: {
         id: relation.id,
