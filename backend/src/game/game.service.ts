@@ -64,4 +64,16 @@ export class GameService {
     });
     return game;
   }
+
+  async getAchievements(nickname: string) {
+	const achievements = await this.prisma.users.findUnique({
+	  where: {
+		nickname: nickname,
+	  },
+	  select: {
+		achievement: true,
+	  }
+	});
+	return achievements;
+  }
 }

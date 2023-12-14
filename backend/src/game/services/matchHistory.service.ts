@@ -94,7 +94,6 @@ export class MatchHistoryService {
     const loss = games.filter(game => {
       return game.winner == user2;
     }).length;
-	console.log(games,user2, auth_id)
 
     let my_goal = 0,
       opp_goal = 0;

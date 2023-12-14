@@ -12,9 +12,7 @@ export class GameMatchController {
     @UseGuards(AuthGuard('jwt'))
     async globalGame(@Res() res, @Req() req)
     {
-        console.log("here")
         const match = await this.MatchHistoryService.getMatchHistoryGlobal()
-        console.log("match", match)
         return res.status(200).json(match)
     }
     @Get('/get')

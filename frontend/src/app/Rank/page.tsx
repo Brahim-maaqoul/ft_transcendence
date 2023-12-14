@@ -123,10 +123,10 @@ function Rank() {
                     />
                   </div>
                   <span className="text-yellow-700 text-2xl mt-2">
-                    {Rank[0].user.nickname}
+                    {Rank[2].user.nickname}
                   </span>
                   <span className="text-yellow-700 font-medium text-sm">
-                    {`${Rank[0]?.leaderboard} `} points
+                    {`${Rank[2]?.leaderboard} `} points
                   </span>
                 </div>
               )}

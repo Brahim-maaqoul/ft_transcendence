@@ -74,7 +74,6 @@ export class AuthService {
       const response = await axios.get(imageUrl, {
         responseType: 'arraybuffer'
       });
-      console.log(response.data.mimetype)
       return this.image.uploadFromAuth(response.data);
       return imageUrl
     } catch (error) {

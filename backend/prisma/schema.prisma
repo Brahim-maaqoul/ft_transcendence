@@ -152,6 +152,7 @@ model Notification {
   type            String
   sender_id       String
   receiver_id     String
+  path			  String
   seen            Boolean @default(false)
   last_change     DateTime       @default(now())
   Recipient       Users   @relation("Recipient", fields: [receiver_id], references: [auth_id])

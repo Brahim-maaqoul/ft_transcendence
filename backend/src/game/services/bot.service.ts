@@ -22,6 +22,14 @@ export class BotService {
         option: data.option,
       },
     });
+    await this.prisma.users.update({
+      where: {
+        auth_id: playerId,
+      },
+      data: {
+        status: 'inGame',
+      },
+    });
     const newgame = new Game();
     newgame.gameId = game.botGameId;
     newgame.playerId1 = playerId;
@@ -35,49 +43,80 @@ export class BotService {
     return game;
   }
 
-  public async deleteBotGame(clientId: string) {
-    if (
-      clientId in this.gameSessionService.botGames &&
-      this.gameSessionService.botGames[clientId].status === 'finished'
-    ) {
-      console.log('delete finished game from botGames');
-      let theWinner =
-        this.gameSessionService.botGames[clientId].score.p1 >
-        this.gameSessionService.botGames[clientId].score.p2
-          ? this.gameSessionService.botGames[clientId].playerId1
-          : 'Bot';
+  public async deleteBotGame(game: Game) {
+	  console.log("finsihed");
+    if (!game || !(game.gameId in this.gameSessionService.botGames)) return;
+	console.log("finsihed");
+    if (game.status === 'finished') {
+		console.log("finsihed");
+      let theWinner = game.score.p1 > game.score.p2 ? game.playerId1 : 'Bot';
       await this.prisma.botGame.update({
         where: {
-          botGameId: this.gameSessionService.botGames[clientId].gameId,
+          botGameId: game.gameId,
         },
         data: {
-          score1: this.gameSessionService.botGames[clientId].score.p1,
-          score2: this.gameSessionService.botGames[clientId].score.p2,
+          score1: game.score.p1,
+          score2: game.score.p2,
           status: 'finished',
           winner: theWinner,
           time: new Date(),
         },
       });
-      console.log(this.gameSessionService.botGames[clientId]);
-      this.gameSessionService.playersSocket[
-        this.gameSessionService.botGames[clientId].playerId1
-      ].emit('gameEnd');
-      delete this.gameSessionService.botGames[clientId];
+      await this.prisma.users.update({
+        where: {
+          auth_id: game.playerId1,
+        },
+        data: {
+          status: 'online',
+        },
+      });
+      this.gameSessionService.playersSocket[game.playerId1].emit('gameEnd');
+      delete this.gameSessionService.botGames[game.gameId];
       return;
     }
-    console.log('delete uncompleted game from botGames');
     await this.prisma.botGame.update({
       where: {
-        botGameId: Number(clientId),
+        botGameId: game.gameId,
       },
       data: {
         status: 'uncompleted',
+        winner: 'Bot',
+        score1: 1,
+        score2: 10,
+        time: new Date(),
       },
     });
-    if (clientId in this.gameSessionService.botGames) {
-      this.gameSessionService.playersSocket[
-        this.gameSessionService.botGames[clientId].playerId1
-      ].emit('gameEnd');
+    await this.prisma.users.update({
+      where: {
+        auth_id: game.playerId1,
+      },
+      data: {
+        status: 'online',
+      },
+    });
+    if (game.gameId in this.gameSessionService.botGames) {
+      this.gameSessionService.playersSocket[game.playerId1].emit('gameEnd');
+      delete this.gameSessionService.botGames[game.gameId];
     }
+  }
+
+  async rankBotUpdate(game: Game) {
+	if (!game) return;
+    const userRank = await this.prisma.stats.findUnique({
+      where: {
+        user_id: game.playerId1,
+      },
+    });
+    let rankNew = userRank.leaderboard;
+    const expected = Math.floor(1 / (1 + Math.pow(10, (rankNew - 1500) / 400)));
+    rankNew = rankNew + ((game.winner === game.playerId1 ? 1 : 0) - expected);
+    await this.prisma.stats.update({
+      where: {
+        user_id: game.playerId1,
+      },
+      data: {
+        leaderboard: rankNew,
+      },
+    });
   }
 }

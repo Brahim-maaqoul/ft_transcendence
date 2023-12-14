@@ -40,7 +40,7 @@ export class MessagesService {
         lastChange: new Date(),
       },
     });
-    if (!group) return ;
+	if (!group) return;
     const members = await this.prisma.members.findMany({
       where: {
         group_id: messageDto.groupId,
@@ -50,7 +50,7 @@ export class MessagesService {
       },
     });
     members.map((member) => {
-      this.notification.addNotification(sender_id, member.user_id, group.type + " message", "/chat/" + messageDto.groupId); // HERE /message/groupId
+      this.notification.addNotification(sender_id, member.user_id, group.type + " message", '/chat/' + messageDto.groupId);
     });
   }
 }

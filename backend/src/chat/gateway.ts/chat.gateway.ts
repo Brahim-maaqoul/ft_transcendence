@@ -22,7 +22,6 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async afterInit(server: any) {
     }
     async handleConnection(client: any, ...args: any[]) {
-        console.log(client.id)
 
     }
     async handleDisconnect(client: any) {
@@ -31,7 +30,6 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage("getId")
     async handelGetId(client: Socket, payload: {auth_id: string})
     {
-        console.log(payload.auth_id)
         if (!payload.auth_id)
             return ;
         this.IdToSocket[payload.auth_id] = client;
@@ -54,7 +52,6 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         members.map((member) => {
             if (this.IdToSocket[member.user_id])
             {
-                console.log("typing")
                 this.IdToSocket[member.user_id].emit("isTyping", {message: payload.user + ' is typing', id: Number(payload.group_id)})
             }
         })
@@ -66,7 +63,6 @@ export class chatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         members.map((member) => {
             if (this.IdToSocket[member.user_id])
             {
-                console.log("not typing")
                 this.IdToSocket[member.user_id].emit("notTyping")
             }
         })

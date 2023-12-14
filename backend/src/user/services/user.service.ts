@@ -135,7 +135,7 @@ export class UserService {
 
   async getUsersByRank() {
     return await this.prisma.stats.findMany({
-      orderBy: { leaderboard: 'asc' },
+      orderBy: { leaderboard: 'desc' },
       select: {
         leaderboard: true,
         user: {
