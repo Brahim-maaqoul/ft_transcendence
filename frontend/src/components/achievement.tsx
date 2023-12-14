@@ -2,6 +2,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import Image from "next/image";
 import Stats from "./stats";
+import { useGetAchievements, useGetRank } from "@/app/api/getRank";
 
 const colors = [
   "/Level_3.png",
@@ -27,30 +28,38 @@ const extractColorName = (path: string) => {
   return name.join(" ");
 };
 
-export const Achievement = () => (
-  <div className="bg-black bg-opacity-40 rounded-2xl shadow-black shadow-2xl flex flex-col p-4 mx-2 my-2">
-    <span className="text-white text-2xl font-mono">Achievements</span>
-    <Splide
-      options={{
-        perPage: 2,
-        arrows: false,
-        pagination: false,
-        drag: "free",
-        autoWidth: true,
-        gap: "2rem",
-      }}>
-      {colors.map((color, index) => (
-        <SplideSlide key={index} className="p-4">
-          <div className="flex flex-col justify-center items-center">
-            <div className="w-[85px] h-[120px]">
-              <div
-                className="h-full w-full bg-contain bg-no-repeat"
-                style={{ backgroundImage: `url(${color})` }}></div>
+export function Achievement({ nickname }: { nickname: string }) {
+  const { data: achievements, isLoading, isError } = useGetAchievements(nickname);
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
+  console.log("Achievement >>>.> ",achievements);
+  return (
+    <div className="bg-black bg-opacity-40 rounded-2xl shadow-black shadow-2xl flex flex-col p-4 mx-2 my-2">
+      <span className="text-white text-2xl font-mono">Achievements</span>
+      <Splide
+        options={{
+          perPage: 2,
+          arrows: false,
+          pagination: false,
+          drag: "free",
+          autoWidth: true,
+          gap: "2rem",
+        }}
+      >
+        {colors.map((color, index) => (
+          <SplideSlide key={index} className="p-4">
+            <div className="flex flex-col justify-center items-center">
+              <div className="w-[85px] h-[120px]">
+                <div
+                  className="h-full w-full bg-contain bg-no-repeat"
+                  style={{ backgroundImage: `url(${color})` }}
+                ></div>
+              </div>
+              <span className="text-white mt-2">{extractColorName(color)}</span>
             </div>
-            <span className="text-white mt-2">{extractColorName(color)}</span>
-          </div>
-        </SplideSlide>
-      ))}
-    </Splide>
-  </div>
-);
+          </SplideSlide>
+        ))}
+      </Splide>
+    </div>
+  );
+}

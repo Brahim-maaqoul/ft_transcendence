@@ -52,7 +52,7 @@ export default function Profile() {
                 {dataUser && params.user !== dataUser?.nickname && (
                   <Stats profileData={profileData} />
                 )}
-                <Achievement />
+                <Achievement nickname={profileData.nickname} />
               </div>
             </div>
           </div>
