@@ -17,7 +17,6 @@ import { upload } from "../api/chatApi/chatApiFunctions";
 
 export default function Edit() {
   const { dataUser } = useAuth();
-  const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [displayname, setDisplayname] = useState("");
   const [avatar, setAvatar] = useState("");
@@ -160,7 +159,7 @@ export default function Edit() {
             />
           </div>
           <div className="py-3 flex flex-col my-3">
-            <TfaToggle />
+            <TfaToggle isEnabled={dataUser.isTfaEnabled}/>
           </div>
         </div>
         {isLoading ? (
