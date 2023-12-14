@@ -3,8 +3,6 @@ import { useAuth } from "./providers/AuthContext";
 
 function FoundMatch({ dataGame }: { dataGame: GameData }) {
   const { dataUser } = useAuth();
-  console.log(dataGame);
-  console.log(dataUser);
   const textShadow = `0px 0px 5px black, 0px 0px 10px white, 0px 0px 20px white, 0px 0px 40px white`;
   return (
     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-600/60 backdrop-blur max-w-[1000px] h-1/2 w-full sm:w-3/5 z-50 rounded flex flex-col justify-center items-center gap-4 px-4">

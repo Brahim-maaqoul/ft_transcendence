@@ -21,7 +21,6 @@ function Infos({ profileData }: { profileData: UserProfile }) {
   const { data: FriendshipType } = useFriendType(profileData.auth_id);
   const [show, setShow] = useState(false);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [logged, setlogged] = useState(true);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -76,6 +75,7 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       router.push("/chat/" + mutation.data?.id);
     }
   }, [mutation.isSuccess, mutation.data?.id, router]);
+  console.log(profileData);
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
       <div className="flex items-start flex-col md:flex-row  gap-8">
@@ -92,11 +92,13 @@ function Infos({ profileData }: { profileData: UserProfile }) {
           <div
             className="h-48 w-48 rounded-full bg-cover relative"
             style={{ backgroundImage: `url(${picturePath})` }}>
-            {logged ? (
+            {profileData?.status === 'online' ? (
               <span className="absolute h-5 w-5 rounded-full bg-green-500 mt-40 ml-36 border-2 border-black"></span>
-            ) : (
-              <span className="absolute h-5 w-5 rounded-full bg-red-600 mt-40 ml-36 border-2 border-black"></span>
-            )}
+            ) : profileData?.status ==="inGame"? (
+              <span className="absolute h-5 w-5 rounded-full bg-purple-600 mt-40 ml-36 border-2 border-black"></span>
+            ):(
+				<span className="absolute h-5 w-5 rounded-full bg-red-600 mt-40 ml-36 border-2 border-black"></span>
+			  )}
           </div>
         </div>
         <div className="w-full relative">

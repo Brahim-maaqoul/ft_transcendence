@@ -63,14 +63,27 @@ export class FriendService {
     if (existingFriendship) {
       throw new HttpException('Friendship already exists.', 201);
     }
-    await this.prisma.friends.create({
+    const friends = await this.prisma.friends.create({
       data: {
         user1_id: user1Id,
         user2_id: user2Id,
         status: 'pending', // Set an initial status if needed
       },
+      select: {
+        user1: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
     });
-    this.notification.addNotification(user1Id, user2Id, "friend Request")
+    if (!friends) return;
+    this.notification.addNotification(
+      user1Id,
+      user2Id,
+      'friend Request',
+      '/profile/' + friends.user1.nickname,
+    ); // HERE
     return 'Friendship request sent successfully.';
   }
 
@@ -85,15 +98,28 @@ export class FriendService {
     if (!friendship) {
       throw new HttpException("doesn't exist in friends waiting list", 400);
     }
-    await this.prisma.friends.update({
+    const friends = await this.prisma.friends.update({
       where: {
         friendship_id: friendship.friendship_id,
       },
       data: {
         status: 'accepted',
       },
+      select: {
+        user2: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
     });
-    this.notification.addNotification(user1Id, user2Id, "friend accept")
+
+    this.notification.addNotification(
+      user1Id,
+      user2Id,
+      'friend accept',
+      '/profile/' + friends.user2.nickname,
+    ); // HERE
     return 'Friendship request accepted successfully.';
   }
 

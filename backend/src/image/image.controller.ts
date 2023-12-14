@@ -11,6 +11,7 @@ export class ImageController {
     constructor(private ImageService:ImageService){}
 
     @Get('/get/:id')
+	@UseGuards(AuthGuard('jwt'))
     async getImg(@Res() res, @Param('id', ParseIntPipe) id: number)
     {
         const image = await this.ImageService.getImg(id)

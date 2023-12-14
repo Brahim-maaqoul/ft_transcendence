@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useAuth } from "./providers/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { MessageInfo } from "./Conversation";
@@ -38,15 +38,16 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
 
   const { showFalse } = useAuth();
   const { data: getMembership } = useGetMemberShip(group.id);
-  socket.on("isTyping", (data: { message: string; id: number }) => {
-    console.log("isTyping111", data, group.id);
-    if (data.id === Number(group.id)) setisTyping(data.message);
-  });
-  socket.on("notTyping", () => {
-    setisTyping(null);
-    console.log("baddrr");
-  });
-
+  useEffect(() => {
+    socket.on("isTyping", (data: { message: string; id: number }) => {
+      console.log("isTyping111", data, group.id);
+      if (data.id === Number(group.id)) setisTyping(data.message);
+    });
+    socket.on("notTyping", () => {
+      setisTyping(null);
+      console.log("baddrr");
+    });
+  }, [socket]);
   return (
     <div className=" w-full h-1/10 border-b border-gray-300 flex items-center p-1">
       {newGroup && <UpdateChannel group={group} setNewGroup={setNewGroup} />}
@@ -58,14 +59,16 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
                 className="h-12 w-12 rounded-full bg-cover"
                 style={{
                   backgroundImage: `url(${group.members[0].user.picture})`,
-                }}></div>
+                }}
+              ></div>
             </div>
           </Link>
         ) : (
           <div className="w-12 h-12">
             <div
               className="h-12 w-12 rounded-full bg-cover"
-              style={{ backgroundImage: `url(${group.picture})` }}></div>
+              style={{ backgroundImage: `url(${group.picture})` }}
+            ></div>
           </div>
         )}
       </div>
@@ -86,7 +89,8 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
             <div className="w-6 h-6">
               <div
                 className="h-6 w-6 rounded-full bg-cover"
-                style={{ backgroundImage: `url(/edit.png)` }}></div>
+                style={{ backgroundImage: `url(/edit.png)` }}
+              ></div>
             </div>
           </button>
         )}
@@ -101,7 +105,8 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
             stroke="currentColor"
             fill="none"
             strokeLinecap="round"
-            strokeLinejoin="round">
+            strokeLinejoin="round"
+          >
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
             <path d="M12 9h.01"></path>
