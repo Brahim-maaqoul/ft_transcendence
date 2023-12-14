@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useAuth } from "./providers/AuthContext";
 import { matchInterface, useGetMatchHistory } from "@/app/api/getGames";
+import Link from "next/link";
 
 export default function RecentGames({ nickname }: { nickname: string | null }) {
   const {
@@ -18,15 +19,17 @@ export default function RecentGames({ nickname }: { nickname: string | null }) {
         MatchHistory?.map((match: matchInterface, index: number) => (
           <div
             key={index}
-            className="bg-black bg-opacity-40 rounded-2xl h-24 flex justify-between px-4 m-2"
-          >
+            className="bg-black bg-opacity-40 rounded-2xl h-24 flex justify-between px-4 m-2">
             <div className="flex gap-x-4 items-center">
-              <div className="w-16 h-16 flex items-center">
-                <div
-                  className="h-16 w-16 rounded-full bg-cover"
-                  style={{ backgroundImage: `url(${match.user1.picture})` }}
-                ></div>
-              </div>
+              <Link href={"/profile/" + match.user1.nickname}>
+                <div className="w-16 h-16 flex items-center">
+                  <div
+                    className="h-16 w-16 rounded-full bg-cover"
+                    style={{
+                      backgroundImage: `url(${match.user1.picture})`,
+                    }}></div>
+                </div>
+              </Link>
               <span className="text-md lg:text-2xl text-slate-400">
                 {match.user1.nickname}
               </span>
@@ -41,8 +44,9 @@ export default function RecentGames({ nickname }: { nickname: string | null }) {
               <div className="w-16 h-16 flex items-center">
                 <div
                   className="h-16 w-16 rounded-full bg-cover"
-                  style={{ backgroundImage: `url(${match.user2.picture})` }}
-                ></div>
+                  style={{
+                    backgroundImage: `url(${match.user2.picture})`,
+                  }}></div>
               </div>
             </div>
           </div>
