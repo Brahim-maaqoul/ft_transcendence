@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { API } from "./checkAuthentication";
 import { useQuery } from "@tanstack/react-query";
+import exp from "constants";
 
 export interface rankInterface {
   leaderboard: string;
@@ -32,5 +33,17 @@ export function useGetMyRank() {
   return useQuery({
     queryKey: ["myRank"],
     queryFn: () => getMyRank(),
+  });
+}
+
+async function getAchievements(nickname: string) {
+  const response: AxiosResponse = await API.get("/Game/achievements?nickname=" + nickname);
+  return response.data;
+}
+
+export function useGetAchievements(nickname: string) {
+	  return useQuery({
+	queryKey: ["achievements"],
+	queryFn: () => getAchievements(nickname),
   });
 }
