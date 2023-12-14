@@ -30,23 +30,25 @@ function Rank() {
           <MyRank />
           <div className="bg-black h-[887px] bg-opacity-40 rounded-2xl  p-4 m-2 overflow-y-auto no-scrollbar">
             <span className="text-white text-2xl font-mono">Global Rank</span>
-            <div className="flex justify-around">
+            <div
+              className={`flex ${
+                Rank?.length === 2 && " flex-col-reverse"
+              } justify-around`}>
               {Rank?.length >= 2 && (
                 <div className="mt-16 flex flex-col items-center relative">
                   <div className="absolute z-10 ml-16 flex justify-center items-center border-2   bg-gray-400 border-gray-500 w-6 h-6 rounded-full">
                     2
                   </div>
                   <div className="relative">
-                  <Link href={"/profile/"+ Rank[1].user.nickname}>
-                    <div className="w-24 h-24">
-                      <div
-                        className="h-24 w-24 rounded-full bg-cover border-8 border-gray-400"
-                        style={{
-                          backgroundImage: `url(${Rank[1].user.picture})`,
-                        }}
-                        ></div>
-                    </div>
-                        </Link>
+                    <Link href={"/profile/" + Rank[1].user.nickname}>
+                      <div className="w-24 h-24">
+                        <div
+                          className="h-24 w-24 rounded-full bg-cover border-8 border-gray-400"
+                          style={{
+                            backgroundImage: `url(${Rank[1].user.picture})`,
+                          }}></div>
+                      </div>
+                    </Link>
                     <Image
                       src={"/silver.svg"}
                       width={100}
@@ -70,16 +72,15 @@ function Rank() {
                     1
                   </div>
                   <div className="relative">
-                  <Link href={"/profile/"+ Rank[0].user.nickname}>
-                    <div className="w-24 h-24">
-                      <div
-                        className="h-24 w-24 rounded-full bg-cover border-8 border-amber-300"
-                        style={{
-                          backgroundImage: `url(${Rank[0].user.picture})`,
-                        }}
-                        ></div>
-                    </div>
-                        </Link>
+                    <Link href={"/profile/" + Rank[0].user.nickname}>
+                      <div className="w-24 h-24">
+                        <div
+                          className="h-24 w-24 rounded-full bg-cover border-8 border-amber-300"
+                          style={{
+                            backgroundImage: `url(${Rank[0].user.picture})`,
+                          }}></div>
+                      </div>
+                    </Link>
                     <Image
                       src={"/gold.svg"}
                       width={100}
@@ -103,16 +104,15 @@ function Rank() {
                     3
                   </div>
                   <div className="relative">
-                    <Link href={"/profile/"+ Rank[2].user.nickname}>
-                    <div className="w-24 h-24">
-                      <div
-                        className="h-24 w-24 rounded-full bg-cover border-8 border-yellow-700"
-                        style={{
-                          backgroundImage: `url(${Rank[2].user.picture})`,
-                        }}
-                        ></div>
-                    </div>
-                        </Link>
+                    <Link href={"/profile/" + Rank[2].user.nickname}>
+                      <div className="w-24 h-24">
+                        <div
+                          className="h-24 w-24 rounded-full bg-cover border-8 border-yellow-700"
+                          style={{
+                            backgroundImage: `url(${Rank[2].user.picture})`,
+                          }}></div>
+                      </div>
+                    </Link>
                     <Image
                       src={"/bronze.svg"}
                       width={100}
@@ -134,16 +134,16 @@ function Rank() {
             {users.map((user: rankInterface, index: number) => (
               <div
                 key={index}
-                className="bg-black bg-opacity-40 rounded-2xl h-24 flex justify-between px-4 m-2"
-              >
+                className="bg-black bg-opacity-40 rounded-2xl h-24 flex justify-between px-4 m-2">
                 <div className="flex gap-x-4 items-center">
                   <span className="text-5xl text-slate-400 ">#{index + 4}</span>
                   <Link href={"/profile/" + user.user.nickname}>
                     <div className="w-24 h-24 flex items-center">
                       <div
                         className="h-20 w-20 rounded-full bg-cover"
-                        style={{ backgroundImage: `url(${user.user.picture})` }}
-                      ></div>
+                        style={{
+                          backgroundImage: `url(${user.user.picture})`,
+                        }}></div>
                     </div>
                   </Link>
                   <div className="flex flex-col">
