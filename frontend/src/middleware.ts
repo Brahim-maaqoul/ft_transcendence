@@ -22,5 +22,5 @@ export async function middleware(request: NextRequest, res: NextResponse) {
 }
 
 export const config = {
-  matcher: ["/((?!_next).*)"],
+  matcher: ["/((?!_next|tfa).*)"],
 };
