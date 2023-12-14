@@ -34,6 +34,7 @@ import { type } from 'os';
 import { parentPort } from 'worker_threads';
 import { AuthService } from 'src/auth/auth.service';
 import { plainToClass } from 'class-transformer';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @WebSocketGateway({
   namespace: 'Game2d',
@@ -51,10 +52,8 @@ export class GameGateway
     private matchMaking: MatchMakingService,
     private gameend: GameEndService,
     private authService: AuthService,
+    private prisma: PrismaService,
   ) {}
-
-  private interval;
-  private game: Game = new Game();
 
   @WebSocketServer() server: Server;
   async afterInit(server: Server) {}
@@ -62,12 +61,13 @@ export class GameGateway
   @UseGuards(JwtGuard)
   @SubscribeMessage('joinQueue')
   async joinQueue(client: any, payload: Data) {
-    console.log('joinQueue', client.user, payload);
+    const gametmp = this.gameSessionService.playersInfo[client.user];
     if (
-      client.user in this.gameSessionService.matchPlayers ||
-      client.user in this.gameSessionService.botGames
+      gametmp &&
+      (gametmp.id in this.gameSessionService.matchPlayers ||
+        gametmp.id in this.gameSessionService.botGames)
     ) {
-      client.emit('ERROR', 'allready in game');
+      client.emit('ERROR', 'you are already in a game');
       return;
     }
     client.emit('startLoading');
@@ -83,12 +83,10 @@ export class GameGateway
       }
       const idx = this.gameSessionService.queuePlayers.containsData(payload);
       if (idx < 0) {
-        // TODO(): where the random data is stored as null
         await this.matchMaking.joinQueue(client.user, payload);
         return;
       }
 
-      //   match it with the one with the same data
       const userData = this.gameSessionService.queuePlayers.getDataByIdx(idx);
       const game = await this.matchMaking.createDuoGame(
         client.user,
@@ -110,17 +108,36 @@ export class GameGateway
   }
 
   @UseGuards(JwtGuard)
+  @SubscribeMessage('rejoin')
+  async rejoin(client: any) {
+    const gametmp = this.gameSessionService.playersInfo[client.user];
+    if (
+      !gametmp ||
+      !(
+        gametmp.id in this.gameSessionService.matchPlayers ||
+        gametmp.id in this.gameSessionService.botGames
+      )
+    ) {
+      client.emit('ERROR', 'you are not in a game');
+      return;
+    }
+    client.emit('gameStart', '/Game/' + gametmp.type + '/' + gametmp.id);
+    return;
+  }
+
+  //   TODO(): check for the game like bot
+  @UseGuards(JwtGuard)
   @SubscribeMessage('gameReady')
   async gameReady(client: any, payload: { gameId: string; type: string }) {
     if (payload.type === 'Bot') {
       if (!(payload.gameId in this.gameSessionService.botGames)) {
-        console.log('ERROR', 'game not found');
+        const game = this.gameSessionService.matchPlayers[payload.gameId];
+
         // client.emit('ERROR', 'game not found');
-        await this.botService.deleteBotGame(payload.gameId);
+        await this.botService.deleteBotGame(game);
         return;
       }
       this.gameSessionService.botGames[payload.gameId].start = [true, true];
-      //   console.log('gameReady', this.gameSessionService.botGames[payload.gameId])
     }
     if (payload.type === 'Duo') {
       const game = this.gameSessionService.matchPlayers[payload.gameId];
@@ -128,17 +145,26 @@ export class GameGateway
         game.playerId1 === client.user || game.start[0],
         game.playerId2 === client.user || game.start[1],
       ];
-      console.log(this.gameSessionService.matchPlayers[payload.gameId].start);
     }
   }
 
   @UseGuards(JwtGuard)
   @SubscribeMessage('cancel')
   async cancel(client: any) {
-    console.log('emit cancel', this.gameSessionService.queuePlayers);
     this.gameSessionService.queuePlayers.erase(client.user);
     client.emit('cancelLoading');
-    console.log('emit cancel', this.gameSessionService.queuePlayers);
+    const gametmp = this.gameSessionService.playersInfo[client.user];
+    if (gametmp) {
+      if (gametmp.id in this.gameSessionService.botGames) {
+        const gameStorage = this.gameSessionService.botGames[gametmp.id];
+        await this.botService.deleteBotGame(gameStorage);
+        return;
+      }
+      if (gametmp.id in this.gameSessionService.matchPlayers) {
+        const gameStorage = this.gameSessionService.matchPlayers[gametmp.id];
+        await this.matchMaking.deleteGameUncompleted(gameStorage, client.user);
+      }
+    }
   }
 
   @UseGuards(JwtGuard)
@@ -160,8 +186,10 @@ export class GameGateway
       if (
         this.gameSessionService.botGames[payload.gameId].status === 'finished'
       ) {
-        await this.gameend.rankBotUpdate(payload.gameId);
-        await this.botService.deleteBotGame(payload.gameId);
+        const gameStorage =
+          this.gameSessionService.botGames[payload.gameId];
+		  await this.botService.deleteBotGame(gameStorage);
+		  await this.botService.rankBotUpdate(gameStorage);
         return;
       }
       client.emit(
@@ -170,12 +198,11 @@ export class GameGateway
       );
     }
 
-
     if (
       payload.type === 'Duo' &&
       payload.gameId in this.gameSessionService.matchPlayers
     ) {
-      const user = client.user
+      const user = client.user;
       this.gameSessionService.matchPlayers[payload.gameId].check_keys(
         payload.keys,
         this.gameSessionService.matchPlayers[payload.gameId].playerId1 === user
@@ -183,24 +210,21 @@ export class GameGateway
           : 1,
       );
       this.gameSessionService.matchPlayers[payload.gameId].update();
-	  const game = this.gameSessionService.matchPlayers[payload.gameId];
-	  if (game.status === 'finished') {
-		console.log('handelKeyGameUpdate', 'finished', game);
-		
-		await this.matchMaking.deleteGame(game);
-		return;
-	  }
-	  this.gameSessionService.playersSocket[game.playerId1].emit(
-		  'gameUpdate',
-		  game.get_data(game.playerId1 === user ? 0 : 1),
-	  );
-	  this.gameSessionService.playersSocket[game.playerId2].emit(
-		'gameUpdate',
-		game.get_data(game.playerId2 === user ? 0 : 1),
-	  );
+      const game = this.gameSessionService.matchPlayers[payload.gameId];
+      if (game.status === 'finished') {
 
+        await this.matchMaking.deleteGame(game);
+        return;
+      }
+      this.gameSessionService.playersSocket[game.playerId1].emit(
+        'gameUpdate',
+        game.get_data(game.playerId1 === user ? 0 : 1),
+      );
+      this.gameSessionService.playersSocket[game.playerId2].emit(
+        'gameUpdate',
+        game.get_data(game.playerId2 === user ? 0 : 1),
+      );
     }
-    // if (client.id in this.gameSessionService.games){
     // 	// bot game
     // 	if (this.gameSessionService.games[client.id] == gameStatus.bot){
     // 		this.botService.botGames[client.id].update();
@@ -255,7 +279,14 @@ export class GameGateway
     const user = this.authService.verifyToken(
       client.handshake.query.token,
     ).userId;
-    console.log(user);
+    await this.prisma.users.update({
+      where: {
+        auth_id: user,
+      },
+      data: {
+        status: 'online',
+      },
+    });
     this.gameSessionService.playersSocket[user] = client;
     // console.log('connecting client id: ', client.user, client.id, client.handshake.query.user);
     // this.gameSessionService.clients[client.id] = client;
@@ -273,21 +304,38 @@ export class GameGateway
     }
     // console.log(`Clinet id: ${client.id} disconnected!`);
     if (game.type == 'Bot' && game.id in this.gameSessionService.botGames) {
-      if (this.gameSessionService.botGames[game.id].status === 'finished') {
-        await this.gameend.rankBotUpdate(game.id);
+		const gameStorage = this.gameSessionService.botGames[game.id];
+      if (gameStorage.status === 'finished') {
+        await this.botService.rankBotUpdate(gameStorage);
       }
-      await this.botService.deleteBotGame(game.id);
+      await this.botService.deleteBotGame(gameStorage);
     }
+
+
     if (game.type == 'Duo' && game.id in this.gameSessionService.matchPlayers) {
-      console.log('deleting game', game.id);
-      if (this.gameSessionService.matchPlayers[game.id].status === 'finished') {
-        await this.gameend.rankDuoUpdate(game.id);
+		const gameStorage = this.gameSessionService.matchPlayers[game.id];
+      if (gameStorage.status === 'finished') {
+        await this.matchMaking.rankDuoUpdate(game.id);
       }
-    //   await this.matchMaking.deleteGame(game);
-    } else if (game.type == 'invite') {
+      await this.matchMaking.deleteGameUncompleted(gameStorage, user);
+    } 
+	
+	
+	
+	else if (game.type == 'invite') {
       // await this.botGameService.deleteBotGame(client.id);
     }
-    delete this.gameSessionService.playersInfo[game.id];
-    delete this.gameSessionService.playersSocket[user];
+    if (game.id in this.gameSessionService.playersInfo)
+      delete this.gameSessionService.playersInfo[game.id];
+    if (user in this.gameSessionService.playersSocket)
+      delete this.gameSessionService.playersSocket[user];
+    await this.prisma.users.update({
+      where: {
+        auth_id: user,
+      },
+      data: {
+        status: 'offline',
+      },
+    });
   }
 }

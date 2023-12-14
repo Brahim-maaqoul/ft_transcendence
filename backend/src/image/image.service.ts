@@ -24,7 +24,6 @@ export class ImageService {
             type: file?.mimetype ? file?.mimetype : "image/*"
         }
     })
-    console.log(image)
     return "http://localhost:8000/v1/api/image/get/" + image.id;
   }
   async uploadFromAuth(file: ArrayBuffer)
@@ -35,7 +34,6 @@ export class ImageService {
             type: "image/*"
         }
     })
-    console.log(image)
     return "http://localhost:8000/v1/api/image/get/" + image.id;
   }
 }
