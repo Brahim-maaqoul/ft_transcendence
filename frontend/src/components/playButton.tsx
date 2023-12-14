@@ -1,5 +1,5 @@
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { redirect, useRouter } from "next/navigation";
+import { use, useEffect, useRef, useState } from "react";
 import styles from "../app/styles.module.css";
 import { useAuth } from "./providers/AuthContext";
 import { set } from "react-hook-form";
@@ -31,6 +31,7 @@ interface DropDownValueProps {
   isVertical: boolean;
   array: string[];
   id: string;
+  dimension?: string;
   click: (value: string) => void;
 }
 
@@ -40,6 +41,7 @@ function DropDownValue({
   array,
   id,
   click,
+  dimension,
 }: DropDownValueProps) {
   return (
     <div
@@ -100,8 +102,6 @@ function Checkbox({
     </li>
   );
 }
-
-const textShadow = `0px 0px 5px black, 0px 0px 20px white, 0px 0px 40px white, 0px 0px 80px white`;
 
 const blueBoxShadow = `0px 0px 5px #008000, 0px 0px 20px #008000, 0px 0px 40px #008000`;
 
@@ -164,6 +164,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
   };
 
   const handleCloseModal = () => {
+    socket?.emit("cancel");
     setShowModal(false);
   };
 
@@ -172,10 +173,10 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
   const [isBottomOpen, setIsBottomOpen] = useState(false);
-
+  const [isSearching, setIsSearching] = useState(false);
   const modes = ["Duo", "Bot"];
   const dimensions = ["3D", "2D"];
-  const map3D = ["autumn", "cherry", "desert"];
+  const map3D = ["cyberpunk", "autumn", "cherry", "desert", "island", "snow"];
   const map2D = ["blue", "red", "green"];
   const [Mode, setMode] = useState("Bot");
   const [dimension, setDimension] = useState("3D");
@@ -186,6 +187,8 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
   const maps = dimension === "2D" ? map2D : map3D;
   const [selectedOption, setSelectedOption] = useState("Ranked");
   const options = ["Ranked", "Friendly", "Random"];
+  const [time, setTime] = useState(0);
+  const [gameIsSet, setGameIsSet] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -224,11 +227,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     };
   }, [showModal, isBottomOpen, isLeftOpen, isRightOpen]);
 
-  const textBorder = `-1px -1px 0 black,
-                    1px -1px 0 black,
-                    -1px 1px 0 black,
-                    1px 1px 0 black`;
-
+  const textShadow = `0px 0px 5px black, 0px 0px 20px white, 0px 0px 40px white, 0px 0px 80px white`;
   const clickLeft = () => {
     setIsLeftOpen((prev) => !prev);
     if (isBottomOpen) setIsBottomOpen(false);
@@ -254,7 +253,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
 
   const handleDimensionClick = (selectedDimension: string) => {
     setDimension(selectedDimension);
-	setMap((prevMap) => (selectedDimension === "2D" ? map2D[0] : map3D[0]));
+    setMap((prevMap) => (selectedDimension === "2D" ? map2D[0] : map3D[0]));
     setIsRightOpen(false);
   };
 
@@ -267,46 +266,63 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     setSelectedOption(value);
   };
 
-  const [isSearching, setIsSearching] = useState(false);
   const cancelMatch = () => {
-    console.log("cancel match");
     socket?.emit("cancel");
-
+    setMsg("");
+    setTime(0);
     updateBoxShadow();
   };
   const findMatch = () => {
     console.log("find match");
+    if (isSearching) return;
     socket?.emit("joinQueue", {
       mode: Mode,
       dimension: dimension,
       map: map,
       option: selectedOption,
     });
-
     updateBoxShadow();
   };
-  socket?.on("ERROR", (msg: string) => {
-    setIsSearching(false);
-    setMsg(msg);
-    setTime(0);
-  });
-  socket?.on("startLoading", () => {
-    setIsSearching(true);
-  });
-  socket?.on("cancelLoading", () => {
-    setIsSearching(false);
-  });
-  socket?.on("gameStart", (path: string) => {
-    setIsSearching(true);
-    router.push(path);
-  });
+
+  const rejoinMatch = () => {
+    socket?.emit("rejoin");
+    updateBoxShadow();
+  };
+
+  useEffect(() => {
+    socket?.on("ERROR", (msg: string) => {
+      console.log(msg, gameIsSet);
+      // setIsSearching(false);
+      setMsg(msg);
+      setTime(0);
+      if (msg === "you are already in a game" && !gameIsSet) {
+        setGameIsSet(true);
+        setIsSearching(true);
+        //   socket?.emit("rejoin");
+      }
+    });
+    socket?.on("startLoading", () => {
+      console.log("start loading");
+      setIsSearching(true);
+    });
+    socket?.on("cancelLoading", () => {
+      console.log("cancel loading");
+	  setGameIsSet(false);
+      setIsSearching(false);
+	  setTime(0);
+    });
+    socket?.on("gameStart", (path: string) => {
+      console.log("game start");
+      setIsSearching(true);
+      router.push(path);
+    });
+  }, [socket, gameIsSet]);
   const updateBoxShadow = () => {
     const button = document.getElementById("searchButton");
     if (button) {
       button.style.boxShadow = isSearching ? blueBoxShadow : redBoxShadow;
     }
   };
-  const [time, setTime] = useState(0);
 
   const format = (time: number) => {
     const minutes: number = Math.floor((time / 60) % 60);
@@ -334,7 +350,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
       setTime(0);
     };
   }, [isSearching]);
-
+  //   if (gameIsSet) return <></>;
   return (
     <>
       <a
@@ -431,6 +447,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                 isVertical={false}
                 isOpen={isBottomOpen}
                 array={maps}
+				dimension={dimension}
                 id={"bottomDropdown"}
                 click={handleMapClick}
               />
@@ -446,43 +463,82 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                 ))}
               </ul>
             </div>
-            <div className="w-full h-full flex flex-col-reverse">
-              <button
-                id="searchButton"
-                onClick={!isSearching ? findMatch : cancelMatch}
-                className={`w-full h-1/3 rounded ${
-                  isSearching ? " bg-red-600" : "bg-green-600"
-                } text-white`}
-                style={{
-                  transition: "box-shadow 0.5s",
-                  boxShadow: "none",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.boxShadow = isSearching
-                    ? redBoxShadow
-                    : blueBoxShadow)
-                }
-                onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
-              >
-                {isSearching ? "CANCEL" : "FIND MATCH"}
-              </button>
-              {isSearching ? (
-                <>
-                  <div
-                    className="w-full h-1/3 text-white text-center text-4xl"
-                    ref={timeRef as React.RefObject<HTMLDivElement>}
-                  >
-                    {format(time)}
-                  </div>
-                  <p
-                    className="w-full h-1/3 text-center text-white text-2xl"
-                    style={{ textShadow: `${textBorder}` }}
-                  >
-                    FINDING GAME
-                  </p>
-                </>
-              ) : null}
-            </div>
+            {gameIsSet ? (
+              <div className="w-full h-full flex flex-row">
+                <button
+                  id="searchButton"
+                  onClick={rejoinMatch}
+                  className={`w-1/2 h-1/3 rounded bg-green-600 text-white`}
+                  style={{
+                    transition: "box-shadow 0.5s",
+                    boxShadow: "none",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.boxShadow = isSearching
+                      ? redBoxShadow
+                      : blueBoxShadow)
+                  }
+                  onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
+                >
+                  "JOIN"
+                </button>
+                <button
+                  id="searchButton"
+                  onClick={cancelMatch}
+                  className={`w-1/2 h-1/3 rounded  bg-red-600 text-white`}
+                  style={{
+                    transition: "box-shadow 0.5s",
+                    boxShadow: "none",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.boxShadow = isSearching
+                      ? redBoxShadow
+                      : blueBoxShadow)
+                  }
+                  onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
+                >
+                  "CANCEL"
+                </button>
+              </div>
+            ) : (
+              <div className="w-full h-full flex flex-col-reverse">
+                <button
+                  id="searchButton"
+                  onClick={!isSearching ? findMatch : cancelMatch}
+                  className={`w-full h-1/3 rounded ${
+                    isSearching ? " bg-red-600" : "bg-green-600"
+                  } text-white`}
+                  style={{
+                    transition: "box-shadow 0.5s",
+                    boxShadow: "none",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.boxShadow = isSearching
+                      ? redBoxShadow
+                      : blueBoxShadow)
+                  }
+                  onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
+                >
+                  {isSearching ? "CANCEL" : "FIND MATCH"}
+                </button>
+                {isSearching ? (
+                  <>
+                    <div
+                      className="w-full h-1/3 text-white text-center text-4xl"
+                      ref={timeRef as React.RefObject<HTMLDivElement>}
+                    >
+                      {format(time)}
+                    </div>
+                    <p
+                      className="w-full h-1/3 text-center text-white text-2xl"
+                      style={{ textShadow: `${textShadow}` }}
+                    >
+                      FINDING GAME
+                    </p>
+                  </>
+                ) : null}
+              </div>
+            )}
           </div>
         </div>
       )}

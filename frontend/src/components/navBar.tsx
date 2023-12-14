@@ -17,6 +17,7 @@ interface notification {
   type: string;
   seen: boolean;
   last_change: Date;
+  path: string;
   Source: {
     auth_id: string;
     nickname: string;

@@ -30,17 +30,7 @@ export class Queue<T, D> {
 
 	containsData(data: D)
 	{
-		// console.log(data);
-		// for (let i = 0; i < this.data.length; i++){
-		// 	if (this.data[i] == data){
-		// 		console.log(' index of constains data ', i, this.data);
-		// 		return i;
-		// 	}
-		// }
-		// console.log(' index of constains data ', -1, this.data);
-		// return -1;
 		const idx = this.data.findIndex(d => this.objEqual(d, data));
-		console.log(' index of constains data ', idx, this.data);
 		return idx;
 	}
 

@@ -193,7 +193,6 @@ export class GroupsService {
   }
   async changeRole(creator_id: string, add_member: memberDto) {
     const admin = await this.checkAdmin(creator_id, add_member.group);
-    console.log('test', admin);
     if (!admin || admin !== 'creator')
       throw new HttpException("you're not an admin!", 401);
     const member = await this.checkAdmin(add_member.userId, add_member.group);
@@ -204,6 +203,7 @@ export class GroupsService {
         user_id: add_member.userId,
       },
     });
+	if (!relation) return;
     const new_member = await this.prisma.members.update({
       where: {
         id: relation.id,

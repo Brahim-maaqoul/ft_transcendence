@@ -49,6 +49,8 @@ export interface UserProfile {
   displayname: string;
   picture: string;
   bio: string;
+  isTfaEnabled:  boolean;
+  status: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

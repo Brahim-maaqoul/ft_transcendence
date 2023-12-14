@@ -65,7 +65,6 @@ export class GroupsController {
     @Req() req,
     @Body(new ValidationPipe()) member: memberDto,
   ) {
-    console.log('data', member);
     await this.GroupsService.changeRole(req.user.auth_id, member);
     return res.status(201).send();
   }
@@ -185,7 +184,6 @@ export class GroupsController {
     @Req() req,
     @Body(new ValidationPipe()) member: muteDto,
   ) {
-    console.log(member);
     const checkAdmin = await this.GroupsService.checkAdmin(
       req.user.auth_id,
       member.group,
@@ -232,7 +230,6 @@ export class GroupsController {
       checkAdmin === 'banned'
     )
       return res.status(401, 'you,re not an admin');
-    console.log(await this.GroupsService.unmute(member));
     return res.status(201, 'user unmute');
   }
 
@@ -306,7 +303,6 @@ export class GroupsController {
       req.user.auth_id,
       group.group_id,
     );
-    console.log('here');
     if (checkAdmin !== 'creator')
       return res.status(401).json({ messqge: "you're not the creator" });
     await this.GroupsService.changePrivacy(group);

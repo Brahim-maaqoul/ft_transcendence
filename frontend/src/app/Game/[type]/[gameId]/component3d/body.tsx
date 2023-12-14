@@ -73,9 +73,6 @@ export function Body3D({
   dataGame: GameData;
   type: string;
 }) {
-  console.log("dataGame", dataGame);
-  console.log("dataUser", dataUser);
-  console.log("type", type);
   const { socket } = useAuth();
 
   const [gameData, setGameData] = useState(
