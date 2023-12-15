@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useAuth } from "./providers/AuthContext";
 import { matchInterface, useGetMatchHistory } from "@/app/api/getGames";
 import Link from "next/link";
+import Spinner from "./spinner";
 
 export default function RecentGames({ nickname }: { nickname: string | null }) {
   const {
@@ -10,8 +11,18 @@ export default function RecentGames({ nickname }: { nickname: string | null }) {
     isError,
   } = useGetMatchHistory(nickname);
   console.log("MatchHistory", MatchHistory);
-  if (isLoading) return <>is loading ...</>;
-  if (isError) return <>Error</>;
+  if (isLoading)
+    return (
+      <div className="h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="h-full flex justify-center items-center text-black text-2xl">
+        Error
+      </div>
+    );
   return (
     <>
       <span className="text-white text-2xl font-mono m-4">Recent Games</span>
@@ -34,7 +45,7 @@ export default function RecentGames({ nickname }: { nickname: string | null }) {
                 {match.user1.nickname}
               </span>
             </div>
-            <span className="text-md lg:text-3xl text-slate-300 flex items-center">
+            <span className="text-md lg:text-3xl text-slate-300 flex items-center justify-center">
               {match.score1} - {match.score2}
             </span>
             <div className="flex gap-x-4 items-center">

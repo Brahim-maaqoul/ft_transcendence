@@ -65,11 +65,8 @@ export class MatchMakingService {
   }
 
   async deleteGame(game: Game) {
-	  console.log("game finished");
     if (!game || !(game.gameId in this.gameSessionService.matchPlayers)) return;
-	console.log("game finished");
     if (game.status === 'finished') {
-		console.log("game finished");
       delete this.gameSessionService.matchPlayers[game.gameId];
       const user1 = game.playerId1;
       const user2 = game.playerId2;
@@ -167,6 +164,8 @@ export class MatchMakingService {
       clean_sheets: number;
     },
     game: { winner: string; score1: number; score2: number },
+    score1: number,
+    score2: number,
   ) {
     let rank1 = user1.leaderboard;
     let rank2 = user2.leaderboard;
@@ -182,13 +181,13 @@ export class MatchMakingService {
         leaderboard: rank1,
         wins: game.winner === user1.user_id ? user1.wins + 1 : user1.wins,
         losses: game.winner === user1.user_id ? user1.losses : user1.losses + 1,
-        goal_conceded: user1.goal_conceded + game.score2,
-        goal_scoared: user1.goal_scoared + game.score1,
+        goal_conceded: user1.goal_conceded + score2,
+        goal_scoared: user1.goal_scoared + score1,
         clean_sheets:
-          game.score2 === 0 ? user1.clean_sheets + 1 : user1.clean_sheets,
+          score2 === 0 ? user1.clean_sheets + 1 : user1.clean_sheets,
         points:
           (game.winner === user1.user_id
-            ? 5 * Math.abs(game.score1 - game.score2)
+            ? 5 * Math.abs(score1 - score2)
             : 0) +
           user1.points +
           10,
@@ -212,8 +211,20 @@ export class MatchMakingService {
         user_id: game.user2_id,
       },
     });
-    const rank1 = await this.calculateRank(user1, user2, game);
-    const rank2 = await this.calculateRank(user2, user1, game);
+    const rank1 = await this.calculateRank(
+      user1,
+      user2,
+      game,
+      game.score1,
+      game.score2,
+    );
+    const rank2 = await this.calculateRank(
+      user2,
+      user1,
+      game,
+      game.score2,
+      game.score1,
+    );
     await this.achivementUpdate(rank1);
     await this.achivementUpdate(rank2);
   }
@@ -229,7 +240,7 @@ export class MatchMakingService {
   }
 
   async rank1(user: any) {
-    if (user.goal_scoared === 100) {
+    if (user.goal_scoared >= 100) {
       const goals = await this.prisma.achievement.findFirst({
         where: {
           user_id: user.user_id,
@@ -252,7 +263,7 @@ export class MatchMakingService {
   }
 
   async rank2(user: any) {
-    if (user.goal_scoared === 200) {
+    if (user.goal_scoared >= 200) {
       const goals = await this.prisma.achievement.findFirst({
         where: {
           user_id: user.user_id,
@@ -275,7 +286,7 @@ export class MatchMakingService {
   }
 
   async rank3(user: any) {
-    if (user.goal_scoared === 300) {
+    if (user.goal_scoared >= 300) {
       const goals = await this.prisma.achievement.findFirst({
         where: {
           user_id: user.user_id,
@@ -321,7 +332,7 @@ export class MatchMakingService {
   }
 
   async level3(user: any) {
-    if (user.points === 300) {
+    if (user.points >= 300) {
       const goals = await this.prisma.achievement.findFirst({
         where: {
           user_id: user.user_id,
@@ -344,7 +355,7 @@ export class MatchMakingService {
   }
 
   async level5(user: any) {
-    if (user.points === 500) {
+    if (user.points >= 500) {
       const goals = await this.prisma.achievement.findFirst({
         where: {
           user_id: user.user_id,
@@ -367,7 +378,7 @@ export class MatchMakingService {
   }
 
   async level10(user: any) {
-    if (user.points === 1000) {
+    if (user.points >= 1000) {
       const goals = await this.prisma.achievement.findFirst({
         where: {
           user_id: user.user_id,
