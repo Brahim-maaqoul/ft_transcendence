@@ -150,8 +150,13 @@ export class GameGateway
         this.gameSessionService.inviteQueue[client.user].notification,
         'canceled',
       );
-      if (this.gameSessionService.inviteQueue[client.user].payload.player in this.gameSessionService.playersSocket)
-        this.gameSessionService.playersSocket[this.gameSessionService.inviteQueue[client.user].payload.player].emit('notification');
+      if (
+        this.gameSessionService.inviteQueue[client.user].payload.player in
+        this.gameSessionService.playersSocket
+      )
+        this.gameSessionService.playersSocket[
+          this.gameSessionService.inviteQueue[client.user].payload.player
+        ].emit('notification');
       this.gameSessionService.inviteQueue.erase(client.user);
     }
     client.emit('cancelLoading');
@@ -264,7 +269,7 @@ export class GameGateway
         'accepted',
       );
       const userData = this.gameSessionService.inviteQueue[payload.challenger];
-      this.gameSessionService.inviteQueue.erase(payload.challenger)
+      this.gameSessionService.inviteQueue.erase(payload.challenger);
       const game = await this.matchMaking.createDuoGame(
         payload.challenger,
         client.user,
@@ -281,8 +286,6 @@ export class GameGateway
     }
     client.emit('notification');
   }
-
-
 
   @UseGuards(JwtGuard)
   @SubscribeMessage('rejectGame')
@@ -306,15 +309,21 @@ export class GameGateway
     const user = this.authService.verifyToken(
       client.handshake.query.token,
     ).userId;
-    await this.prisma.users.update({
+    const status = await this.prisma.users.findUnique({
       where: {
         auth_id: user,
       },
-      data: {
-        status: 'online',
-      },
     });
-
+    if (status) {
+      await this.prisma.users.update({
+        where: {
+          auth_id: user,
+        },
+        data: {
+          status: 'online',
+        },
+      });
+    }
     this.gameSessionService.playersSocket[user] = client;
     // console.log('connecting client id: ', client.user, client.id, client.handshake.query.user);
     // this.gameSessionService.clients[client.id] = client;

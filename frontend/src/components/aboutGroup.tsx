@@ -152,7 +152,7 @@ const iconBan = (
   </svg>
 );
 
-const socket = io("http://e3r11p9.1337.ma:8000/chat");
+const socket = io("http://e3r11p4.1337.ma:8000/chat");
 
 const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
   // handleBanYser **************
@@ -227,12 +227,11 @@ const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
   // *********** FIN ******************
   console.log(new Date(user.muted), new Date());
   return (
-    <div
-      className="col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 "
-      >
+    <div className="col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 ">
       {user.type === "member" && (
-        <button className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt"
-        onClick={() => handleMakeAdmin()}
+        <button
+          className="hover:cursor-pointer icon icon-tabler icon-tabler-user-bolt"
+          onClick={() => handleMakeAdmin()}
         >
           {iconAdd}
         </button>

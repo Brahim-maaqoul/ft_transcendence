@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./providers/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInfo } from "./Conversation";
-import { sendMessages, useGetMemberShip } from "@/app/api/chatApi/chatApiFunctions";
+import {
+  sendMessages,
+  useGetMemberShip,
+} from "@/app/api/chatApi/chatApiFunctions";
 import { io } from "socket.io-client";
 
-const socket = io("http://e3r11p9.1337.ma:8000/chat");
+const socket = io("http://e3r11p4.1337.ma:8000/chat");
 interface sendMessagesProps {
   id: string;
   message: string;
@@ -20,43 +23,43 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   dataUser,
 }) => {
   const queryClient = useQueryClient();
-  const [time, setTime] = useState(0)
+  const [time, setTime] = useState(0);
   const mutation = useMutation({
     mutationFn: sendMessages,
-    onSuccess:() => {
+    onSuccess: () => {
       setMessage("");
-      socket.emit("sendMessage", {group_id: id})
+      socket.emit("sendMessage", { group_id: id });
     },
-  })
+  });
   const handleSubmitNewMessage = () => {
-    mutation.mutate({groupId: Number(id) , message: message});
+    mutation.mutate({ groupId: Number(id), message: message });
   };
-  const {data, isSuccess} = useGetMemberShip(id)
+  const { data, isSuccess } = useGetMemberShip(id);
   useEffect(() => {
     const timeLoop = setInterval(() => {
-      if(isSuccess)
-        setTime((new Date(data?.muted).getTime() - new Date().getTime())/1000)
-      },1000);
-      return () => {
-        clearInterval(timeLoop)
+      if (isSuccess)
+        setTime(
+          (new Date(data?.muted).getTime() - new Date().getTime()) / 1000
+        );
+    }, 1000);
+    return () => {
+      clearInterval(timeLoop);
     };
   }, [isSuccess, data]);
   return (
     <div className="w-full flex bottom-0 absolute ">
       <input
         value={message}
-        onFocus={() => {
-        }}
+        onFocus={() => {}}
         onBlur={() => {
-          console.log("not typing")
-          socket.emit("stop typing", {group_id: id})
+          console.log("not typing");
+          socket.emit("stop typing", { group_id: id });
         }}
         onChange={(input) => {
           if (input.target.value.length)
-            socket.emit("typing", {group_id: id, user: dataUser.nickname})
-          else
-            socket.emit("stop typing", {group_id: id})
-          setMessage(input.target.value)
+            socket.emit("typing", { group_id: id, user: dataUser.nickname });
+          else socket.emit("stop typing", { group_id: id });
+          setMessage(input.target.value);
         }}
         id="msg"
         placeholder="Type your message here..."
@@ -74,7 +77,7 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
       <button
         id="send"
         className={`pl-2.5 bg-[#45B9D1] text-white rounded-3xl shadow-black pr-2 py-1.5 ml-3 ${
-          (!message || time > 0) &&  "cursor-not-allowed"
+          (!message || time > 0) && "cursor-not-allowed"
         }`}
         onClick={(e) => {
           if (message.trim() !== "") {
@@ -82,12 +85,9 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
           }
         }}
       >
-        {
-          (time > 0) ?
-          Math.floor(time/60) + ":" + Math.floor(time)%60
-          :
-          "Send"
-        }
+        {time > 0
+          ? Math.floor(time / 60) + ":" + (Math.floor(time) % 60)
+          : "Send"}
       </button>
     </div>
   );

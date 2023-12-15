@@ -49,7 +49,7 @@ export interface UserProfile {
   displayname: string;
   picture: string;
   bio: string;
-  isTfaEnabled:  boolean;
+  isTfaEnabled: boolean;
   status: string;
 }
 
@@ -73,18 +73,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setShow(false);
   };
 
-const login = (data: UserProfile) => {
-	setIsAuthenticated(true);
-	const token = localStorage?.getItem('token');
-	const newSocket = io("http://e3r11p9.1337.ma:8000/Game2d", {
-		query: { token: token },
-	});
-	setSocket(newSocket);
-};
+  const login = (data: UserProfile) => {
+    setIsAuthenticated(true);
+    const token = localStorage?.getItem("token");
+    const newSocket = io("http://e3r11p4.1337.ma:8000/Game2d", {
+      query: { token: token },
+    });
+    setSocket(newSocket);
+  };
 
-const logout = () => {
-	setIsAuthenticated(false);
-};
+  const logout = () => {
+    setIsAuthenticated(false);
+  };
   const setuserdata = (data: UserProfile | null) => {
     setDataUser(data);
   };
