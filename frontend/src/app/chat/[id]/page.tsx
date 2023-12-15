@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8000/chat");
+const socket = io("http://e3r11p9.1337.ma:8000/chat");
 
 export default function Chat({ params }: { params: any }) {
   const { dataUser, show, showFalse, showTrue } = useAuth();

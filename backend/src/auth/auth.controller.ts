@@ -16,10 +16,14 @@ import { AuthService } from './auth.service';
 import { AuthGoogleGuard } from './Guard/auth-google.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import { updatedUser } from './dtos/updateUser.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('v1/api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGoogleGuard)
@@ -36,15 +40,17 @@ export class AuthController {
         this.authService.generateTotpCode(user.tfaSecret),
       );
       return res.redirect(
-        `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
+        `${this.configService.get('FRONT_PORT')}tfa?&nickname=${
+          req.user.nickname
+        }`,
       );
     }
-    const token = this.authService.generateToken({userId });
+    const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
-        ? `http://localhost:3000/Edit`
-        : 'http://localhost:3000/',
+        ? `${this.configService.get('FRONT_PORT')}Edit`
+        : this.configService.get('FRONT_PORT'),
     );
   }
 
@@ -63,15 +69,17 @@ export class AuthController {
         this.authService.generateTotpCode(user.tfaSecret),
       );
       return res.redirect(
-        `http://localhost:3000/tfa?&nickname=${req.user.nickname}`,
+        `${this.configService.get('FRONT_PORT')}tfa?&nickname=${
+          req.user.nickname
+        }`,
       );
     }
     const token = this.authService.generateToken({ userId });
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
-        ? `http://localhost:3000/Edit`
-        : 'http://localhost:3000/',
+        ? `${this.configService.get('FRONT_PORT')}Edit`
+        : this.configService.get('FRONT_PORT'),
     );
   }
 
@@ -87,18 +95,23 @@ export class AuthController {
   @Get('logout')
   logout(@Req() req, @Res() res) {
     res.clearCookie('token');
-    return res.redirect('http://localhost:3000');
+    return res.redirect(this.configService.get('FRONT_PORT'));
   }
 
   @Get('checkAuth')
   @UseGuards(AuthGuard('jwt'))
   async checkAuthentication(@Req() request, @Res() res, @Body() body) {
-    try{
+    try {
       const user = await this.authService.findUserById(request.user.auth_id);
       if (!user) res.status(200).json({ isAuthenticated: false });
-      return res.status(200).json({ isAuthenticated: true, user: user, token: request.cookies.token });
-    }
-    catch{
+      return res
+        .status(200)
+        .json({
+          isAuthenticated: true,
+          user: user,
+          token: request.cookies.token,
+        });
+    } catch {
       return res.status(200).json({ isAuthenticated: false });
     }
   }
