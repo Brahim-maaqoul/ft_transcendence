@@ -17,12 +17,11 @@ export enum gameStatus {
 export class GameSession {
 	constructor(private prisma: PrismaService) { }
 
-	// botGames = new Array<Game>();
-	// game = new Game();
+	
 	playersInfo: Record<string, {type: string, id: string}> = {};
 	playersSocket: Record<string, Socket> = {};
 	queuePlayers = new Queue<string, Data>();
-
+	inviteQueue = new Queue<string, {data:Data, player:string, notification: number}>();
 	
 	matchPlayers: Record<number, Game> = {};
 	botGames: Record<string, Game> = {};

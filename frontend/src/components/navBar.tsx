@@ -12,30 +12,26 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthContext";
 import { useCheckAuthentication } from "@/app/api/checkAuthentication";
 import { useGetNotification } from "@/app/api/notification";
-
-interface notification {
-  type: string;
-  seen: boolean;
-  last_change: Date;
-  path: string;
-  Source: {
-    auth_id: string;
-    nickname: string;
-    picture: string;
-  };
-}
+import Notification from "./notification";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function NavBar() {
   const [not, setNot] = useState(false);
-  const { dataUser, isAuthenticated } = useAuth();
+  const { dataUser, isAuthenticated, socket } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const handleDocumentClick = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
       setNot(false);
     }
   };
-  const { data: notifications, isSuccess } = useGetNotification();
-  console.log("notification", notifications);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    console.log("here");
+    socket?.on("notification", () => {
+      queryClient.invalidateQueries(["notifications"]);
+      console.log("notificationnnnnnnn");
+    });
+  }, [socket]);
   useEffect(() => {
     if (not) {
       document.addEventListener(
@@ -57,15 +53,9 @@ export default function NavBar() {
     };
   }, [not]);
   const imageUrl = dataUser?.picture;
-  console.log(dataUser?.nickname, "check")
-  if (!dataUser)
-    <></>
-  const accept = () => {
-    console.log("accept");
-  };
-  const reject = () => {
-    console.log("reject");
-  };
+  console.log(dataUser?.nickname, "check");
+  if (!dataUser) <></>;
+
   return (
     <>
       {isAuthenticated && (
@@ -143,86 +133,7 @@ export default function NavBar() {
                 ref={menuRef}
                 className="absolute bg-white p-5  lg:w-[500px]    top-0  left-0  bottom-0   right-0 z-50"
               >
-                <div className="flex h-full flex-col w-full overflow-y-auto no-scrollbar">
-                  <span className="text-lg font-bold">Notifications</span>
-                  {notifications.map(
-                    (notification: notification, id: number) => (
-                      <div key={id} className="flex flex-col w-full">
-                        <Link
-                          href={`/profile/${notification.Source.nickname}`}
-                          onClick={() => {
-                            setNot(false);
-                          }}
-                          className={`flex items-center  gap-x-4 w-full p-4 mt-6 rounded-2xl justify-between ${
-                            !notification.seen && "bg-slate-600"
-                          }`}
-                        >
-                          <div className="flex gap-4">
-                            <div className="w-14 h-14">
-                              <div
-                                className="h-14 w-14 rounded-full bg-cover"
-                                style={{
-                                  backgroundImage: `url(${notification.Source.picture})`,
-                                }}
-                              ></div>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="text-black-500 text-lg">
-                                {notification.Source.nickname}
-                              </span>
-                              <span className="text-slate-500 text-sm">
-                                {notification.type}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex gap-4 justify-center">
-                            <button onClick={accept}>
-                              <svg
-                                className="w-6 h-6 hover:text-blue-600"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                />
-                              </svg>
-                            </button>
-                            <button onClick={reject}>
-                              <svg
-                                className="w-6 h-6 hover:text-red-600"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </Link>
-                      </div>
-                    )
-                  )}
-                  <IoIosClose
-                    onClick={() => {
-                      setNot(false);
-                    }}
-                    className="lg:hidden"
-                    size={32}
-                  ></IoIosClose>
-                </div>
+                <Notification setNot={setNot} />
               </div>
             </>
           )}

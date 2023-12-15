@@ -30,7 +30,6 @@ export default function Chat({ params }: { params: any }) {
       queryClient.invalidateQueries(["dataGroups"]);
       queryClient.invalidateQueries(["getChat"]);
       queryClient.invalidateQueries(["getMembership"]);
-      console.log("reloaddddd");
     });
   }, [socket]);
   return (

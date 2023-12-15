@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { NotificationService } from '../service/notification.service';
 
@@ -13,7 +13,7 @@ export class NotificationController{
         const notification = await this.NotificationService.getNotifications(req.user.auth_id)
         return res.status(200).json(notification)
     }
-    @Get('/get')
+    @Post('/seenAll')
     @UseGuards(AuthGuard('jwt'))
     async seenAllNotification(@Req() req, @Res() res)
     {
