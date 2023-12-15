@@ -3,12 +3,14 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AuthService } from 'src/auth/auth.service';
 import { createWriteStream } from 'fs';
 import { Multer } from 'multer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: PrismaService,
     private authService: AuthService,
+    private config: ConfigService,
   ) {}
 
   async getUserStats(nickname: string) {
@@ -163,7 +165,7 @@ export class UserService {
       stream.write(file.buffer);
       stream.end();
 
-      return `http://localhost:8000/${picturePath}`;
+      return this.config.get('FRONT_PORT') + picturePath;
     } catch (error) {
       console.error(error);
       return false;

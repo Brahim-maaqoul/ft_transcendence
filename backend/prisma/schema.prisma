@@ -14,8 +14,8 @@ model Users {
   nickname            String         @unique
   firstSignIn         Boolean        @default(true)
   displayname         String?
-  status			  String         @default("online")
-  picture             String?        @default("http://localhost:8000/upload/huh.jpeg")
+  status              String         @default("online")
+  picture             String?
   isTfaEnabled        Boolean        @default(false)
   isTfaValidated      Boolean        @default(false)
   tfaSecret           String?
@@ -28,48 +28,47 @@ model Users {
   NoticationRecipient Notification[] @relation("Recipient")
   NoticationSource    Notification[] @relation("Source")
   stats               Stats?
-  achievement		  Achievement[]
-  GameHost			  Game[]			@relation("User1ToGame")
-  GamePlayer		  Game[]			@relation("User2ToGame")
-  BotGame			  BotGame[]		
+  achievement         Achievement[]
+  GameHost            Game[]         @relation("User1ToGame")
+  GamePlayer          Game[]         @relation("User2ToGame")
+  BotGame             BotGame[]
 }
 
 model Game {
-	gameId		Int			@id @default(autoincrement())
-	score1		Int			@default(0)
-	score2		Int			@default(0)
-	status		String		@default("notStarted")
-	user1		Users		@relation("User1ToGame", fields: [user1_id], references: [auth_id])
-	user2		Users		@relation("User2ToGame", fields: [user2_id], references: [auth_id])
-	user1_id	String		
-	user2_id	String		
-	map			String		@default("winter.hdr")
-	dimension	String		@default("3D")
-	option 		String      @default("Ranked")
-	winner		String		@default("noWinner")
-	time		DateTime	@default(now())
+  gameId    Int      @id @default(autoincrement())
+  score1    Int      @default(0)
+  score2    Int      @default(0)
+  status    String   @default("notStarted")
+  user1     Users    @relation("User1ToGame", fields: [user1_id], references: [auth_id])
+  user2     Users    @relation("User2ToGame", fields: [user2_id], references: [auth_id])
+  user1_id  String
+  user2_id  String
+  map       String   @default("winter.hdr")
+  dimension String   @default("3D")
+  option    String   @default("Ranked")
+  winner    String   @default("noWinner")
+  time      DateTime @default(now())
 }
 
 model BotGame {
-	botGameId	Int			@id @default(autoincrement())
-	score1		Int			@default(0)
-	score2		Int			@default(0)
-	status		String		@default("notStarted")
-	user1		Users		@relation(fields: [user1_id], references: [auth_id])
-	user1_id	String
-	winner		String		@default("noWinner")
-	map			String		@default("winter.hdr")
-	dimension	String		@default("3D")
-	option 		String      @default("Ranked")
-	time		DateTime	@default(now())
+  botGameId Int      @id @default(autoincrement())
+  score1    Int      @default(0)
+  score2    Int      @default(0)
+  status    String   @default("notStarted")
+  user1     Users    @relation(fields: [user1_id], references: [auth_id])
+  user1_id  String
+  winner    String   @default("noWinner")
+  map       String   @default("winter.hdr")
+  dimension String   @default("3D")
+  option    String   @default("Ranked")
+  time      DateTime @default(now())
 }
 
-model image{
-  id        Int @id @default(autoincrement())
-  type      String
-  data      Bytes
+model image {
+  id   Int    @id @default(autoincrement())
+  type String
+  data Bytes
 }
-
 
 model Stats {
   stats_id      Int    @id @default(autoincrement())
@@ -104,15 +103,15 @@ model BlockedUser {
 }
 
 model Groups {
-  id           Int            @id @default(autoincrement())
-  name         String
-  type         String         @default("duo")
-  privacy      String         @default("private")
-  password     String?
-  picture      String         @default("")
-  lastChange   DateTime       @default(now())
-  members      Members[]
-  messages     Message[]
+  id         Int       @id @default(autoincrement())
+  name       String
+  type       String    @default("duo")
+  privacy    String    @default("private")
+  password   String?
+  picture    String    @default("")
+  lastChange DateTime  @default(now())
+  members    Members[]
+  messages   Message[]
 }
 
 model Members {
@@ -127,34 +126,34 @@ model Members {
 }
 
 model Message {
-  id          Int      @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   message_text String
-  group_id    Int
-  lastmodif   DateTime @default(now())
-  sender_id   String
-  group       Groups   @relation(fields: [group_id], references: [id])
-  sender      Users    @relation(fields: [sender_id], references: [auth_id])
+  group_id     Int
+  lastmodif    DateTime @default(now())
+  sender_id    String
+  group        Groups   @relation(fields: [group_id], references: [id])
+  sender       Users    @relation(fields: [sender_id], references: [auth_id])
 }
 
 model Achievement {
   achievement_id Int    @id @default(autoincrement())
-  user_id		 String
-  user		 	 Users  @relation(fields: [user_id], references: [auth_id])
-  name           String	@default("")
-  description    String	@default("")
-  level			 Int	@default(0)
-  goal_scoared   Int	@default(0)
-  clean_sheets   Int	@default(0)
+  user_id        String
+  user           Users  @relation(fields: [user_id], references: [auth_id])
+  name           String @default("")
+  description    String @default("")
+  level          Int    @default(0)
+  goal_scoared   Int    @default(0)
+  clean_sheets   Int    @default(0)
 }
 
 model Notification {
-  notification_id Int     @id @default(autoincrement())
+  notification_id Int      @id @default(autoincrement())
   type            String
   sender_id       String
   receiver_id     String
-  path			      String
-  seen            Boolean @default(false)
-  last_change     DateTime       @default(now())
-  Recipient       Users   @relation("Recipient", fields: [receiver_id], references: [auth_id])
-  Source          Users   @relation("Source", fields: [sender_id], references: [auth_id])
+  path            String
+  seen            Boolean  @default(false)
+  last_change     DateTime @default(now())
+  Recipient       Users    @relation("Recipient", fields: [receiver_id], references: [auth_id])
+  Source          Users    @relation("Source", fields: [sender_id], references: [auth_id])
 }
