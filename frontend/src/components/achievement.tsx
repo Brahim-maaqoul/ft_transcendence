@@ -46,16 +46,16 @@ export function Achievement({ nickname }: { nickname: string }) {
           gap: "2rem",
         }}
       >
-        {colors.map((color, index) => (
+        {achievements.achievement.map((achievement :{name:string, description: string}, index: number) => (
           <SplideSlide key={index} className="p-4">
             <div className="flex flex-col justify-center items-center">
               <div className="w-[85px] h-[120px]">
                 <div
                   className="h-full w-full bg-contain bg-no-repeat"
-                  style={{ backgroundImage: `url(${color})` }}
+                  style={{ backgroundImage: `url(/${achievement.name}.png)` }}
                 ></div>
               </div>
-              <span className="text-white mt-2">{extractColorName(color)}</span>
+              <span className="text-white mt-2">{achievement.description}</span>
             </div>
           </SplideSlide>
         ))}

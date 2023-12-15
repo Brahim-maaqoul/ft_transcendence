@@ -5,7 +5,7 @@ import { MessageInfo } from "./Conversation";
 import { sendMessages, useGetMemberShip } from "@/app/api/chatApi/chatApiFunctions";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8000/chat")
+const socket = io("http://e3r11p9.1337.ma:8000/chat");
 interface sendMessagesProps {
   id: string;
   message: string;

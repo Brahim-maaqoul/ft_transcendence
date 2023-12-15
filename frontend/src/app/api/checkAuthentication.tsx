@@ -25,7 +25,7 @@ export const API = axios.create({
 
 // checkAuthentication
 async function checkAuthentication() {
-    const response: AxiosResponse = await API.get("/auth/checkAuth");
+    const response: AxiosResponse = await API.get("auth/checkAuth");
     localStorage.setItem("token", response.data.token);
 	console.log(response.data)
     return response.data;
@@ -33,7 +33,7 @@ async function checkAuthentication() {
 // updateUserProfile
 export async function updateUserProfile(data: UserProfileUpdate) {
   console.log(data)
-  const response: AxiosResponse = await API.post("/auth/UpdateData", data);
+  const response: AxiosResponse = await API.post("auth/UpdateData", data);
   return response.data;
 }
 

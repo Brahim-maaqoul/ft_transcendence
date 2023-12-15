@@ -152,7 +152,7 @@ const iconBan = (
   </svg>
 );
 
-const socket = io("http://localhost:8000/chat");
+const socket = io("http://e3r11p9.1337.ma:8000/chat");
 
 const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
   // handleBanYser **************

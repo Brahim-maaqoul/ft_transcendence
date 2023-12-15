@@ -139,7 +139,7 @@ export default function NavBar() {
                 </button>
               </div>
               <Link
-                href={"http://localhost:8000/v1/api/auth/logout"}
+                href={process.env.NEXT_PUBLIC_API_URL + "auth/logout"}
                 className="hover:bg-slate-400  w-12 my-2 mt-auto flex items-center justify-center  h-12 text-[#ffffff] rounded-full "
               >
                 <FiLogOut size={32}></FiLogOut>
