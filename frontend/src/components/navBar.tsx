@@ -11,17 +11,21 @@ import { MouseEvent, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthContext";
 import { useCheckAuthentication } from "@/app/api/checkAuthentication";
-import { useGetNotification } from "@/app/api/notification";
+import { seeAllNotification, useGetNotification } from "@/app/api/notification";
 import Notification from "./notification";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function NavBar() {
   const [not, setNot] = useState(false);
   const { dataUser, isAuthenticated, socket } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
+  const mutation = useMutation({
+    mutationFn: seeAllNotification,
+  });
   const handleDocumentClick = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
       setNot(false);
+      mutation.mutate();
     }
   };
   const queryClient = useQueryClient();
@@ -52,9 +56,15 @@ export default function NavBar() {
       );
     };
   }, [not]);
+  const { data: notifications, isLoading } = useGetNotification();
   const imageUrl = dataUser?.picture;
-  console.log(dataUser?.nickname, "check");
-  if (!dataUser) <></>;
+  if (!dataUser || isLoading || !notifications) <></>;
+  console.log(
+    notifications?.filter((notification: any) => {
+      return !notification.seen;
+    }).length,
+    "check"
+  );
 
   return (
     <>
@@ -107,7 +117,18 @@ export default function NavBar() {
                   />
                 </Link>
               </div>
-              <div className="my-2">
+              <div className="my-2 relative">
+                {!!notifications?.filter((notification: any) => {
+                  return !notification.seen;
+                }).length && (
+                  <div className="absolute w-2 h-2 bg-red-500 rounded-full top-[20%] right-[25%] text-[1px]">
+                    {
+                      notifications?.filter((notification: any) => {
+                        return !notification.seen;
+                      }).length
+                    }
+                  </div>
+                )}
                 <button
                   onClick={() => {
                     setNot(true);

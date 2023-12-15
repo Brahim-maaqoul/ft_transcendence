@@ -1,9 +1,10 @@
-import { useGetNotification } from "@/app/api/notification";
+import { seeAllNotification, useGetNotification } from "@/app/api/notification";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import { useAuth } from "./providers/AuthContext";
 import { useRouter } from "next/navigation";
+import { UseMutationResult, useMutation } from "@tanstack/react-query";
 
 interface notification {
   type: string;
@@ -23,7 +24,9 @@ export default function Notification({
   setNot: Dispatch<SetStateAction<boolean>>;
 }) {
   const { data: notifications, isSuccess } = useGetNotification();
-
+  const mutation = useMutation({
+    mutationFn: seeAllNotification,
+  });
   return (
     <div className="flex h-full flex-col w-full overflow-y-auto no-scrollbar">
       <span className="text-lg font-bold flex justify-between">
@@ -31,6 +34,7 @@ export default function Notification({
         <IoIosClose
           onClick={() => {
             setNot(false);
+            mutation.mutate();
           }}
           className="lg:hidden"
           size={32}
@@ -42,9 +46,10 @@ export default function Notification({
             <ChallengeNotification
               notification={notification}
               setNot={setNot}
+              mutation={mutation}
             />
           ) : (
-            <OtherNotification notification={notification} setNot={setNot} />
+            <OtherNotification notification={notification} setNot={setNot} mutation={mutation} />
           )}
         </div>
       ))}
@@ -55,9 +60,11 @@ export default function Notification({
 function ChallengeNotification({
   notification,
   setNot,
+  mutation,
 }: {
   notification: notification;
   setNot: Dispatch<SetStateAction<boolean>>;
+  mutation: UseMutationResult<any, unknown, void, unknown>;
 }) {
   const { socket } = useAuth();
   const router = useRouter();
@@ -67,6 +74,7 @@ function ChallengeNotification({
       setMsg("waiting...");
       router.push(path);
       setNot(false);
+      mutation.mutate();
     });
   }, [socket]);
   const accept = (challenger: string) => {
@@ -82,7 +90,7 @@ function ChallengeNotification({
   return (
     <div
       className={`flex items-center  gap-x-4 w-full p-4 mt-6 rounded-2xl justify-between ${
-        !notification.seen && "bg-slate-600"
+        !notification.seen ? "bg-slate-400" : "bg-slate-200"
       }`}
     >
       <div className="flex gap-4">
@@ -146,20 +154,23 @@ function ChallengeNotification({
 }
 
 function OtherNotification({
-  notification,
-  setNot,
-}: {
-  notification: notification;
-  setNot: Dispatch<SetStateAction<boolean>>;
-}) {
+    notification,
+    setNot,
+    mutation,
+  }: {
+    notification: notification;
+    setNot: Dispatch<SetStateAction<boolean>>;
+    mutation: UseMutationResult<any, unknown, void, unknown>;
+  }) {
   return (
     <Link
       href={notification.path}
       onClick={() => {
         setNot(false);
+        mutation.mutate();
       }}
       className={`flex items-center  gap-x-4 w-full p-4 mt-6 rounded-2xl justify-between ${
-        !notification.seen && "bg-slate-600"
+        !notification.seen ? "bg-slate-400" : "bg-slate-200"
       }`}
     >
       <div className="flex gap-4">
