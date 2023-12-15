@@ -1,5 +1,5 @@
 "use client";
-import Brick from "./bricks";
+import Bricks from "./bricks";
 
 import { Game, GameConfig } from "../types/index";
 import { useEffect, useState } from "react";
@@ -214,7 +214,7 @@ export function Body({
               ></div>
             );
           })}
-          {gameData.bricks.map((b, id) => { return (<Brick key={id} brick={b} />) })}
+          {gameData.bricks.map((b, id) => { return (<Bricks key={id} brick={b} />) })}
         </div>
       </div>
     </div>

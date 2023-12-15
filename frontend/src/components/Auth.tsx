@@ -5,6 +5,7 @@ import { useCheckAuthentication } from "../app/api/checkAuthentication";
 import { MouseEvent, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function Auth() {
   const router = useRouter();
@@ -37,5 +38,6 @@ export function CheckAuth()
       }
     }
   }, [isLoading, data, isError, error]);
+  
   return <div></div>;
 }
