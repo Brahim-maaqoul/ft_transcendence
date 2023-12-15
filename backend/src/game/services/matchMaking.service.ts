@@ -252,7 +252,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Rank_1',
-            description: 'score 100 goals',
+            description: 'Score 100 goals',
             level: 0,
             goal_scoared: 1,
             clean_sheets: 0,
@@ -275,7 +275,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Rank_2',
-            description: 'score 200 goals',
+            description: 'Score 200 goals',
             level: 0,
             goal_scoared: 1,
             clean_sheets: 0,
@@ -298,7 +298,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Rank_3',
-            description: 'score 300 goals',
+            description: 'Score 300 goals',
             level: 0,
             goal_scoared: 1,
             clean_sheets: 0,
@@ -321,7 +321,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Genius',
-            description: 'get 1 clean sheet',
+            description: 'Clean sheet',
             level: 0,
             goal_scoared: 0,
             clean_sheets: 1,
@@ -344,7 +344,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Level_3',
-            description: 'get 3 level',
+            description: 'Level 3',
             level: 1,
             goal_scoared: 0,
             clean_sheets: 0,
@@ -367,7 +367,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Level_5',
-            description: 'get 5 level',
+            description: 'Level 5',
             level: 1,
             goal_scoared: 0,
             clean_sheets: 0,
@@ -390,7 +390,7 @@ export class MatchMakingService {
           data: {
             user_id: user.user_id,
             name: 'Level_10',
-            description: 'get 10 level',
+            description: 'Level 10',
             level: 1,
             goal_scoared: 0,
             clean_sheets: 0,
