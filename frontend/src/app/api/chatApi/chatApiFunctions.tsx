@@ -145,7 +145,7 @@ async function getMemberShip(data: string) {
 
 export function useGetMemberShip(data: string) {
   return useQuery({
-    queryKey: ["getMembership"],
+    queryKey: ["getMembership", data],
     queryFn: () => getMemberShip(data),
   });
 }

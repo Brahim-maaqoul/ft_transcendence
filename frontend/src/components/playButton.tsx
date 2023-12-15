@@ -19,8 +19,7 @@ function DropDownArrow({ isOpen }: DropDownArrowProps) {
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
-      viewBox="0 0 16 10"
-    >
+      viewBox="0 0 16 10">
       <path d="M15.434 1.235A2 2 0 0 0 13.586 0H2.414A2 2 0 0 0 1 3.414L6.586 9a2 2 0 0 0 2.828 0L15 3.414a2 2 0 0 0 .434-2.179Z" />
     </svg>
   );
@@ -46,19 +45,18 @@ function DropDownValue({
   return (
     <div
       id={id}
-      className={`z-10 bg-white w-full ${isOpen ? "block" : "hidden"} relative`}
-    >
+      className={`z-10 bg-white w-full ${
+        isOpen ? "block" : "hidden"
+      } relative`}>
       <ul
         className={`absolute w-full bg-slate-950/70 ${
           isVertical ? "flex flex-col" : "grid grid-cols-3"
-        } justify-center`}
-      >
+        } justify-center`}>
         {array.map((value, index) => (
           <li
             className="text-white px-5 py-2.5"
             key={index}
-            onClick={() => click(value)}
-          >
+            onClick={() => click(value)}>
             {value}
           </li>
         ))}
@@ -72,10 +70,7 @@ interface CheckboxProps {
   handleCheckboxChange: (value: string) => void;
 }
 
-function Checkbox({
-  value,
-  handleCheckboxChange,
-}: CheckboxProps) {
+function Checkbox({ value, handleCheckboxChange }: CheckboxProps) {
   return (
     <li className="w-full" key={value}>
       <div className="flex items-center text-start gap-2.5 px-5 bg-slate-900/40 rounded-[10px]">
@@ -104,15 +99,13 @@ const DoubleSword = () => {
         width="30"
         height="30"
         viewBox="0 0 24 24"
-        style={{ filter: "drop-shadow(2px 2px 4px rgba(38, 99, 235, 0.8))" }}
-      >
+        style={{ filter: "drop-shadow(2px 2px 4px rgba(38, 99, 235, 0.8))" }}>
         <g
           fill="none"
           stroke="#2563eb"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
-        >
+          strokeWidth="2">
           <path d="M2 19.2L3.8 21m.9-7.2l.9 3.6m0 0l3.6.9m-3.6-.9l-2.7 2.7M16.4 3.9l-9 9l.45 2.25l2.25.45l9-9L20 3l-3.6.9Z" />
           <path d="M22 19.2L20.2 21m-.9-7.2l-.9 3.6m0 0l2.7 2.7m-2.7-2.7l-1.8.45l-1.8.45M9.3 11L4.9 6.6L4 3l3.6.9L12 8.3m.1 5.5l1.8 1.8l2.25-.45l.45-2.25l-1.8-1.8" />
         </g>
@@ -129,8 +122,7 @@ const HorizontalLine = () => {
         width="500"
         height="2"
         viewBox="0 0 500 2"
-        fill="none"
-      >
+        fill="none">
         <path
           d="M0 1H500"
           stroke="white"
@@ -262,7 +254,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
       mode: Mode,
       dimension: dimension,
       map: map,
-      option: ""
+      option: "",
     });
     updateBoxShadow();
   };
@@ -335,8 +327,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
       <a
         href={isAuthenticated ? "/play" : "/login"}
         onClick={handleLinkClick}
-        className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}
-      >
+        className={`${styles.notch_button} my-12 h-2 md:h-4 w-3/5 relative flex justify-center items-center`}>
         <div className=" z-10 text-black md:text-lg lg:text-2xl font-mono absolute">
           {isAuthenticated ? "Play Now " : "Sign In"}
         </div>
@@ -345,20 +336,17 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
       {showModal && (
         <div
           ref={modalRef}
-          className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-20`}
-        >
+          className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-20`}>
           <div className="w-full h-full flex flex-col items-center gap-[30px] rounded-[10px] p-[30px] bg-slate-950/70 backdrop-blur-xl">
             <div className="w-full h-[180px] text-center">
               <p
                 className="text-white text-[60px]"
-                style={{ textShadow: `${textShadow}` }}
-              >
+                style={{ textShadow: `${textShadow}` }}>
                 SETUP
               </p>
               <p
                 className="text-white text-[60px]"
-                style={{ textShadow: `${textShadow}` }}
-              >
+                style={{ textShadow: `${textShadow}` }}>
                 GAME
               </p>
             </div>
@@ -367,8 +355,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
               <div className="flex-1 h-[74px] w-1/2">
                 <button
                   onMouseDown={clickLeft}
-                  className="w-full h-full p-5 text-white bg-slate-900/80 text-center flex items-center flex-shrink-0 rounded-[10px]"
-                >
+                  className="w-full h-full p-5 text-white bg-slate-900/80 text-center flex items-center flex-shrink-0 rounded-[10px]">
                   <div className="flex flex-1 items-center">
                     <div className="text-start">
                       <p>Mode</p>
@@ -390,8 +377,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
               <div className="flex-1 h-[74px] w-1/2 ">
                 <button
                   onMouseDown={clickRight}
-                  className="w-full h-full p-5 text-white rounded-[10px] bg-slate-900/80 text-center flex items-center flex-shrink-0"
-                >
+                  className="w-full h-full p-5 text-white rounded-[10px] bg-slate-900/80 text-center flex items-center flex-shrink-0">
                   <div className="flex flex-1 items-center">
                     <div className="text-start">
                       <p>Dimension</p>
@@ -414,8 +400,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
             <div className="w-full flex flex-col flex-start text-center gap-2.5 bg-left bg-cover rounded-2xl px-5 py-2.5 bg-slate-900/40">
               <button
                 className="text-white w-full h-full flex items-center justify-between"
-                onMouseDown={clickBottom}
-              >
+                onMouseDown={clickBottom}>
                 <div className="flex items-center gap-2.5">
                   <DoubleSword />
                   <p>{map}</p>
@@ -447,8 +432,9 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                       ? redBoxShadow
                       : blueBoxShadow)
                   }
-                  onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
-                >
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.boxShadow = "none")
+                  }>
                   JOIN
                 </button>
                 <button
@@ -464,8 +450,9 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                       ? redBoxShadow
                       : blueBoxShadow)
                   }
-                  onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
-                >
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.boxShadow = "none")
+                  }>
                   CANCEL
                 </button>
               </div>
@@ -486,22 +473,21 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                       ? redBoxShadow
                       : blueBoxShadow)
                   }
-                  onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
-                >
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.boxShadow = "none")
+                  }>
                   {isSearching ? "CANCEL" : "FIND MATCH"}
                 </button>
                 {isSearching ? (
                   <>
                     <div
                       className="w-full h-1/3 text-white text-center text-4xl"
-                      ref={timeRef as React.RefObject<HTMLDivElement>}
-                    >
+                      ref={timeRef as React.RefObject<HTMLDivElement>}>
                       {format(time)}
                     </div>
                     <p
                       className="w-full h-1/3 text-center text-white text-2xl"
-                      style={{ textShadow: `${textShadow}` }}
-                    >
+                      style={{ textShadow: `${textShadow}` }}>
                       FINDING GAME
                     </p>
                   </>

@@ -30,13 +30,19 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
   const mutation = useMutation({
     mutationFn: blockFriend,
     onSuccess: () => {
-      queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries([
+        "FriendshipType",
+        group.members[0].user_id,
+      ]);
     },
   });
   const mutation1 = useMutation({
     mutationFn: unblockFriend,
     onSuccess: () => {
-      queryClient.invalidateQueries(["FriendshipType"]);
+      queryClient.invalidateQueries([
+        "FriendshipType",
+        group.members[0].user_id,
+      ]);
     },
   });
   const handler = () => {
@@ -79,8 +85,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
           {FriendshipType?.type === "blocking" ? (
             <div
               onClick={handler1}
-              className=" bg-slate-400 hover:bg-cyan-600 hover:cursor-pointer p-2   rounded-2xl   relative flex justify-center items-center px-5 text-xs lg:text-xl"
-            >
+              className=" bg-slate-400 hover:bg-cyan-600 hover:cursor-pointer p-2   rounded-2xl   relative flex justify-center items-center px-5 text-xs lg:text-xl">
               <Image
                 src={"/unblock.png"}
                 alt="Unblock Friend"
@@ -95,8 +100,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
             <div className="flex flex-col gap-y-2">
               <div
                 className=" bg-red-600 text-white p-2 rounded-2xl hover:cursor-pointer  relative flex justify-center items-center px-5 text-xs lg:text-xl"
-                onClick={handler}
-              >
+                onClick={handler}>
                 <Image
                   src={"/block.png"}
                   alt="block Friend"
@@ -109,8 +113,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
 
               <button
                 onClick={handleButtonClick}
-                className="p-2 flex items-center justify-center bg-black text-white rounded-full"
-              >
+                className="p-2 flex items-center justify-center bg-black text-white rounded-full">
                 <Image
                   src={"/challenge.png"}
                   alt="challenge Friend"
@@ -125,8 +128,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
           {showModal && (
             <div
               ref={modalRef}
-              className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-50`}
-            >
+              className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-50`}>
               <div className="w-full h-full flex flex-col items-center gap-[30px] rounded-[10px] p-[30px] bg-slate-950/70 backdrop-blur-xl">
                 <Challenge player={group.members[0].user.auth_id} />
               </div>

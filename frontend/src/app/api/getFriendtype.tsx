@@ -15,7 +15,7 @@ async function getFriendType(auth_id: string) {
 
 export function useFriendType(auth_id: string) {
   return useQuery({
-    queryKey: ["FriendshipType"],
+    queryKey: ["FriendshipType", auth_id],
     queryFn: () => getFriendType(auth_id),
   });
 }

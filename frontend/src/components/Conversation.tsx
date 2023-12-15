@@ -70,7 +70,6 @@ export const Conversation: React.FC<ConversationProps> = ({ id, socket }) => {
     isError,
     isLoading,
   } = UseGetMessages(id);
-  const route = useRouter();
   if (isLoading) {
     return (
       <div className="h-full flex justify-center items-center">
@@ -88,7 +87,7 @@ export const Conversation: React.FC<ConversationProps> = ({ id, socket }) => {
       </div>
     );
   }
-  if (isSuccess) queryClien.invalidateQueries(["getMembership"]);
+  if (isSuccess) queryClien.invalidateQueries(["getMembership", id]);
   return (
     <div className="relative h-full">
       {isSuccess && (

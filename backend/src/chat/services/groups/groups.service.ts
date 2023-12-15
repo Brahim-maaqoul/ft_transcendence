@@ -332,7 +332,7 @@ export class GroupsService {
     if (group.privacy === 'private')
       throw new HttpException('this group is private', HttpStatus.FORBIDDEN);
     if (group.privacy === 'protected') {
-      if (!(await bcrypt.compare(joinRequest.password, group.password)))
+      if (!joinRequest.password || !(await bcrypt.compare(joinRequest.password, group.password)))
         throw new HttpException('wrong password', HttpStatus.FORBIDDEN);
     }
     await this.prisma.members.create({

@@ -55,7 +55,12 @@ export const Groups = () => {
     }
   };
 
-  if (isError) return <div>error</div>;
+  if (isError)
+    return (
+      <div className="h-full flex justify-center items-center text-2xl">
+        error
+      </div>
+    );
   if (isLoading)
     return (
       <div className="h-full flex justify-center items-center">
