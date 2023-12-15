@@ -21,7 +21,7 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   setMessage,
   dataUser,
 }) => {
-  const {chatSocket} = useAuth()
+  const { chatSocket } = useAuth();
   const [time, setTime] = useState(0);
   const mutation = useMutation({
     mutationFn: sendMessages,
@@ -55,7 +55,10 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
         }}
         onChange={(input) => {
           if (input.target.value.length)
-          chatSocket?.emit("typing", { group_id: id, user: dataUser.nickname });
+            chatSocket?.emit("typing", {
+              group_id: id,
+              user: dataUser.nickname,
+            });
           else chatSocket?.emit("stop typing", { group_id: id });
           setMessage(input.target.value);
         }}

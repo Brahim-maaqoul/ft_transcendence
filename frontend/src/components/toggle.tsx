@@ -40,7 +40,6 @@ const Toggle = () => {
 
   const sendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const emailSecret = process.env.NEXT_PUBLIC_EMAIL_SECRET;
       const emailTemplate = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE;

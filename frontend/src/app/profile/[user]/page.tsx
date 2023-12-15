@@ -40,7 +40,7 @@ export default function Profile() {
           <div className="grid grid-cols-1 lg:grid-cols-4">
             <div className="col-span-2">
               <div className="h-[700px] bg-black bg-opacity-40 rounded-2xl shadow-black shadow-xl p-4 mx-2 my-3 overflow-y-auto no-scrollbar">
-                <RecentGames nickname={params.user.toString()}/>
+                <RecentGames nickname={params.user.toString()} />
               </div>
             </div>
             <div className="col-span-2">
