@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "./providers/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface DropDownArrowProps {
   isOpen: boolean;
@@ -88,7 +90,7 @@ const DoubleSword = () => {
   );
 };
 
-function Challenge() {
+function Challenge({ player }: { player: string }) {
   const [isRightOpen, setIsRightOpen] = useState(false);
   const [isBottomOpen, setIsBottomOpen] = useState(false);
 
@@ -131,11 +133,13 @@ function Challenge() {
     setIsBottomOpen((prev) => !prev);
     if (isRightOpen) setIsRightOpen(false);
   };
-
+  
+  const router = useRouter();
   const dimensions = ["2D", "3D"];
   const map3D = ["Autumn", "Cherry", "Desert"];
   const map2D = ["Blue", "Red", "Green"];
   const [dimension, setDimension] = useState("2D");
+  const { socket } = useAuth();
   const [map, setMap] = useState(
     dimension === dimensions[0] ? map2D[0] : map3D[0]
   );
@@ -143,7 +147,7 @@ function Challenge() {
 
   const handleDimensionClick = (selectedDimension: string) => {
     setDimension(selectedDimension);
-	setMap((prevMap) => (selectedDimension === "2D" ? map2D[0] : map3D[0]));
+    setMap((prevMap) => (selectedDimension === "2D" ? map2D[0] : map3D[0]));
     setIsRightOpen(false);
   };
 
@@ -154,9 +158,34 @@ function Challenge() {
 
   const [isSearching, setIsSearching] = useState(false);
   const findMatch = () => {
-    setIsSearching((prev) => !prev);
+    console.log("game invite")
+    socket?.emit("inviteGame", {
+      player,
+      data: {
+        map,
+        dimension,
+        mode: "Duo",
+        option: "",
+      },
+    });
     updateBoxShadow();
   };
+  const cancelMatch = () => {
+    console.log("cancel")
+    socket?.emit("cancel");
+    updateBoxShadow();
+  };
+  useEffect(() => {
+    socket?.on("loadingFriendGame", () => {
+      setIsSearching(true);
+    });
+    socket?.on("cancelLoading", () => {
+      setIsSearching(false);
+    });
+    socket?.on("gameStart", (path: string) => {
+      router.push(path);
+    });
+  }, [socket]);
 
   const updateBoxShadow = () => {
     const button = document.getElementById("searchButton");
@@ -250,7 +279,7 @@ function Challenge() {
       <div className="w-full h-full flex flex-col-reverse">
         <button
           id="searchButton"
-          onClick={findMatch}
+          onClick={!isSearching ? findMatch : cancelMatch}
           className={`w-full h-1/4 rounded ${
             isSearching ? " bg-red-600" : "bg-green-600"
           } text-white`}
