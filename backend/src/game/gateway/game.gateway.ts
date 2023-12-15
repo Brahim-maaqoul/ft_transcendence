@@ -264,6 +264,7 @@ export class GameGateway
         'accepted',
       );
       const userData = this.gameSessionService.inviteQueue[payload.challenger];
+      this.gameSessionService.inviteQueue.erase(payload.challenger)
       const game = await this.matchMaking.createDuoGame(
         payload.challenger,
         client.user,
