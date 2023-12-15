@@ -25,7 +25,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
   const corsOptions = {
-    origin: 'http://e3r11p4.1337.ma:3000',
+    origin: 'http://e3r11p10.1337.ma:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   };

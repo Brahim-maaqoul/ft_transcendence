@@ -33,14 +33,14 @@ export default function Profile() {
     <div className="h-[1037px] z-0 w-full  relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  shadow-black shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="h-full flex bg-slate-800  bg-opacity-40 rounded-2xl overflow-y-auto no-scrollbar">
         <NavBar />
-        <div>
+        <div className="w-full">
           <div className="w-full p-4 flex justify-center">
             {profileData && <Infos profileData={profileData} />}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4">
             <div className="col-span-2">
               <div className="h-[700px] bg-black bg-opacity-40 rounded-2xl shadow-black shadow-xl p-4 mx-2 my-3 overflow-y-auto no-scrollbar">
-                <RecentGames nickname={params.user.toString()}/>
+                <RecentGames nickname={params.user.toString()} />
               </div>
             </div>
             <div className="col-span-2">

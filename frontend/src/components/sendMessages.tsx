@@ -8,7 +8,7 @@ import {
 } from "@/app/api/chatApi/chatApiFunctions";
 import { io } from "socket.io-client";
 
-const socket = io("http://e3r11p4.1337.ma:8000/chat");
+const socket = io("http://e3r11p10.1337.ma:8000/chat");
 interface sendMessagesProps {
   id: string;
   message: string;
@@ -83,8 +83,7 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
           if (message.trim() !== "") {
             handleSubmitNewMessage();
           }
-        }}
-      >
+        }}>
         {time > 0
           ? Math.floor(time / 60) + ":" + (Math.floor(time) % 60)
           : "Send"}

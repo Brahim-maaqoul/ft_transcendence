@@ -21,7 +21,7 @@
   font-family: "Press Start 2P", cursive;
 }
 
-@layer utilities base {
+@layer utilities {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -85,7 +85,7 @@
   }
 }
 
-@layer utilities base {
+@layer utilities {
   * {
     @apply border-border;
   }

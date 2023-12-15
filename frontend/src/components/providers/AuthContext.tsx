@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (data: UserProfile) => {
     setIsAuthenticated(true);
     const token = localStorage?.getItem("token");
-    const newSocket = io("http://e3r11p4.1337.ma:8000/Game2d", {
+    const newSocket = io("http://e3r11p10.1337.ma:8000/Game2d", {
       query: { token: token },
     });
     setSocket(newSocket);

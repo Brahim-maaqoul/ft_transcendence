@@ -155,15 +155,6 @@ function Rank() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <Image
-                    src={"/gold.svg"}
-                    alt="Avatar of user"
-                    width={100}
-                    height={100}
-                    className="w-32 h-32"
-                  />
-                </div>
               </div>
             ))}
           </div>

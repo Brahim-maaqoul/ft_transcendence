@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://e3r11p4.1337.ma:8000/chat");
+const socket = io("http://e3r11p10.1337.ma:8000/chat");
 
 export default function Chat({ params }: { params: any }) {
   const { dataUser, show, showFalse, showTrue } = useAuth();
@@ -42,8 +42,7 @@ export default function Chat({ params }: { params: any }) {
           </div> */}
           <div className="h-full grid grid-cols-1 lg:grid-cols-2">
             <div
-              className={`bg-black bg-opacity-40 rounded-2xl shadow-black shadow-sm ${hidden} lg:flex flex-col  p-2 m-2 `}
-            >
+              className={`bg-black bg-opacity-40 rounded-2xl shadow-black shadow-sm ${hidden} lg:flex flex-col  p-2 m-2 `}>
               {isNaN(Number(params.id)) ? (
                 <>{selectMessage}</>
               ) : (
