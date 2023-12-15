@@ -4,7 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000/v1/api/",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
 });
 
@@ -25,11 +25,11 @@ const TfaPage = () => {
 
   const verifyTfaCode = async (e: any) => {
     try {
-      const response = await API.get("/user/getUserInfo", {
+      const response = await API.get("user/getUserInfo", {
         params: { nickname: nickname },
       });
       if (response.data.userInfo) {
-        const verifyResponse = await API.post("/user/verifyTfa", {
+        const verifyResponse = await API.post("user/verifyTfa", {
           code: userInput,
           UserInfo: response.data.userInfo,
         });

@@ -4,7 +4,7 @@ import Settings from "./settings";
 import Edit from "@/app/Edit/page";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000/v1/api/",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
 });
 

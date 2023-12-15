@@ -2,33 +2,29 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000/v1/api/",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
 });
 const TfaToggle = ({ isEnabled }: { isEnabled: boolean }) => {
   const [isTfaEnabled, setIsTfaEnabled] = useState(isEnabled);
   useEffect(() => {
+    const fetchTfaStatus = async () => {
+      try {
+        const response: AxiosResponse = await API.get("user/tfaStatus");
+        setIsTfaEnabled(response.data);
+      } catch (error) {}
+    };
     fetchTfaStatus();
   }, []);
-  const fetchTfaStatus = async () => {
-    try {
-      const response: AxiosResponse = await API.get("/user/tfaStatus");
-      setIsTfaEnabled(response.data);
-    } catch (error) {
-      console.error("Error fetching TFA status:", error);
-    }
-  };
   const handleToggleTfa = async () => {
     try {
       if (isTfaEnabled) {
-        await API.post("/user/disableTFA");
+        await API.post("user/disableTFA");
       } else {
-        await API.post("/user/enableTFA");
+        await API.post("user/enableTFA");
       }
       setIsTfaEnabled(!isTfaEnabled);
-    } catch (error) {
-      console.error("Error toggling TFA:", error);
-    }
+    } catch (error) {}
   };
   return (
     <div className="toggle flex flex-row items-center justify-center gap-20">

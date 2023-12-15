@@ -1,10 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Multer } from 'multer';
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class ImageService {
   constructor(
     private prisma: PrismaService,
+    private config: ConfigService,
   ) {}
   
   async getImg(id: number)
@@ -24,7 +27,7 @@ export class ImageService {
             type: file?.mimetype ? file?.mimetype : "image/*"
         }
     })
-    return "http://localhost:8000/v1/api/image/get/" + image.id;
+    return this.config.get('NEXT_PUBLIC_API_URL') + "image/get/" + image.id;
   }
   async uploadFromAuth(file: ArrayBuffer)
   {
@@ -34,6 +37,6 @@ export class ImageService {
             type: "image/*"
         }
     })
-    return "http://localhost:8000/v1/api/image/get/" + image.id;
+    return this.config.get('NEXT_PUBLIC_API_URL') + "image/get/" + image.id;
   }
 }
