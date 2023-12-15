@@ -155,7 +155,7 @@ export function Body({
       clearInterval(interval);
       socket?.off("gameUpdate");
     };
-  }, [gameData, socket]);
+  }, [gameData, socket, dataGame, type]);
   if (!socket) return <></>;
   
   return (

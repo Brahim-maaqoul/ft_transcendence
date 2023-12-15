@@ -7,8 +7,6 @@ services:
     container_name: db
     env_file:
       - .env
-    volumes:
-      - $PWD/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
@@ -18,12 +16,10 @@ services:
     image: backend
     restart: "always" 
     env_file:
-      - .env
+      - ./backend/.env
     ports:
       - "8000:8000"
       - "5555:5555"
-    volumes:
-      - ./backend:/app
 
   client:
     depends_on:
@@ -32,9 +28,7 @@ services:
     container_name: frontend
     image: frontend
     env_file:
-      - .env
+      - ./frontend/.env
     ports:
       - "3000:3000"
-    restart: "always" 
-    volumes:
-      - ./frontend:/client
+    restart: "always"

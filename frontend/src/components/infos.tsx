@@ -75,7 +75,6 @@ function Infos({ profileData }: { profileData: UserProfile }) {
       router.push("/chat/" + mutation.data?.id);
     }
   }, [mutation.isSuccess, mutation.data?.id, router]);
-  console.log(profileData);
   return (
     <div className="bg-black bg-opacity-40 rounded-3xl md:shadow-black shadow-2xl p-4 m-2 w-full">
       <div className="flex items-start flex-col md:flex-row  gap-8">

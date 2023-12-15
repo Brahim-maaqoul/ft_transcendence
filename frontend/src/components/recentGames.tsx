@@ -10,7 +10,6 @@ export default function RecentGames({ nickname }: { nickname: string | null }) {
     isLoading,
     isError,
   } = useGetMatchHistory(nickname);
-  console.log("MatchHistory", MatchHistory);
   if (isLoading)
     return (
       <div className="h-full flex justify-center items-center">

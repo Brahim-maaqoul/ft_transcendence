@@ -128,7 +128,7 @@ export const AboutDuo: React.FC<ConversationProps> = ({ group }) => {
               className={`modal fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[688px] z-50`}
             >
               <div className="w-full h-full flex flex-col items-center gap-[30px] rounded-[10px] p-[30px] bg-slate-950/70 backdrop-blur-xl">
-                <Challenge />
+                <Challenge player={group.members[0].user.auth_id} />
               </div>
             </div>
           )}

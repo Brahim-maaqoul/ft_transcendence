@@ -14,7 +14,7 @@ model Users {
   nickname            String         @unique
   firstSignIn         Boolean        @default(true)
   displayname         String?
-  status              String         @default("online")
+  status              String         @default("offline")
   picture             String?
   isTfaEnabled        Boolean        @default(false)
   isTfaValidated      Boolean        @default(false)

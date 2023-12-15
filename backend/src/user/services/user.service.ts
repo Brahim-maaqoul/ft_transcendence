@@ -165,9 +165,8 @@ export class UserService {
       stream.write(file.buffer);
       stream.end();
 
-      return this.config.get('FRONT_PORT') + picturePath;
+      return this.config.get('NEXT_PUBLIC_FRONT_PORT') + picturePath;
     } catch (error) {
-      console.error(error);
       return false;
     }
   }

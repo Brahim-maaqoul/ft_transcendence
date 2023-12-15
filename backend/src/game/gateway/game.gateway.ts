@@ -126,7 +126,7 @@ export class GameGateway
       if (!(payload.gameId in this.gameSessionService.botGames)) {
         const game = this.gameSessionService.matchPlayers[payload.gameId];
 
-        // client.emit('ERROR', 'game not found');
+        client.emit('ERROR', 'game not found');
         await this.botService.deleteBotGame(game);
         return;
       }
@@ -235,7 +235,6 @@ export class GameGateway
   @UseGuards(JwtGuard)
   @SubscribeMessage('inviteGame')
   async inviteGame(client: any, payload: { player: string; data: Data }) {
-    console.log('invite');
     const user = client.user;
     this.cancel(client);
     client.emit('loadingFriendGame');
@@ -247,13 +246,7 @@ export class GameGateway
       '',
     );
     this.gameSessionService.inviteQueue[user] = { payload, notification };
-    console.log(this.gameSessionService.inviteQueue);
-    console.log(
-      payload.player,
-      payload.player in this.gameSessionService.playersSocket,
-    );
     if (payload.player in this.gameSessionService.playersSocket) {
-      console.log('here');
       this.gameSessionService.playersSocket[payload.player].emit(
         'notification',
       );
@@ -306,9 +299,10 @@ export class GameGateway
 
   @UseGuards(JwtGuard)
   async handleConnection(client: any, ...args: any[]) {
-    const user = this.authService.verifyToken(
-      client.handshake.query.token,
-    ).userId;
+    const token = this.authService.verifyToken(client.handshake.query.token);
+    if (!token) return;
+    const user = token.userId;
+    if (!user) return;
     const status = await this.prisma.users.findUnique({
       where: {
         auth_id: user,
@@ -325,21 +319,18 @@ export class GameGateway
       });
     }
     this.gameSessionService.playersSocket[user] = client;
-    // console.log('connecting client id: ', client.user, client.id, client.handshake.query.user);
-    // this.gameSessionService.clients[client.id] = client;
-    // this.gameSessionService.clients[client.handshake.query.user] = client;
   }
 
   @UseGuards(JwtGuard)
   async handleDisconnect(client: any) {
-    const user = this.authService.verifyToken(
-      client.handshake.query.token,
-    ).userId;
+    const token = this.authService.verifyToken(client.handshake.query.token);
+    if (!token) return;
+    const user = token.userId;
+    if (!user) return;
     const game = this.gameSessionService.playersInfo[user];
     if (game === undefined) {
       return;
     }
-    // console.log(`Clinet id: ${client.id} disconnected!`);
     if (game.type == 'Bot' && game.id in this.gameSessionService.botGames) {
       const gameStorage = this.gameSessionService.botGames[game.id];
       if (gameStorage.status === 'finished') {

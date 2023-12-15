@@ -27,6 +27,7 @@ export default function MyRank() {
           width={100}
           height={100}
           className="w-32 h-32"
+          priority={true}
         />
         <span className="text-white text-2xl"># {myRank?.rank}</span>
       </div>

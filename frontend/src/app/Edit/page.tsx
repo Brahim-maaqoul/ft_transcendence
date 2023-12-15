@@ -79,7 +79,6 @@ export default function Edit() {
   };
 
   const uploadPicture = async (picture: File) => {
-    console.log("here");
     const formData = new FormData();
     formData.append("file", picture);
     uploadMutation.mutate(formData);

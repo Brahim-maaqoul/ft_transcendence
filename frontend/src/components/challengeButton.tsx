@@ -158,7 +158,6 @@ function Challenge({ player }: { player: string }) {
 
   const [isSearching, setIsSearching] = useState(false);
   const findMatch = () => {
-    console.log("game invite")
     socket?.emit("inviteGame", {
       player,
       data: {
@@ -171,7 +170,6 @@ function Challenge({ player }: { player: string }) {
     updateBoxShadow();
   };
   const cancelMatch = () => {
-    console.log("cancel")
     socket?.emit("cancel");
     updateBoxShadow();
   };
@@ -185,7 +183,7 @@ function Challenge({ player }: { player: string }) {
     socket?.on("gameStart", (path: string) => {
       router.push(path);
     });
-  }, [socket]);
+  }, [socket, router]);
 
   const updateBoxShadow = () => {
     const button = document.getElementById("searchButton");

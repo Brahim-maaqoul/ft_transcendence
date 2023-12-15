@@ -14,6 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   dataUser: UserProfile | null;
   socket: Socket | null;
+  chatSocket: Socket | null;
   login: (data: UserProfile) => void;
   logout: () => void;
   setuserdata: (data: UserProfile) => void;
@@ -63,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataUser, setDataUser] = useState<UserProfile | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [chatSocket, setChatSocket] = useState<Socket | null>(null);
   const [show, setShow] = useState(false);
 
   const showTrue = () => {
@@ -74,16 +76,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = (data: UserProfile) => {
-    setIsAuthenticated(true);
     const token = localStorage?.getItem("token");
-    const newSocket = io("http://e3r11p4.1337.ma:8000/Game2d", {
-      query: { token: token },
-    });
-    setSocket(newSocket);
+    if (!socket || !isAuthenticated) {
+      const newSocket = io(process.env.NEXT_PUBLIC_BACK_PORT + "Game2d", {
+        query: { token: token },
+      });
+      setSocket(newSocket);
+    }
+    if (!chatSocket || !isAuthenticated) {
+      const newSocket = io(process.env.NEXT_PUBLIC_BACK_PORT + "chat", {
+        query: { token: token },
+      });
+      setChatSocket(newSocket);
+    }
+    setIsAuthenticated(true);
+    setuserdata(data);
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    // setuserdatanull();
+    // setSocket(null);
   };
   const setuserdata = (data: UserProfile | null) => {
     setDataUser(data);
@@ -96,6 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     dataUser,
     socket,
+    chatSocket,
     login,
     logout,
     setuserdata,

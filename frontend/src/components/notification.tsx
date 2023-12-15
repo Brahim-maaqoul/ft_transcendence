@@ -76,13 +76,12 @@ function ChallengeNotification({
       setNot(false);
       mutation.mutate();
     });
-  }, [socket]);
+  }, [socket, mutation, router, setNot]);
   const accept = (challenger: string) => {
     socket?.emit("acceptGame", { challenger });
     setMsg(notification.path);
   };
   const reject = (challenger: string) => {
-    console.log();
     socket?.emit("rejectGame", { challenger });
     setMsg(notification.path);
     setMsg("rejected");

@@ -57,7 +57,6 @@ export const selectMessage = (
   </div>
 );
 export const Conversation: React.FC<ConversationProps> = ({ id, socket }) => {
-  console.log("id", id);
   const [message, setMessage] = useState("");
   const [more, setMore] = useState(false);
   const { dataUser, show } = useAuth();
@@ -72,7 +71,6 @@ export const Conversation: React.FC<ConversationProps> = ({ id, socket }) => {
     isLoading,
   } = UseGetMessages(id);
   const route = useRouter();
-  console.log("getMessages", getMessages);
   if (isLoading) {
     return (
       <div className="h-full flex justify-center items-center">

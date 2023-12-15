@@ -10,10 +10,14 @@ import { useScroll } from "framer-motion";
 import { MouseEvent, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthContext";
-import { useCheckAuthentication } from "@/app/api/checkAuthentication";
+import {
+  logoutUser,
+  useCheckAuthentication,
+} from "@/app/api/checkAuthentication";
 import { seeAllNotification, useGetNotification } from "@/app/api/notification";
 import Notification from "./notification";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { redirect, useRouter } from "next/navigation";
 
 export default function NavBar() {
   const [not, setNot] = useState(false);
@@ -22,21 +26,31 @@ export default function NavBar() {
   const mutation = useMutation({
     mutationFn: seeAllNotification,
   });
-  const handleDocumentClick = (event: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      setNot(false);
-      mutation.mutate();
-    }
-  };
+  const router = useRouter();
+  const logoutMutation = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => router.push("/login"),
+  });
   const queryClient = useQueryClient();
   useEffect(() => {
-    console.log("here");
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setNot(false);
+        mutation.mutate();
+      }
+    };
+
     socket?.on("notification", () => {
       queryClient.invalidateQueries(["notifications"]);
-      console.log("notificationnnnnnnn");
     });
-  }, [socket]);
+  }, [socket, queryClient, mutation]);
   useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setNot(false);
+        mutation.mutate();
+      }
+    };
     if (not) {
       document.addEventListener(
         "click",
@@ -55,16 +69,10 @@ export default function NavBar() {
         handleDocumentClick as unknown as (event: Event) => void
       );
     };
-  }, [not]);
+  }, [not, mutation]);
   const { data: notifications, isLoading } = useGetNotification();
   const imageUrl = dataUser?.picture;
   if (!dataUser || isLoading || !notifications) <></>;
-  console.log(
-    notifications?.filter((notification: any) => {
-      return !notification.seen;
-    }).length,
-    "check"
-  );
 
   return (
     <>
@@ -138,12 +146,14 @@ export default function NavBar() {
                   <IoNotificationsOutline size={32}></IoNotificationsOutline>
                 </button>
               </div>
-              <Link
-                href={process.env.NEXT_PUBLIC_API_URL + "auth/logout"}
+              <button
+                onClick={() => {
+                  logoutMutation.mutate(dataUser?.auth_id);
+                }}
                 className="hover:bg-slate-400  w-12 my-2 mt-auto flex items-center justify-center  h-12 text-[#ffffff] rounded-full "
               >
                 <FiLogOut size={32}></FiLogOut>
-              </Link>
+              </button>
             </div>
           </div>
 

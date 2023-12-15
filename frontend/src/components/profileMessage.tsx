@@ -40,14 +40,12 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
   const { data: getMembership } = useGetMemberShip(group.id);
   useEffect(() => {
     socket.on("isTyping", (data: { message: string; id: number }) => {
-      console.log("isTyping111", data, group.id);
       if (data.id === Number(group.id)) setisTyping(data.message);
     });
     socket.on("notTyping", () => {
       setisTyping(null);
-      console.log("baddrr");
     });
-  }, [socket]);
+  }, [group.id, socket]);
   return (
     <div className=" w-full h-1/10 border-b border-gray-300 flex items-center p-1">
       {newGroup && <UpdateChannel group={group} setNewGroup={setNewGroup} />}
@@ -76,11 +74,7 @@ export const ProfileMessages: React.FC<ProfileMessagesProps> = ({
         <span className="text-white text-lg">
           {group.type === "group" ? group.name : group.members[0].user.nickname}
         </span>
-        {!isTyping ? (
-          <p className="text-xs font-mono ">online last 08:30</p>
-        ) : (
-          <p className="text-xs font-mono ">{isTyping}</p>
-        )}
+        {isTyping && <p className="text-xs font-mono ">{isTyping}</p>}
       </div>
 
       <div className="ml-auto mr-0 flex items-center">

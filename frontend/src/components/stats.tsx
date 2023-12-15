@@ -6,7 +6,6 @@ import Link from "next/link";
 function Stats({ profileData }: { profileData: UserProfile }) {
   const { dataUser } = useAuth();
   const { data, isLoading, isError } = useGetStatsUser(profileData.auth_id);
-  console.log(data);
   if (isLoading) return <></>;
   if (isError) return <></>;
   return (

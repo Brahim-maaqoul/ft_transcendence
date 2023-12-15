@@ -4,17 +4,12 @@ import {
   Body,
   Post,
   Req,
-  Param,
   Res,
   UseGuards,
-  Redirect,
-  UnauthorizedException,
-  UseFilters,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthGoogleGuard } from './Guard/auth-google.guard';
-import { PrismaService } from '../prisma/prisma.service';
 import { updatedUser } from './dtos/updateUser.dto';
 import { ConfigService } from '@nestjs/config';
 
@@ -40,7 +35,7 @@ export class AuthController {
         this.authService.generateTotpCode(user.tfaSecret),
       );
       return res.redirect(
-        `${this.configService.get('FRONT_PORT')}tfa?&nickname=${
+        `${this.configService.get('NEXT_PUBLIC_FRONT_PORT')}tfa?&nickname=${
           req.user.nickname
         }`,
       );
@@ -49,8 +44,8 @@ export class AuthController {
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
-        ? `${this.configService.get('FRONT_PORT')}Edit`
-        : this.configService.get('FRONT_PORT'),
+        ? `${this.configService.get('NEXT_PUBLIC_FRONT_PORT')}Edit`
+        : this.configService.get('NEXT_PUBLIC_FRONT_PORT'),
     );
   }
 
@@ -69,7 +64,7 @@ export class AuthController {
         this.authService.generateTotpCode(user.tfaSecret),
       );
       return res.redirect(
-        `${this.configService.get('FRONT_PORT')}tfa?&nickname=${
+        `${this.configService.get('NEXT_PUBLIC_FRONT_PORT')}tfa?&nickname=${
           req.user.nickname
         }`,
       );
@@ -78,8 +73,8 @@ export class AuthController {
     res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
     return res.redirect(
       req.user.firstSignIn
-        ? `${this.configService.get('FRONT_PORT')}Edit`
-        : this.configService.get('FRONT_PORT'),
+        ? `${this.configService.get('NEXT_PUBLIC_FRONT_PORT')}Edit`
+        : this.configService.get('NEXT_PUBLIC_FRONT_PORT'),
     );
   }
 
@@ -92,25 +87,26 @@ export class AuthController {
     );
   }
 
-  @Get('logout')
-  logout(@Req() req, @Res() res) {
+  @Post('logout')
+  async logout(@Req() req, @Res() res, @Body('auth_id') auth_id: string) {
+    if (auth_id) {
+      await this.authService.logout(auth_id);
+    }
     res.clearCookie('token');
-    return res.redirect(this.configService.get('FRONT_PORT'));
+    return res.status(201).send();
   }
 
   @Get('checkAuth')
   @UseGuards(AuthGuard('jwt'))
-  async checkAuthentication(@Req() request, @Res() res, @Body() body) {
+  async checkAuthentication(@Req() request, @Res() res) {
     try {
       const user = await this.authService.findUserById(request.user.auth_id);
       if (!user) res.status(200).json({ isAuthenticated: false });
-      return res
-        .status(200)
-        .json({
-          isAuthenticated: true,
-          user: user,
-          token: request.cookies.token,
-        });
+      return res.status(200).json({
+        isAuthenticated: true,
+        user: user,
+        token: request.cookies.token,
+      });
     } catch {
       return res.status(200).json({ isAuthenticated: false });
     }

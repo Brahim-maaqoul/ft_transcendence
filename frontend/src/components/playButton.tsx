@@ -69,13 +69,11 @@ function DropDownValue({
 
 interface CheckboxProps {
   value: string;
-  selectedOption: string;
   handleCheckboxChange: (value: string) => void;
 }
 
 function Checkbox({
   value,
-  selectedOption,
   handleCheckboxChange,
 }: CheckboxProps) {
   return (
@@ -85,19 +83,10 @@ function Checkbox({
           id={value}
           type="checkbox"
           value={value}
-          checked={selectedOption === value}
           onChange={() => handleCheckboxChange(value)}
           className="w-4 h-4 text-black"
           style={{ filter: "drop-shadow(2px 2px 8px rgba(38, 99, 235, 0.8))" }}
         />
-        <label
-          htmlFor={value}
-          className={`w-full py-3 text-sm font-medium ${
-            selectedOption === value ? "text-blue-600" : "text-white"
-          }`}
-        >
-          {value}
-        </label>
       </div>
     </li>
   );
@@ -163,10 +152,10 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     isAuthenticated ? setShowModal(true) : router.push("/login");
   };
 
-  const handleCloseModal = () => {
-    socket?.emit("cancel");
-    setShowModal(false);
-  };
+  // const handleCloseModal = () => {
+  //   socket?.emit("cancel");
+  //   setShowModal(false);
+  // };
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -185,8 +174,6 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
   );
   const [msg, setMsg] = useState("");
   const maps = dimension === "2D" ? map2D : map3D;
-  const [selectedOption, setSelectedOption] = useState("Ranked");
-  const options = ["Ranked", "Friendly", "Random"];
   const [time, setTime] = useState(0);
   const [gameIsSet, setGameIsSet] = useState(false);
 
@@ -215,7 +202,8 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
       }
 
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        handleCloseModal();
+        socket?.emit("cancel");
+        setShowModal(false);
       }
     };
     if (showModal) {
@@ -225,7 +213,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showModal, isBottomOpen, isLeftOpen, isRightOpen]);
+  }, [showModal, isBottomOpen, isLeftOpen, isRightOpen, socket]);
 
   const textShadow = `0px 0px 5px black, 0px 0px 20px white, 0px 0px 40px white, 0px 0px 80px white`;
   const clickLeft = () => {
@@ -262,10 +250,6 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     setIsBottomOpen(false);
   };
 
-  const handleCheckboxChange = (value: string) => {
-    setSelectedOption(value);
-  };
-
   const cancelMatch = () => {
     socket?.emit("cancel");
     setMsg("");
@@ -273,13 +257,12 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
     updateBoxShadow();
   };
   const findMatch = () => {
-    console.log("find match");
     if (isSearching) return;
     socket?.emit("joinQueue", {
       mode: Mode,
       dimension: dimension,
       map: map,
-      option: selectedOption,
+      option: ""
     });
     updateBoxShadow();
   };
@@ -291,7 +274,6 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
 
   useEffect(() => {
     socket?.on("ERROR", (msg: string) => {
-      console.log(msg, gameIsSet);
       // setIsSearching(false);
       setMsg(msg);
       setTime(0);
@@ -302,21 +284,18 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
       }
     });
     socket?.on("startLoading", () => {
-      console.log("start loading");
       setIsSearching(true);
     });
     socket?.on("cancelLoading", () => {
-      console.log("cancel loading");
-	  setGameIsSet(false);
+      setGameIsSet(false);
       setIsSearching(false);
-	  setTime(0);
+      setTime(0);
     });
     socket?.on("gameStart", (path: string) => {
-      console.log("game start");
       setIsSearching(true);
       router.push(path);
     });
-  }, [socket, gameIsSet]);
+  }, [socket, gameIsSet, router]);
   const updateBoxShadow = () => {
     const button = document.getElementById("searchButton");
     if (button) {
@@ -447,21 +426,11 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                 isVertical={false}
                 isOpen={isBottomOpen}
                 array={maps}
-				dimension={dimension}
+                dimension={dimension}
                 id={"bottomDropdown"}
                 click={handleMapClick}
               />
               <HorizontalLine />
-              <ul className="flex gap-2.5 items-center w-full">
-                {options.map((option) => (
-                  <Checkbox
-                    key={option}
-                    value={option}
-                    selectedOption={selectedOption}
-                    handleCheckboxChange={handleCheckboxChange}
-                  />
-                ))}
-              </ul>
             </div>
             {gameIsSet ? (
               <div className="w-full h-full flex flex-row">
@@ -480,7 +449,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                   }
                   onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
                 >
-                  "JOIN"
+                  JOIN
                 </button>
                 <button
                   id="searchButton"
@@ -497,7 +466,7 @@ function PlayButton({ isAuthenticated }: PlayButtonProps) {
                   }
                   onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
                 >
-                  "CANCEL"
+                  CANCEL
                 </button>
               </div>
             ) : (

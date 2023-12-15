@@ -12,6 +12,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Spinner from "@/components/spinner";
 import Link from "next/link";
 import { io } from "socket.io-client";
+import { useAuth } from "./providers/AuthContext";
+
 interface moreProps {
   more: boolean;
   setMore: React.Dispatch<React.SetStateAction<boolean>>;
@@ -152,9 +154,9 @@ const iconBan = (
   </svg>
 );
 
-const socket = io("http://e3r11p4.1337.ma:8000/chat");
 
 const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
+  const {chatSocket} =  useAuth();
   // handleBanYser **************
   const queryClient = useQueryClient();
   const deleteUser = useMutation({
@@ -186,9 +188,9 @@ const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
     mutationFn: muteFromGroup,
     onSuccess: () => {
       queryClient.invalidateQueries(["getMembers"]);
-      socket.emit("sendMessage", { group_id: idG });
     },
   });
+  chatSocket?.emit("sendMessage", { group_id: idG });
   const handleMuteToGroup = () => {
     const currentDate = new Date();
     currentDate.setMinutes(currentDate.getMinutes() + 18);
@@ -203,9 +205,9 @@ const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
     mutationFn: unmuteFromGroup,
     onSuccess: () => {
       queryClient.invalidateQueries(["getMembers"]);
-      socket.emit("sendMessage", { group_id: idG });
     },
   });
+  chatSocket?.emit("sendMessage", { group_id: idG });
   const handleUnMuteToGroup = () => {
     const currentDate = new Date();
     currentDate.setMinutes(currentDate.getMinutes() - 8);
@@ -225,7 +227,6 @@ const GroupUserManagement: React.FC<groupUsersProps> = ({ user, idG }) => {
   };
 
   // *********** FIN ******************
-  console.log(new Date(user.muted), new Date());
   return (
     <div className="col-span-2 flex flex-row-reverse justify-between items-center w-[100%] pr-2 ">
       {user.type === "member" && (

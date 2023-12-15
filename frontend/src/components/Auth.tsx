@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function Auth() {
-  const router = useRouter();
   const pathname = usePathname();
   if (pathname === "/login" || pathname === "/tfa") return <></>
   return <CheckAuth/>
@@ -30,14 +29,12 @@ export function CheckAuth()
     if (!isLoading || isError) {
       if (data?.isAuthenticated) {
         login(data.user);
-        setuserdata(data.user);
       } else {
         logout();
-        setuserdatanull();
         router.push("/login");
       }
     }
-  }, [isLoading, data, isError, error]);
+  }, [isLoading, data, isError, error, logout, login, router]);
   
   return <div></div>;
 }

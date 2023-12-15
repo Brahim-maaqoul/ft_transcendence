@@ -1,11 +1,13 @@
 
 "use client"
 
-import { Brick } from "../types/component"
+import { Brick, PSize } from "../types/component"
 
+interface BricksProps {
+    brick: PSize;
+}
 
-
-export default function  Bricks({brick}:{brick: Brick}){
+export default function Bricks({brick}: BricksProps){
 
     return (
         <div

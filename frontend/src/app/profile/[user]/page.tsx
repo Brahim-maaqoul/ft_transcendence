@@ -33,7 +33,7 @@ export default function Profile() {
     <div className="h-[1037px] z-0 w-full  relative p-2 md:rounded-3xl bg-slate-500 bg-opacity-30  shadow-black shadow-2xl overflow-y-scroll no-scrollbar ">
       <div className="h-full flex bg-slate-800  bg-opacity-40 rounded-2xl overflow-y-auto no-scrollbar">
         <NavBar />
-        <div>
+        <div className="w-full">
           <div className="w-full p-4 flex justify-center">
             {profileData && <Infos profileData={profileData} />}
           </div>

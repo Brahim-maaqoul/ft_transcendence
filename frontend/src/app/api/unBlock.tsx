@@ -8,7 +8,6 @@ export async function unblockFriend(auth_id: string) {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching user stats:", error);
     throw error;
   }
 }

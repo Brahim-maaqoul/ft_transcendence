@@ -88,9 +88,7 @@ export async function upload(data: FormData) {
 }
 
 async function getMessages(data: string) {
-  console.log("here1111", data);
   const response: AxiosResponse = await API.get("/groups/get/" + data);
-  console.log("here1111", response.data);
   return response.data;
 }
 

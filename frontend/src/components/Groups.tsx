@@ -52,8 +52,6 @@ export const Groups = () => {
     } else {
       showTrue();
       pushId(String(group.id));
-      console.log("aaaaaaaa");
-      console.log("aabbaaaaaa");
     }
   };
 

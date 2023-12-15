@@ -35,10 +35,9 @@ export default function Game2d({
   } = useGetGame(params.type, params.gameId);
   useEffect(() => {
 	socket?.on("gameEnd", () => {
-	console.log("gameEnd");
 	queryClient.invalidateQueries(["gameData", params.type, params.gameId]);
 	});
-  }, [socket]);
+  }, [socket, params, queryClient]);
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
   return (

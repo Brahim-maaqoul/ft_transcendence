@@ -43,6 +43,17 @@ export class NotificationService {
     type: string,
     path: string,
   ) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        auth_id: sender_id,
+      },
+    });
+    const user2 = await this.prisma.users.findUnique({
+      where: {
+        auth_id: receiver_id,
+      },
+    });
+    if (!user || !user2) return;
     const notification = await this.prisma.notification.create({
       data: {
         type,
@@ -54,22 +65,20 @@ export class NotificationService {
     return notification.notification_id;
   }
 
-  async changeNotification(id: number, path: string)
-  {
+  async changeNotification(id: number, path: string) {
     const user = await this.prisma.notification.findUnique({
-      where:{
+      where: {
         notification_id: id,
       },
-    })
-    if (!user)
-      return ;
-    return await this.prisma.notification.update({
-      where:{
+    });
+    if (!user) return;
+    return await this.prisma.notification.updateMany({
+      where: {
         notification_id: id,
       },
-      data:{
+      data: {
         path: path,
-      }
-    })
+      },
+    });
   }
 }

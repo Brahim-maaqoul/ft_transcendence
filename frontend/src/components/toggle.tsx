@@ -19,7 +19,8 @@ export const close = (
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
-    strokeLinejoin="round">
+    strokeLinejoin="round"
+  >
     <path d="M19 6 L5 18 M5 6 L19 18" />
   </svg>
 );
@@ -41,16 +42,18 @@ const Toggle = () => {
     e.preventDefault();
 
     try {
-      const result = await emailjs.sendForm(
-        "gmail",
-        "template_eo1g60g",
-        form.current!,
-        "HlsseG9BiS6Ux9W7m"
-      );
+      const emailSecret = process.env.NEXT_PUBLIC_EMAIL_SECRET;
+      const emailTemplate = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE;
+      if (emailSecret && emailTemplate) {
+        await emailjs.sendForm(
+          "gmail",
+          emailTemplate,
+          form.current!,
+          emailSecret
+        );
+      }
       setContact(false);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 20) setSubject(e.target.value);
@@ -122,7 +125,8 @@ const Toggle = () => {
             onClick={() => {
               setShow(true);
             }}
-            className="bg-black hover:bg-white flex justify-center md:hidden text-white hover:text-black w-24 p-2 ">
+            className="bg-black hover:bg-white flex justify-center md:hidden text-white hover:text-black w-24 p-2 "
+          >
             Menu
           </button>
         </div>
@@ -133,7 +137,8 @@ const Toggle = () => {
           <Link
             href={"https://discord.gg/YUXWWWJvJb"}
             target="blank"
-            className="">
+            className=""
+          >
             Discord
           </Link>
           <button onClick={() => setContact(true)} className="">
@@ -150,11 +155,13 @@ const Toggle = () => {
             animate={{
               y: 0,
             }}
-            className="flex flex-col mx-5 mt-5 p-5 bg-black bg-opacity-80 gap-4 font-[Guji] text-md font-bold text-white rounded-2xl">
+            className="flex flex-col mx-5 mt-5 p-5 bg-black bg-opacity-80 gap-4 font-[Guji] text-md font-bold text-white rounded-2xl"
+          >
             <div className="flex justify-between">
               <button
                 onClick={() => setAbout(true)}
-                className="flex hover:text-xl">
+                className="flex hover:text-xl"
+              >
                 About Us
               </button>
               <button onClick={() => setShow(false)}>{close}</button>
@@ -162,12 +169,14 @@ const Toggle = () => {
             <Link
               href={"https://discord.gg/YUXWWWJvJb"}
               target="blank"
-              className="hover:text-xl">
+              className="hover:text-xl"
+            >
               Discord
             </Link>
             <button
               onClick={() => setContact(true)}
-              className="flex hover:text-xl">
+              className="flex hover:text-xl"
+            >
               Contact Us
             </button>
           </motion.div>
@@ -177,7 +186,8 @@ const Toggle = () => {
         <div className="absolute top-0 left-0 bottom-0 right-0 z-50 backdrop-blur-sm">
           <div
             ref={aboutRef}
-            className="mx-5 mt-24 p-5  bg-opacity-80  font-[Guji] text-md font-bold text-white rounded-2xl bg-white">
+            className="mx-5 mt-24 p-5  bg-opacity-80  font-[Guji] text-md font-bold text-white rounded-2xl bg-white"
+          >
             <About />
           </div>
         </div>
@@ -188,7 +198,8 @@ const Toggle = () => {
             ref={form}
             onSubmit={sendEmail}
             onChange={handleInputChange}
-            className="mx-5 mt-24 p-5  bg-opacity-80    rounded-2xl bg-black text-white">
+            className="mx-5 mt-24 p-5  bg-opacity-80    rounded-2xl bg-black text-white"
+          >
             <div className="z-0 relative p-2 md:rounded-3xl overflow-y-scroll no-scrollbar">
               <div className="">
                 <div className="py-5">
@@ -234,8 +245,15 @@ const Toggle = () => {
                 <button
                   type="submit"
                   disabled={isButtonDisabled}
-                  className={`${styles.notch_button} my-12 h-2 md:col-span-2 mx-auto md:h-4 w-[80%] md:w-[400px] mt-10 relative flex justify-center items-center`}>
-                  <div className={`z-40 text-black md:text-lg lg:text-2xl font-mono absolute ${isButtonDisabled ? "cursor-not-allowed" : "hover:animate-bounce"}`}>
+                  className={`${styles.notch_button} my-12 h-2 md:col-span-2 mx-auto md:h-4 w-[80%] md:w-[400px] mt-10 relative flex justify-center items-center`}
+                >
+                  <div
+                    className={`z-40 text-black md:text-lg lg:text-2xl font-mono absolute ${
+                      isButtonDisabled
+                        ? "cursor-not-allowed"
+                        : "hover:animate-bounce"
+                    }`}
+                  >
                     Save
                   </div>
                 </button>

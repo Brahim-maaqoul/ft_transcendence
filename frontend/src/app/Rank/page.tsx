@@ -17,7 +17,6 @@ interface Users {
 
 function Rank() {
   const { data: Rank, isLoading, isError } = useGetRank();
-  console.log("Rank", Rank);
   if (isLoading) return <></>;
   if (isError) return <>error</>;
   const users = Rank.slice(3);
@@ -155,15 +154,7 @@ function Rank() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <Image
-                    src={"/gold.svg"}
-                    alt="Avatar of user"
-                    width={100}
-                    height={100}
-                    className="w-32 h-32"
-                  />
-                </div>
+                
               </div>
             ))}
           </div>

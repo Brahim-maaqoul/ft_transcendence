@@ -25,7 +25,7 @@ import io, { Socket } from "socket.io-client";
 import { Game, GameConfig } from "../types/index";
 import { useEffect, useState } from "react";
 import { set } from "react-hook-form";
-import { PSize, key } from "../types/component";
+import { Ball, PSize, key } from "../types/component";
 import { UserProfile, useAuth } from "@/components/providers/AuthContext";
 import { GameData } from "@/app/api/getGame";
 const gameState: Game = new Game();
@@ -136,9 +136,9 @@ export function Body3D({
       }
     });
 
-	// socker?.on('gameEnd', (data) => {
-	// 	;
-	// })
+    // socker?.on('gameEnd', (data) => {
+    // 	;
+    // })
 
     document.addEventListener("keydown", handelKeyDown);
     document.addEventListener("keyup", handelKeyUp);
@@ -148,7 +148,7 @@ export function Body3D({
       clearInterval(interval);
       socket?.off("gameUpdate");
     };
-  }, [gameData, socket]);
+  }, [gameData, socket, dataGame, player, type]);
   if (!socket) return <></>;
 
   return (
@@ -236,8 +236,12 @@ function Loader({
   );
 }
 
-function Electron({ radius = 2.75, speed = 6, ball }) {
-  const ref = useRef();
+interface ElectronProps {
+  ball: PSize;
+}
+
+function Electron({ ball }: ElectronProps) {
+  const ref = useRef<any>();
   const { x, y } = ball.position;
   useFrame((state) => {
     if (ref.current && ref.current.position)
@@ -281,7 +285,7 @@ function Electron({ radius = 2.75, speed = 6, ball }) {
 // }
 
 function Paddle({ paddle }: { paddle: PSize }) {
-  const ref = useRef(null);
+  const ref = useRef<any>(null);
   const { x, y } = paddle.position;
   useFrame((state) => {
     ref.current?.position.set(x - 500, -150, y - 300);
@@ -302,8 +306,8 @@ function Paddle({ paddle }: { paddle: PSize }) {
   );
 }
 
-function Brick({ brick }) {
-  const ref = useRef();
+function Brick({ brick }: { brick: PSize }) {
+  const ref = useRef<any>();
   const { x, y } = brick.position;
   useFrame((state) => {
     ref.current.position.set(x - 500, -150, y - 300);
@@ -325,7 +329,7 @@ function Brick({ brick }) {
   );
 }
 
-function Wall({ y }) {
+function Wall({ y }: { y: number }) {
   return (
     <mesh position={[0, -180, y]}>
       <boxGeometry args={[998, 100, 10]} />

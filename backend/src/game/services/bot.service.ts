@@ -44,11 +44,8 @@ export class BotService {
   }
 
   public async deleteBotGame(game: Game) {
-	  console.log("finsihed");
     if (!game || !(game.gameId in this.gameSessionService.botGames)) return;
-	console.log("finsihed");
     if (game.status === 'finished') {
-		console.log("finsihed");
       let theWinner = game.score.p1 > game.score.p2 ? game.playerId1 : 'Bot';
       await this.prisma.botGame.update({
         where: {

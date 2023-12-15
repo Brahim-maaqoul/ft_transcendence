@@ -25,7 +25,6 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
   group,
   setNewGroup,
 }) => {
-  console.log("beeedroooo", group);
   const [typegroup, setTypeGroup] = useState(group.privacy);
   const [GroupName, setGroupName] = useState(group.name);
   const [GroupPassword, setGroupPassword] = useState("");
@@ -103,7 +102,6 @@ export const UpdateChannel: React.FC<CreatGroupProps> = ({
   };
 
   const uploadPicture = async (picture: File) => {
-    console.log("here");
     const formData = new FormData();
     formData.append("file", picture);
     uploadMutation.mutate(formData);

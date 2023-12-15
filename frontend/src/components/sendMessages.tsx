@@ -8,7 +8,6 @@ import {
 } from "@/app/api/chatApi/chatApiFunctions";
 import { io } from "socket.io-client";
 
-const socket = io("http://e3r11p4.1337.ma:8000/chat");
 interface sendMessagesProps {
   id: string;
   message: string;
@@ -22,13 +21,13 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
   setMessage,
   dataUser,
 }) => {
-  const queryClient = useQueryClient();
+  const {chatSocket} = useAuth()
   const [time, setTime] = useState(0);
   const mutation = useMutation({
     mutationFn: sendMessages,
     onSuccess: () => {
       setMessage("");
-      socket.emit("sendMessage", { group_id: id });
+      chatSocket?.emit("sendMessage", { group_id: id });
     },
   });
   const handleSubmitNewMessage = () => {
@@ -52,13 +51,12 @@ export const SendMessages: React.FC<sendMessagesProps> = ({
         value={message}
         onFocus={() => {}}
         onBlur={() => {
-          console.log("not typing");
-          socket.emit("stop typing", { group_id: id });
+          chatSocket?.emit("stop typing", { group_id: id });
         }}
         onChange={(input) => {
           if (input.target.value.length)
-            socket.emit("typing", { group_id: id, user: dataUser.nickname });
-          else socket.emit("stop typing", { group_id: id });
+          chatSocket?.emit("typing", { group_id: id, user: dataUser.nickname });
+          else chatSocket?.emit("stop typing", { group_id: id });
           setMessage(input.target.value);
         }}
         id="msg"

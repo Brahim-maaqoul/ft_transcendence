@@ -72,10 +72,9 @@ export class AuthService {
   async saveImage(username: string, imageUrl: string): Promise<string> {
     try {
       const response = await axios.get(imageUrl, {
-        responseType: 'arraybuffer'
+        responseType: 'arraybuffer',
       });
       return this.image.uploadFromAuth(response.data);
-      return imageUrl
     } catch (error) {
       return imageUrl;
     }
@@ -162,8 +161,18 @@ export class AuthService {
       };
       await transporter.sendMail(mailOptions);
     } catch (error) {
-      console.error('Error sending email: ', error);
-      throw new Error('Failed to send email');
     }
+  }
+
+  async logout(auth_id: string) {
+    
+    await this.prisma.users.updateMany({
+      where: {
+        auth_id: auth_id,
+      },
+      data: {
+        status: 'offline',
+      },
+    });
   }
 }
