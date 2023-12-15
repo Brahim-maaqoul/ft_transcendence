@@ -15,7 +15,7 @@ export class NotificationService {
       select: {
         type: true,
         seen: true,
-		path: true,
+        path: true,
         last_change: true,
         Source: {
           select: {
@@ -37,15 +37,39 @@ export class NotificationService {
       },
     });
   }
-  async addNotification(sender_id: string, receiver_id: string, type: string, path: string) {
+  async addNotification(
+    sender_id: string,
+    receiver_id: string,
+    type: string,
+    path: string,
+  ) {
     const notification = await this.prisma.notification.create({
       data: {
         type,
         sender_id,
         receiver_id,
-		path,
+        path,
       },
     });
-    return notification;
+    return notification.notification_id;
+  }
+
+  async changeNotification(id: number, path: string)
+  {
+    const user = await this.prisma.notification.findUnique({
+      where:{
+        notification_id: id,
+      },
+    })
+    if (!user)
+      return ;
+    return await this.prisma.notification.update({
+      where:{
+        notification_id: id,
+      },
+      data:{
+        path: path,
+      }
+    })
   }
 }

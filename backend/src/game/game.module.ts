@@ -13,6 +13,7 @@ import { GameEndService } from './services/gameEnd.service';
 import { MatchHistoryService } from './services/matchHistory.service';
 import { UserService } from 'src/user/services/user.service';
 import { GameMatchController } from './controllers/gamematch.controller';
+import { NotificationService } from 'src/notification/service/notification.service';
 
 @Module({
   controllers: [GameController, GameMatchController],
@@ -28,6 +29,7 @@ import { GameMatchController } from './controllers/gamematch.controller';
 	  GameEndService,
 	  MatchHistoryService,
     UserService,
+    NotificationService
   ],
 })
 export class GameModule {}

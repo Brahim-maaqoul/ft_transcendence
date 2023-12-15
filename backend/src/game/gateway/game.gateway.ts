@@ -16,25 +16,17 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { Observable, from, map } from 'rxjs';
 import { Server } from 'socket.io';
-import { Socket } from 'socket.io';
 import { GameSession, gameStatus } from '../services/gameSession.service';
-import { subscribe } from 'diagnostics_channel';
-import { Game } from '../classes/game.class';
 import { Data, key } from '../interfaces/utils.interface';
-import { use } from 'passport';
-import { AuthGuard } from '@nestjs/passport';
-import { request } from 'http';
 import { JwtGuard } from 'src/auth/Guard/jwt.guard';
 import { BotService } from '../services/bot.service';
 import { MatchMakingService } from '../services/matchMaking.service';
 import { GameEndService } from '../services/gameEnd.service';
-import { type } from 'os';
-import { parentPort } from 'worker_threads';
 import { AuthService } from 'src/auth/auth.service';
 import { plainToClass } from 'class-transformer';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotificationService } from 'src/notification/service/notification.service';
 
 @WebSocketGateway({
   namespace: 'Game2d',
@@ -53,6 +45,7 @@ export class GameGateway
     private gameend: GameEndService,
     private authService: AuthService,
     private prisma: PrismaService,
+    private notification: NotificationService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -152,6 +145,15 @@ export class GameGateway
   @SubscribeMessage('cancel')
   async cancel(client: any) {
     this.gameSessionService.queuePlayers.erase(client.user);
+    if (client.user in this.gameSessionService.inviteQueue) {
+      this.notification.changeNotification(
+        this.gameSessionService.inviteQueue[client.user].notification,
+        'canceled',
+      );
+      if (this.gameSessionService.inviteQueue[client.user].payload.player in this.gameSessionService.playersSocket)
+        this.gameSessionService.playersSocket[this.gameSessionService.inviteQueue[client.user].payload.player].emit('notification');
+      this.gameSessionService.inviteQueue.erase(client.user);
+    }
     client.emit('cancelLoading');
     const gametmp = this.gameSessionService.playersInfo[client.user];
     if (gametmp) {
@@ -186,10 +188,9 @@ export class GameGateway
       if (
         this.gameSessionService.botGames[payload.gameId].status === 'finished'
       ) {
-        const gameStorage =
-          this.gameSessionService.botGames[payload.gameId];
-		  await this.botService.deleteBotGame(gameStorage);
-		  await this.botService.rankBotUpdate(gameStorage);
+        const gameStorage = this.gameSessionService.botGames[payload.gameId];
+        await this.botService.deleteBotGame(gameStorage);
+        await this.botService.rankBotUpdate(gameStorage);
         return;
       }
       client.emit(
@@ -212,7 +213,6 @@ export class GameGateway
       this.gameSessionService.matchPlayers[payload.gameId].update();
       const game = this.gameSessionService.matchPlayers[payload.gameId];
       if (game.status === 'finished') {
-
         await this.matchMaking.deleteGame(game);
         return;
       }
@@ -225,53 +225,79 @@ export class GameGateway
         game.get_data(game.playerId2 === user ? 0 : 1),
       );
     }
-    // 	// bot game
-    // 	if (this.gameSessionService.games[client.id] == gameStatus.bot){
-    // 		this.botService.botGames[client.id].update();
-    // 		if (this.botService.botGames[client.id].status === 'finished') {
-    // 			// this.gameSessionService.clients[client.id].disconnect();
-    // 			// this.handleDisconnect(this.gameSessionService.clients[client.id]);
-    // 			// await client.disconnect();
-    // 			await this.handleDisconnect(client);
-    // 			return ;
-    // 		}
-    // 		this.botService.botGames[client.id].check_keys(keys.keys, 0); // the player is always 0
-    // 		client.emit('gameUpdate', this.botService.botGames[client.id].get_data(0));
-    // 	}
-    // 	// matchMaking game
-    // 	else if (this.gameSessionService.games[client.id] == gameStatus.matchMaking){
-    // 		if (client.id in this.matchMaking.matchPlayers){
-    // 			this.matchMaking.matchPlayers[client.id].Game.update();
-    // 			if (this.matchMaking.matchPlayers[client.id].Game.status === 'finished'){
-    // 				// socket off
-    // 				await this.handleDisconnect(client);
-    // 				await client.disconnect();
-    // 				return ;
-    // 			}
-    // 			this.matchMaking.matchPlayers[client.id].Game.check_keys(keys.keys, this.matchMaking.matchPlayers[client.id].player);
-    // 			client.emit('gameUpdate', this.matchMaking.matchPlayers[client.id].Game.get_data(this.matchMaking.matchPlayers[client.id].player));
-    // 		}
-    // 		else {
-    // 			await this.matchMaking.createDuoGame({ playerId1: client.handshake.query.user, boot: false });
-    // 		}
-    // 	}
-    // 	// invite game
-    // 	else {
-    // 	}
-    // }
-    // else {
-    // 	// update the status of the
-    // 	this.gameSessionService.games[client.id] = gameStatus.bot; // keys.gameType;
-    // 	if (this.gameSessionService.games[client.id] == gameStatus.bot){
-    // 		await this.botService.createBotGame({playerId1: client.handshake.query.user, boot: true}, client.id);
-    // 	}
-    // 	else if (this.gameSessionService.games[client.id] == gameStatus.matchMaking && !(client.id in this.matchMaking.matchPlayers)){
-    // 		// await this.matchMaking.joinQueue({ playerId1: client.handshake.query.user, boot: false }, client.id);
-    // 	}
-    // 	// else if (this.gameSessionService.games[client.handshake.query.user] == gameStatus.invite){
-    // 	// 	await this.matchMaking.joinQueue({ playerId1: client.user, boot: false }, client.handshake.query.user);
-    // 	// }
-    // }
+  }
+
+  @UseGuards(JwtGuard)
+  @SubscribeMessage('inviteGame')
+  async inviteGame(client: any, payload: { player: string; data: Data }) {
+    console.log('invite');
+    const user = client.user;
+    this.cancel(client);
+    client.emit('loadingFriendGame');
+    this.gameSessionService.playersSocket[user] = client;
+    const notification = await this.notification.addNotification(
+      user,
+      payload.player,
+      'challenge',
+      '',
+    );
+    this.gameSessionService.inviteQueue[user] = { payload, notification };
+    console.log(this.gameSessionService.inviteQueue);
+    console.log(
+      payload.player,
+      payload.player in this.gameSessionService.playersSocket,
+    );
+    if (payload.player in this.gameSessionService.playersSocket) {
+      console.log('here');
+      this.gameSessionService.playersSocket[payload.player].emit(
+        'notification',
+      );
+    }
+  }
+
+  @UseGuards(JwtGuard)
+  @SubscribeMessage('acceptGame')
+  async acceptGame(client: any, payload: { challenger: string }) {
+    if (payload.challenger in this.gameSessionService.inviteQueue) {
+      this.notification.changeNotification(
+        this.gameSessionService.inviteQueue[payload.challenger].notification,
+        'accepted',
+      );
+      const userData = this.gameSessionService.inviteQueue[payload.challenger];
+      const game = await this.matchMaking.createDuoGame(
+        payload.challenger,
+        client.user,
+        userData.payload.data,
+      );
+      this.gameSessionService.playersSocket[game.user1_id].emit(
+        'gameStart',
+        '/Game/Duo/' + game.gameId,
+      );
+      this.gameSessionService.playersSocket[game.user2_id].emit(
+        'gameStart',
+        '/Game/Duo/' + game.gameId,
+      );
+    }
+    client.emit('notification');
+  }
+
+
+
+  @UseGuards(JwtGuard)
+  @SubscribeMessage('rejectGame')
+  async rejectGame(client: any, payload: { challenger: string }) {
+    if (payload.challenger in this.gameSessionService.inviteQueue) {
+      this.notification.changeNotification(
+        this.gameSessionService.inviteQueue[payload.challenger].notification,
+        'canceled',
+      );
+
+      this.gameSessionService.inviteQueue.erase(payload.challenger);
+      this.gameSessionService.playersSocket[payload.challenger].emit(
+        'cancelLoading',
+      );
+    }
+    client.emit('notification');
   }
 
   @UseGuards(JwtGuard)
@@ -287,6 +313,7 @@ export class GameGateway
         status: 'online',
       },
     });
+
     this.gameSessionService.playersSocket[user] = client;
     // console.log('connecting client id: ', client.user, client.id, client.handshake.query.user);
     // this.gameSessionService.clients[client.id] = client;
@@ -304,25 +331,20 @@ export class GameGateway
     }
     // console.log(`Clinet id: ${client.id} disconnected!`);
     if (game.type == 'Bot' && game.id in this.gameSessionService.botGames) {
-		const gameStorage = this.gameSessionService.botGames[game.id];
+      const gameStorage = this.gameSessionService.botGames[game.id];
       if (gameStorage.status === 'finished') {
         await this.botService.rankBotUpdate(gameStorage);
       }
       await this.botService.deleteBotGame(gameStorage);
     }
 
-
     if (game.type == 'Duo' && game.id in this.gameSessionService.matchPlayers) {
-		const gameStorage = this.gameSessionService.matchPlayers[game.id];
+      const gameStorage = this.gameSessionService.matchPlayers[game.id];
       if (gameStorage.status === 'finished') {
         await this.matchMaking.rankDuoUpdate(game.id);
       }
       await this.matchMaking.deleteGameUncompleted(gameStorage, user);
-    } 
-	
-	
-	
-	else if (game.type == 'invite') {
+    } else if (game.type == 'invite') {
       // await this.botGameService.deleteBotGame(client.id);
     }
     if (game.id in this.gameSessionService.playersInfo)
