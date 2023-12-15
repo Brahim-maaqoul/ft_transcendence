@@ -1,9 +1,11 @@
 
 "use client"
 
+import { Brick } from "../types/component"
 
 
-export default function  Brick({brick}){
+
+export default function  Bricks({brick}:{brick: Brick}){
 
     return (
         <div

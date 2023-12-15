@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 export function Auth() {
   const router = useRouter();
   const pathname = usePathname();
-  if (pathname === "/login") return <></>
+  if (pathname === "/login" || pathname === "/tfa") return <></>
   return <CheckAuth/>
 }
 
